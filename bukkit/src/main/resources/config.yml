@@ -1,0 +1,11 @@
+serverName: "Hub-01"
+
+mongo:
+  host: "localhost"
+  port: 27017
+  database: "mCore"
+  auth:
+    enabled: false
+    username: ""
+    password: ""
+    database: ""
