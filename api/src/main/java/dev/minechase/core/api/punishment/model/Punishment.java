@@ -2,6 +2,9 @@ package dev.minechase.core.api.punishment.model;
 
 import dev.lbuddyboy.commons.api.APIConstants;
 import dev.minechase.core.api.api.Documented;
+import dev.minechase.core.api.api.IExpirable;
+import dev.minechase.core.api.api.IRemovable;
+import dev.minechase.core.api.api.ISendable;
 import dev.minechase.core.api.punishment.PunishmentHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,12 +16,12 @@ import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class Punishment extends Documented {
+public class Punishment extends Documented implements IRemovable, ISendable, IExpirable {
 
     private final UUID id, senderUUID, targetUUID;
     private final PunishmentType type;
     private final long sentAt, duration;
-    private final String server;
+    private final String reason, server;
 
     private List<PunishmentProof> proof = new ArrayList<>();
 
@@ -26,13 +29,14 @@ public class Punishment extends Documented {
     private String removedReason = null;
     private long removedAt = 0L;
 
-    public Punishment(UUID senderUUID, UUID targetUUID, PunishmentType type, long duration, String server) {
+    public Punishment(UUID senderUUID, UUID targetUUID, PunishmentType type, long duration, String reason, String server) {
         this.id = UUID.randomUUID();
         this.senderUUID = senderUUID;
         this.targetUUID = targetUUID;
         this.type = type;
         this.sentAt = System.currentTimeMillis();
         this.duration = duration;
+        this.reason = reason;
         this.server = server;
     }
 
@@ -44,14 +48,11 @@ public class Punishment extends Documented {
         this.sentAt = document.getLong("sentAt");
         this.duration = document.getLong("duration");
         this.server = document.getString("server");
+        this.reason = document.getString("reason");
         this.proof = APIConstants.GSON.fromJson(document.getString("proof"), PunishmentHandler.PROOF.getType());
         this.removedBy = this.deserializeUUID(document.getString("removedBy"));
         this.removedReason = document.getString("removedReason");
         this.removedAt = document.getLong("removedAt");
-    }
-
-    public boolean isRemoved() {
-        return this.removedAt > 0;
     }
 
     public void supplyProof(UUID senderUUID, String link) {
@@ -69,11 +70,12 @@ public class Punishment extends Documented {
         Document document = new Document();
 
         document.put("id", this.id.toString());
-        document.put("senderUUID", this.senderUUID.toString());
+        document.put("senderUUID", this.serializeUUID(this.senderUUID));
         document.put("targetUUID", this.targetUUID.toString());
         document.put("type", this.type.name());
         document.put("sentAt", this.sentAt);
         document.put("duration", this.duration);
+        document.put("reason", this.reason);
         document.put("server", this.server);
         document.put("proof", APIConstants.GSON.toJson(this.proof, PunishmentHandler.PROOF.getType()));
         document.put("removedBy", this.removedBy);

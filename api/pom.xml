@@ -6,11 +6,11 @@
 
     <parent>
         <groupId>dev.minechase.core</groupId>
-        <artifactId>mCore</artifactId>
+        <artifactId>mcore</artifactId>
         <version>1.0</version>
     </parent>
 
-    <artifactId>api</artifactId>
+    <artifactId>${parent.artifactId}-api</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

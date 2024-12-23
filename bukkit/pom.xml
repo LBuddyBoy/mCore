@@ -6,11 +6,11 @@
 
     <parent>
         <groupId>dev.minechase.core</groupId>
-        <artifactId>mCore</artifactId>
+        <artifactId>mcore</artifactId>
         <version>1.0</version>
     </parent>
 
-    <artifactId>bukkit</artifactId>
+    <artifactId>${parent.artifactId}-bukkit</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
     <name>core-bukkit</name>
@@ -73,7 +73,7 @@
         </dependency>
         <dependency>
             <groupId>dev.minechase.core</groupId>
-            <artifactId>api</artifactId>
+            <artifactId>mcore-api</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
         </dependency>

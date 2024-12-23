@@ -1,4 +1,5 @@
 serverName: "Hub-01"
+serverGroup: "GLOBAL"
 
 mongo:
   host: "localhost"

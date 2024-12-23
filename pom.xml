@@ -5,13 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>dev.minechase.core</groupId>
-    <artifactId>mCore</artifactId>
+    <artifactId>mcore</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>api</module>
         <module>bukkit</module>
+        <module>velocity</module>
     </modules>
 
     <properties>

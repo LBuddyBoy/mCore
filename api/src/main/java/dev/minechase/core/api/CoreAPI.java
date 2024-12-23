@@ -3,6 +3,8 @@ package dev.minechase.core.api;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -21,6 +23,12 @@ public class CoreAPI {
 
         instance = coreAPI;
         initiated = true;
+    }
+
+    public static List<String> getScopes() {
+        return Arrays.asList(
+                "GLOBAL"
+        );
     }
 
 }

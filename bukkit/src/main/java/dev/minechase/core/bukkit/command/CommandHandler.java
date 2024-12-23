@@ -3,9 +3,15 @@ package dev.minechase.core.bukkit.command;
 import co.aikar.commands.PaperCommandManager;
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.bukkit.CorePlugin;
-import dev.minechase.core.bukkit.command.context.CorePlayerContext;
+import dev.minechase.core.bukkit.command.context.*;
+import dev.minechase.core.bukkit.command.impl.GrantsCommand;
+import dev.minechase.core.bukkit.command.impl.QueueCommand;
+import dev.minechase.core.bukkit.command.impl.RankCommand;
 import dev.minechase.core.bukkit.command.impl.UserCommand;
 import lombok.Getter;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Getter
 public class CommandHandler implements IModule {
@@ -16,9 +22,20 @@ public class CommandHandler implements IModule {
     public void load() {
         this.commandManager = new PaperCommandManager(CorePlugin.getInstance());
 
-        new CorePlayerContext().register(this.commandManager);
+        Arrays.asList(
+                new RankContext(),
+                new MultiScopeContext(),
+                new TimeDurationContext(),
+                new CoreServerContext(),
+                new CorePlayerContext()
+        ).forEach(context -> context.register(this.commandManager));
 
+        this.commandManager.getCommandCompletions().registerCompletion("rankPermissions", new RankContext.RankPermissionCompletion());
+
+        this.commandManager.registerCommand(new RankCommand());
+        this.commandManager.registerCommand(new GrantsCommand());
         this.commandManager.registerCommand(new UserCommand());
+        this.commandManager.registerCommand(new QueueCommand());
     }
 
     @Override

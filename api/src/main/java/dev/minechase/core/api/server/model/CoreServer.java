@@ -1,0 +1,94 @@
+package dev.minechase.core.api.server.model;
+
+import com.google.common.collect.ImmutableList;
+import dev.minechase.core.api.CoreAPI;
+import dev.minechase.core.api.api.Documented;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
+import org.bson.Document;
+
+import java.util.Comparator;
+import java.util.List;
+
+@EqualsAndHashCode(callSuper = true)
+@Data
+@RequiredArgsConstructor
+public class CoreServer extends Documented {
+
+    private final String name;
+    private String host;
+    private int port, playerCount, maxPlayers;
+    private long startedAt, stoppedAt;
+    private boolean whitelisted, queuePaused;
+
+    public CoreServer(Document document) {
+        this.name = document.getString("name");
+        this.host = document.getString("host");
+        this.port = document.getInteger("port");
+        this.playerCount = document.getInteger("playerCount");
+        this.maxPlayers = document.getInteger("maxPlayers");
+        this.startedAt = document.getLong("startedAt");
+        this.stoppedAt = document.getLong("stoppedAt");
+        this.whitelisted = document.getBoolean("whitelisted");
+        this.queuePaused = document.getBoolean("queuePaused");
+    }
+
+    @Override
+    public Document toDocument() {
+        return new Document()
+                .append("name", this.name)
+                .append("host", this.host)
+                .append("port", this.port)
+                .append("whitelisted", this.whitelisted)
+                .append("queuePaused", this.queuePaused)
+                .append("playerCount", this.playerCount)
+                .append("maxPlayers", this.maxPlayers)
+                .append("startedAt", this.startedAt)
+                .append("stoppedAt", this.stoppedAt);
+    }
+
+    public void updatePositions() {
+        int position = 1;
+
+        for (QueuePlayer player : this.getQueuePlayers().stream().sorted(Comparator.comparingInt(QueuePlayer::getPriority)).toList()) {
+            player.setPosition(position++);
+        }
+
+    }
+
+    public List<QueuePlayer> getQueuePlayers() {
+        return CoreAPI.getInstance().getServerHandler().getQueuePlayers(this);
+    }
+
+    public int getQueueSize() {
+        return this.getQueuePlayers().size();
+    }
+
+    public boolean isOnline() {
+        return this.startedAt > 0 && this.stoppedAt <= 0;
+    }
+
+    public boolean isOffline() {
+        return this.stoppedAt > 0;
+    }
+
+    public boolean isHub() {
+        return this.name.toLowerCase().startsWith("hub-");
+    }
+
+    public ServerStatus getStatus() {
+        return isOffline() ? ServerStatus.OFFLINE : isQueuePaused() ? ServerStatus.PAUSED : isWhitelisted() ? ServerStatus.WHITELISTED : ServerStatus.ONLINE;
+    }
+
+    public void markOnline() {
+        this.startedAt = System.currentTimeMillis();
+        this.stoppedAt = 0L;
+    }
+
+    public void markOffline() {
+        this.stoppedAt = System.currentTimeMillis();
+        this.startedAt = 0L;
+    }
+
+}

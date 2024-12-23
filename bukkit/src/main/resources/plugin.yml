@@ -1,6 +1,6 @@
-name: mCore
+name: mcore-bukkit
 version: '${project.version}'
-main: dev.minechase.core.bukkit.mCore
+main: dev.minechase.core.bukkit.CorePlugin
 api-version: '1.21'
 depend:
   - Commons

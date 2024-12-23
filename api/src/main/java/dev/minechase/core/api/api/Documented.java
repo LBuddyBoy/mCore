@@ -19,4 +19,8 @@ public abstract class Documented {
         return uuidString == null ? null : UUID.fromString(uuidString);
     }
 
+    public String serializeUUID(UUID uuid) {
+        return uuid == null ? null : uuid.toString();
+    }
+
 }

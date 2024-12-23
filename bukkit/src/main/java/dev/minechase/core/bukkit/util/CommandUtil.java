@@ -11,4 +11,8 @@ public class CommandUtil {
         return sender instanceof Player senderPlayer ? senderPlayer.getUniqueId() : null;
     }
 
+    public static String getSenderName(CommandSender sender) {
+        return sender instanceof Player senderPlayer ? senderPlayer.getName() : "&a&lCONSOLE";
+    }
+
 }

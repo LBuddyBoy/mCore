@@ -10,6 +10,7 @@ public class PunishmentProof {
 
     private final UUID senderUUID;
     private String link;
+    private long appliedAt;
 
     public PunishmentProof(UUID senderUUID, String link) {
         this.senderUUID = senderUUID;
