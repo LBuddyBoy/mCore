@@ -1,7 +1,5 @@
 package dev.minechase.core.velocity.util;
 
-import com.velocitypowered.api.proxy.Player;
-import dev.lbuddyboy.commons.api.util.ColorSet;
 import dev.lbuddyboy.commons.api.util.GradientUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -23,6 +21,7 @@ public class CC {
             .character('&')
             .hexCharacter('#')
             .build();
+
     private static final List<String> SPECIAL_COLORS = Arrays.asList("&l", "&n", "&o", "&k", "&m", "§l", "§n", "§o", "§k", "§m");
 
     public static final Pattern HEX_PATTERN1 = Pattern.compile("&#(\\w{5}[0-9a-f])");

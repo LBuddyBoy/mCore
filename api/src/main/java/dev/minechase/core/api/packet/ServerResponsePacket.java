@@ -13,10 +13,12 @@ public abstract class ServerResponsePacket implements Packet {
     public void receive() {
         if (CoreAPI.getInstance().getServerName().equalsIgnoreCase(this.getExecuteServer())) {
             this.onReceiveExecuteServer();
+            CoreAPI.getInstance().getLogger().info("Received Execute Server: " + this.getClass().getName());
             return;
         }
 
         this.onReceiveOtherServer();
+        CoreAPI.getInstance().getLogger().info("Received Other Server: " + this.getClass().getName());
     }
 
 }

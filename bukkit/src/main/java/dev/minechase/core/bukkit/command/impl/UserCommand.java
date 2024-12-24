@@ -35,37 +35,4 @@ public class UserCommand extends BaseCommand {
         });
     }
 
-/*    @Subcommand("punishment")
-    @CommandCompletion("@players")
-    public void punishment(CommandSender sender, @Name("player") AsyncCorePlayer player, @Name("seconds") long seconds) {
-        player.getUUID().whenCompleteAsyncExcept(uuid -> {
-
-            Punishment punishment = new Punishment(
-                    CommandUtil.getSender(sender),
-                    uuid,
-                    PunishmentType.BAN,
-                    seconds * 1000L,
-                    CorePlugin.getInstance().getServerName()
-            );
-
-            new PunishmentUpdatePacket(punishment).send();
-            sender.sendMessage(CC.translate("&aTested punishment on " + player.getName() + "."));
-
-        }, (throwable -> sender.sendMessage(CoreConstants.INVALID_NAME(player))));
-    }
-
-    @Subcommand("punishments")
-    @CommandCompletion("@players")
-    public void punishments(CommandSender sender, @Name("player") AsyncCorePlayer player) {
-        player.getUUID().whenCompleteAsyncExcept(uuid -> {
-            sender.sendMessage(CC.translate("&aLoading " + player.getName() + "'s punishments..."));
-
-            CorePlugin.getInstance().getPunishmentHandler().getPunishments(uuid).whenCompleteAsync(((punishments, throwable) -> {
-                sender.sendMessage(CC.translate("&a" + player.getName() + " has " + punishments.size() + " punishments."));
-            }));
-
-        }, (throwable -> sender.sendMessage(CoreConstants.INVALID_NAME(player))));
-
-    }*/
-
 }

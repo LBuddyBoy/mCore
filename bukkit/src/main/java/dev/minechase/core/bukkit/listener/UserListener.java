@@ -2,6 +2,7 @@ package dev.minechase.core.bukkit.listener;
 
 import dev.lbuddyboy.commons.api.CommonsAPI;
 import dev.lbuddyboy.commons.api.cache.UUIDCache;
+import dev.minechase.core.api.log.model.impl.NewUserLog;
 import dev.minechase.core.api.user.model.User;
 import dev.minechase.core.bukkit.CorePlugin;
 import org.bukkit.entity.Player;
@@ -35,6 +36,7 @@ public class UserListener implements Listener {
 
         if (!user.hasPlayedBefore()) {
             user.setFirstJoinAt(System.currentTimeMillis());
+            new NewUserLog(player.getUniqueId()).createLog();
         }
 
     }

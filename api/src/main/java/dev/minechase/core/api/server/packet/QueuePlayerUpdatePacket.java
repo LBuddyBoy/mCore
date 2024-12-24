@@ -4,15 +4,18 @@ import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.packet.ServerResponsePacket;
 import dev.minechase.core.api.server.model.QueuePlayer;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
 @AllArgsConstructor
 public class QueuePlayerUpdatePacket extends ServerResponsePacket {
 
     private final QueuePlayer player;
+    private final String executeServer;
 
-    @Override
-    public String getExecuteServer() {
-        return CoreAPI.getInstance().getServerName();
+    public QueuePlayerUpdatePacket(QueuePlayer player) {
+        this.player = player;
+        this.executeServer = CoreAPI.getInstance().getServerName();
     }
 
     @Override

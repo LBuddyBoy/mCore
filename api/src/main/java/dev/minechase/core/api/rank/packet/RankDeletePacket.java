@@ -3,17 +3,21 @@ package dev.minechase.core.api.rank.packet;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.grant.packet.GrantUpdatePacket;
 import dev.minechase.core.api.packet.ServerResponsePacket;
+import dev.minechase.core.api.punishment.model.Punishment;
 import dev.minechase.core.api.rank.model.Rank;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
+@Getter
 public class RankDeletePacket extends ServerResponsePacket {
 
     private final Rank rank;
+    private final String executeServer;
 
-    @Override
-    public String getExecuteServer() {
-        return CoreAPI.getInstance().getServerName();
+    public RankDeletePacket(Rank rank) {
+        this.rank = rank;
+        this.executeServer = CoreAPI.getInstance().getServerName();
     }
 
     @Override

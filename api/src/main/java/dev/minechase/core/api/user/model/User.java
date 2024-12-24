@@ -59,7 +59,7 @@ public class User {
 
     public void save(boolean async) {
         if (async) {
-            CompletableFuture.runAsync(() -> save(true), CoreAPI.POOL);
+            CompletableFuture.runAsync(() -> save(false), CoreAPI.POOL);
             return;
         }
 

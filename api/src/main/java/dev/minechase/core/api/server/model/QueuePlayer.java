@@ -19,13 +19,14 @@ public class QueuePlayer extends Documented {
     private int priority;
     private long offlineAt;
 
-    @Setter private transient int position;
+    @Setter private int position;
 
     public QueuePlayer(Document document) {
         this.playerUUID = this.deserializeUUID(document.getString("playerUUID"));
         this.playerName = document.getString("playerName");
         this.queueName = document.getString("queueName");
         this.priority = document.getInteger("priority");
+        this.position = document.getInteger("position");
     }
 
     @Override
@@ -33,6 +34,7 @@ public class QueuePlayer extends Documented {
         return new Document()
                 .append("playerUUID", this.serializeUUID(this.playerUUID))
                 .append("playerName", this.playerName)
+                .append("position", this.position)
                 .append("queueName", this.queueName)
                 .append("priority", this.priority);
     }

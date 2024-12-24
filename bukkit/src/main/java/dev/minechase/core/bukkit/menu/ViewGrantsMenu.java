@@ -1,9 +1,11 @@
 package dev.minechase.core.bukkit.menu;
 
+import dev.lbuddyboy.commons.api.util.StringUtils;
 import dev.lbuddyboy.commons.menu.IButton;
 import dev.lbuddyboy.commons.menu.paged.IPagedMenu;
 import dev.lbuddyboy.commons.util.ItemFactory;
 import dev.minechase.core.api.grant.grant.Grant;
+import dev.minechase.core.api.grant.packet.GrantUpdatePacket;
 import dev.minechase.core.api.util.UUIDUtils;
 import lombok.AllArgsConstructor;
 import org.bukkit.Material;
@@ -57,10 +59,11 @@ public class ViewGrantsMenu extends IPagedMenu {
             factory.lore(
                     "&7&m--------------------------",
                     "&fRank&7: " + this.grant.getInitialRankName(),
-                    "&fSender&7: " + this.grant.getSenderName(),
-                    "&fTarget&7: " + this.grant.getTargetName(),
-                    "&fReason&7: " + this.grant.getReason(),
-                    "&fDuration&7: " + this.grant.getDurationString(),
+                    "&fSender&7: &e" + this.grant.getSenderName(),
+                    "&fTarget&7: &6" + this.grant.getTargetName(),
+                    "&fReason&7: &b" + this.grant.getReason(),
+                    "&fDuration&7: &a" + this.grant.getDurationString(),
+                    "&fScopes&7: &b" + StringUtils.join(this.grant.getScopes(), ", "),
                     "&7&m--------------------------"
             );
 
@@ -69,6 +72,9 @@ public class ViewGrantsMenu extends IPagedMenu {
                 factory.addToLore("&fRemoved By&7: &c" + this.grant.getRemovedByName());
                 factory.addToLore("&fRemoved At&7: &c" + this.grant.getRemovedAtDate());
                 factory.addToLore("&7&m--------------------------");
+            } else {
+                factory.addToLore("&cClick to remove this grant.");
+                factory.addToLore("&7&m--------------------------");
             }
 
             return factory.build();
@@ -76,7 +82,15 @@ public class ViewGrantsMenu extends IPagedMenu {
 
         @Override
         public void action(Player player, ClickType clickType, int slot) {
+            if (this.grant.isExpired() || this.grant.isRemoved() || !this.grant.isRemovable()) {
+                return;
+            }
 
+            this.grant.setRemovedBy(player.getUniqueId());
+            this.grant.setRemovedAt(System.currentTimeMillis());
+            this.grant.setRemovedReason("None specified");
+
+            new GrantUpdatePacket(this.grant).send();
         }
     }
 

@@ -6,12 +6,12 @@ import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Name;
 import dev.lbuddyboy.commons.util.CC;
-import dev.minechase.core.api.server.ServerHandler;
 import dev.minechase.core.api.server.model.CoreServer;
 import dev.minechase.core.api.server.model.QueuePlayer;
+import dev.minechase.core.bukkit.CoreConstants;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.api.BukkitServerHandler;
-import dev.minechase.core.proxy.packet.PlayerSendToServerPacket;
+import dev.minechase.core.velocity.packet.PlayerSendToServerPacket;
 import org.bukkit.entity.Player;
 
 public class QueueCommand extends BaseCommand {
@@ -47,6 +47,11 @@ public class QueueCommand extends BaseCommand {
 
         if (this.serverHandler.isQueued(sender.getUniqueId())) {
             this.serverHandler.removeFromQueue(sender.getUniqueId());
+        }
+
+        if (sender.hasPermission(CoreConstants.QUEUE_BYPASS_PERM)) {
+            this.server(sender, server);
+            return;
         }
 
         this.serverHandler.addToQueue(sender.getUniqueId(), server);

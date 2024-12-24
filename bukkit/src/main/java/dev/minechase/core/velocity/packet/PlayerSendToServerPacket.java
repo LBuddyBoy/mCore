@@ -1,4 +1,4 @@
-package dev.minechase.core.proxy.packet;
+package dev.minechase.core.velocity.packet;
 
 import dev.lbuddyboy.commons.api.redis.packet.Packet;
 import lombok.AllArgsConstructor;

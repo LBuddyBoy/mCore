@@ -4,10 +4,7 @@ import co.aikar.commands.PaperCommandManager;
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.command.context.*;
-import dev.minechase.core.bukkit.command.impl.GrantsCommand;
-import dev.minechase.core.bukkit.command.impl.QueueCommand;
-import dev.minechase.core.bukkit.command.impl.RankCommand;
-import dev.minechase.core.bukkit.command.impl.UserCommand;
+import dev.minechase.core.bukkit.command.impl.*;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -36,6 +33,8 @@ public class CommandHandler implements IModule {
         this.commandManager.registerCommand(new GrantsCommand());
         this.commandManager.registerCommand(new UserCommand());
         this.commandManager.registerCommand(new QueueCommand());
+        this.commandManager.registerCommand(new LogsCommand());
+        this.commandManager.registerCommand(new HubCommand());
     }
 
     @Override

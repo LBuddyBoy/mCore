@@ -57,6 +57,7 @@ public abstract class ServerHandler<T> implements IModule {
     @Override
     public void unload() {
         CoreServer server = this.getLocalServer();
+        if (server == null) return;
 
         server.markOffline();
 
@@ -67,9 +68,7 @@ public abstract class ServerHandler<T> implements IModule {
         return this.servers.getOrDefault(name, null);
     }
 
-    public abstract boolean isJoinable(T player, CoreServer server);
-
-    private void createLocalServer() {
+    public void createLocalServer() {
         if (this.servers.containsKey(CoreAPI.getInstance().getServerName())) return;
 
         CoreServer server = new CoreServer(CoreAPI.getInstance().getServerName());

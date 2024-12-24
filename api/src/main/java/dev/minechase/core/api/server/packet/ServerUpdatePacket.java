@@ -4,15 +4,18 @@ import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.packet.ServerResponsePacket;
 import dev.minechase.core.api.server.model.CoreServer;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
+@Getter
 public class ServerUpdatePacket extends ServerResponsePacket {
 
     private final CoreServer server;
+    private final String executeServer;
 
-    @Override
-    public String getExecuteServer() {
-        return CoreAPI.getInstance().getServerName();
+    public ServerUpdatePacket(CoreServer server) {
+        this.server = server;
+        this.executeServer = CoreAPI.getInstance().getServerName();
     }
 
     @Override

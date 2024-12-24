@@ -8,12 +8,12 @@ public interface IScoped {
 
     List<String> getScopes();
 
-    default boolean isValid(String serverGroup) {
-        return this.getScopes().stream().anyMatch(scope -> scope.equalsIgnoreCase(serverGroup));
+    default boolean isValid(List<String> serverGroups) {
+        return this.getScopes().stream().anyMatch(scope -> serverGroups.stream().anyMatch(scope::equalsIgnoreCase));
     }
 
     default boolean isValidLocal() {
-        return this.isValid(CoreAPI.getInstance().getServerGroup());
+        return this.isValid(CoreAPI.getInstance().getServerGroups());
     }
 
 }

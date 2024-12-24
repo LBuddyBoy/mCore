@@ -4,16 +4,20 @@ import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.grant.grant.Grant;
 import dev.minechase.core.api.packet.ServerResponsePacket;
 import dev.minechase.core.api.punishment.model.Punishment;
+import dev.minechase.core.api.server.model.CoreServer;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
+@Getter
 public class GrantUpdatePacket extends ServerResponsePacket {
 
     private final Grant grant;
+    private final String executeServer;
 
-    @Override
-    public String getExecuteServer() {
-        return CoreAPI.getInstance().getServerName();
+    public GrantUpdatePacket(Grant grant) {
+        this.grant = grant;
+        this.executeServer = CoreAPI.getInstance().getServerName();
     }
 
     @Override

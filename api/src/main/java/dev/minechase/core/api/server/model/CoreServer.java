@@ -51,7 +51,7 @@ public class CoreServer extends Documented {
     public void updatePositions() {
         int position = 1;
 
-        for (QueuePlayer player : this.getQueuePlayers().stream().sorted(Comparator.comparingInt(QueuePlayer::getPriority)).toList()) {
+        for (QueuePlayer player : this.getSortedQueuePlayers()) {
             player.setPosition(position++);
         }
 
@@ -59,6 +59,10 @@ public class CoreServer extends Documented {
 
     public List<QueuePlayer> getQueuePlayers() {
         return CoreAPI.getInstance().getServerHandler().getQueuePlayers(this);
+    }
+
+    public List<QueuePlayer> getSortedQueuePlayers() {
+        return this.getQueuePlayers().stream().sorted(Comparator.comparingInt(QueuePlayer::getPriority)).toList();
     }
 
     public int getQueueSize() {

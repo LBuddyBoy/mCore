@@ -21,6 +21,7 @@ import java.util.UUID;
 public class CoreConstants {
 
     public static String STAFF_PERM = "core.staff";
+    public static String QUEUE_BYPASS_PERM = "core.queue.bypass";
 
     public static String INVALID_NAME(AsyncCorePlayer player) {
         return CC.translate("<blend:&4;&c>No player with the name '" + player.getName() + "' exists.</>");

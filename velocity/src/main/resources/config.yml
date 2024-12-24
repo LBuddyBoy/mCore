@@ -1,0 +1,12 @@
+serverName: "Proxy"
+serverGroup: "GLOBAL"
+
+mongo:
+  host: "localhost"
+  port: 27017
+  database: "mCore"
+  auth:
+    enabled: false
+    username: ""
+    password: ""
+    database: ""

@@ -7,6 +7,7 @@ import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.ICoreAPI;
 import dev.minechase.core.api.grant.GrantHandler;
+import dev.minechase.core.api.log.LogHandler;
 import dev.minechase.core.api.punishment.PunishmentHandler;
 import dev.minechase.core.api.rank.RankHandler;
 import dev.minechase.core.api.server.ServerHandler;
@@ -15,6 +16,8 @@ import dev.minechase.core.api.user.UserHandler;
 import dev.minechase.core.bukkit.api.BukkitServerHandler;
 import dev.minechase.core.bukkit.command.CommandHandler;
 import dev.minechase.core.bukkit.listener.UserListener;
+import dev.minechase.core.bukkit.packet.GlobalStaffMessagePacket;
+import dev.minechase.core.bukkit.task.QueuePlayerTask;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -37,6 +40,7 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
     private GrantHandler grantHandler;
     private RankHandler rankHandler;
     private BukkitServerHandler serverHandler;
+    private LogHandler logHandler;
 
     @Override
     public void onEnable() {
@@ -47,10 +51,23 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
 
         this.loadModules();
         this.loadListeners();
+        this.loadTasks();
+
+        new GlobalStaffMessagePacket(Arrays.asList(
+                "&7&m------------------------",
+                "&6" + getServerName() + " &eis now &aonline&e!",
+                "&7&m------------------------"
+        )).send();
     }
 
     @Override
     public void onDisable() {
+        new GlobalStaffMessagePacket(Arrays.asList(
+                "&7&m------------------------",
+                "&6" + getServerName() + " &eis now &coffline&e!",
+                "&7&m------------------------"
+        )).send();
+
         this.modules.forEach(IModule::unload);
     }
 
@@ -60,8 +77,8 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
     }
 
     @Override
-    public String getServerGroup() {
-        return this.getConfig().getString("serverGroup");
+    public List<String> getServerGroups() {
+        return this.getConfig().getStringList("serverGroups");
     }
 
     public RedisHandler getRedisHandler() {
@@ -96,10 +113,15 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
                 this.rankHandler = new RankHandler(),
                 this.grantHandler = new GrantHandler(),
                 this.punishmentHandler = new PunishmentHandler(),
-                this.serverHandler = new BukkitServerHandler()
+                this.serverHandler = new BukkitServerHandler(),
+                this.logHandler = new LogHandler()
         ));
 
         this.modules.forEach(IModule::load);
+    }
+
+    private void loadTasks() {
+        new QueuePlayerTask();
     }
 
     private void loadListeners() {

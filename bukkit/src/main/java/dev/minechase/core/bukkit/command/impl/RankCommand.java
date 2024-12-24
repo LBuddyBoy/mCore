@@ -7,6 +7,7 @@ import dev.lbuddyboy.commons.api.util.TimeDuration;
 import dev.lbuddyboy.commons.util.CC;
 import dev.minechase.core.api.api.MultiScope;
 import dev.minechase.core.api.api.ScopedPermission;
+import dev.minechase.core.api.log.model.impl.RankCreationLog;
 import dev.minechase.core.api.rank.RankHandler;
 import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.api.rank.packet.RankDeletePacket;
@@ -37,6 +38,7 @@ public class RankCommand extends BaseCommand {
         new RankUpdatePacket(rank).send();
         new GlobalStaffMessagePacket(CC.translate("<blend:&6;&e>[Rank Handler]</>&a " + senderName + " created the '" + rank.getName() + "' rank!")).send();
         this.rankHandler.saveRank(rank);
+        new RankCreationLog(CommandUtil.getSender(sender), rank).createLog();
     }
 
     @Subcommand("delete")
