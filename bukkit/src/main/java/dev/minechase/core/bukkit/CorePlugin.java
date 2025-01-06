@@ -10,16 +10,18 @@ import dev.minechase.core.api.grant.GrantHandler;
 import dev.minechase.core.api.log.LogHandler;
 import dev.minechase.core.api.punishment.PunishmentHandler;
 import dev.minechase.core.api.rank.RankHandler;
-import dev.minechase.core.api.server.ServerHandler;
 import dev.minechase.core.api.server.model.CoreServer;
+import dev.minechase.core.api.server.packet.ServerUpdatePacket;
+import dev.minechase.core.bukkit.listener.ChatListener;
+import dev.minechase.core.bukkit.listener.PunishmentListener;
+import dev.minechase.core.bukkit.settings.SettingsHandler;
 import dev.minechase.core.api.user.UserHandler;
 import dev.minechase.core.bukkit.api.BukkitServerHandler;
 import dev.minechase.core.bukkit.command.CommandHandler;
 import dev.minechase.core.bukkit.listener.UserListener;
-import dev.minechase.core.bukkit.packet.GlobalStaffMessagePacket;
+import dev.minechase.core.bukkit.packet.StaffMessagePacket;
 import dev.minechase.core.bukkit.task.QueuePlayerTask;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
     private PunishmentHandler punishmentHandler;
     private GrantHandler grantHandler;
     private RankHandler rankHandler;
+    private SettingsHandler settingsHandler;
     private BukkitServerHandler serverHandler;
     private LogHandler logHandler;
 
@@ -53,7 +56,7 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
         this.loadListeners();
         this.loadTasks();
 
-        new GlobalStaffMessagePacket(Arrays.asList(
+        new StaffMessagePacket(Arrays.asList(
                 "&7&m------------------------",
                 "&6" + getServerName() + " &eis now &aonline&e!",
                 "&7&m------------------------"
@@ -62,7 +65,7 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
 
     @Override
     public void onDisable() {
-        new GlobalStaffMessagePacket(Arrays.asList(
+        new StaffMessagePacket(Arrays.asList(
                 "&7&m------------------------",
                 "&6" + getServerName() + " &eis now &coffline&e!",
                 "&7&m------------------------"
@@ -93,8 +96,9 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
         localServer.setPort(this.getServer().getPort());
         localServer.setPlayerCount(this.getServer().getOnlinePlayers().size());
         localServer.setMaxPlayers(this.getServer().getMaxPlayers());
-        localServer.setStartedAt(System.currentTimeMillis());
         localServer.setStoppedAt(0L);
+
+        new ServerUpdatePacket(localServer).send();
     }
 
     private void loadModules() {
@@ -114,6 +118,7 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
                 this.grantHandler = new GrantHandler(),
                 this.punishmentHandler = new PunishmentHandler(),
                 this.serverHandler = new BukkitServerHandler(),
+                this.settingsHandler = new SettingsHandler(),
                 this.logHandler = new LogHandler()
         ));
 
@@ -125,6 +130,8 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
     }
 
     private void loadListeners() {
+        this.getServer().getPluginManager().registerEvents(new ChatListener(), this);
+        this.getServer().getPluginManager().registerEvents(new PunishmentListener(), this);
         this.getServer().getPluginManager().registerEvents(new UserListener(), this);
     }
 

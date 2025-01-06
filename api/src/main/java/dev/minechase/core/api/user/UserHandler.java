@@ -1,21 +1,22 @@
 package dev.minechase.core.api.user;
 
+import com.google.gson.reflect.TypeToken;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
+import dev.lbuddyboy.commons.api.APIConstants;
 import dev.lbuddyboy.commons.api.cache.UUIDCache;
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.grant.grant.Grant;
 import dev.minechase.core.api.user.model.User;
+import dev.minechase.core.api.user.model.UserMetadata;
 import dev.minechase.core.api.util.UUIDUtils;
 import lombok.Getter;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
 public class UserHandler implements IModule {
 
     private static final Pattern UUID_PATTERN = Pattern.compile("(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)");
+    private static final TypeToken<UserMetadata> METADATA = new TypeToken<>() {};
 
     private Map<UUID, User> users;
     private MongoCollection<Document> collection;
@@ -37,6 +39,13 @@ public class UserHandler implements IModule {
     public void unload() {
         this.users.values().forEach(user -> user.save(false));
     }
+
+    /**
+     * Fetches a user based on the cache (This will not query any database)
+     *
+     * @param playerUUID players uuid to fetch
+     * @return a user based on the cache
+     */
 
     public User getUser(UUID playerUUID) {
         return this.users.getOrDefault(playerUUID, null);
@@ -56,6 +65,10 @@ public class UserHandler implements IModule {
         return UUIDUtils.fetchName(uuid).thenApplyAsync(name -> loadUser(uuid, name));
     }
 
+    public CompletableFuture<List<User>> fetchUsersAsync() {
+        return CompletableFuture.supplyAsync(() -> UUIDCache.getUuidToNames().entrySet().stream().map(entry -> loadUser(entry.getKey(), entry.getValue())).toList());
+    }
+
     public User loadUser(UUID uuid, String name) {
         User user = new User(uuid, name);
         Document document = this.collection.find(Filters.eq("uniqueId", uuid.toString())).first();
@@ -63,6 +76,11 @@ public class UserHandler implements IModule {
         if (document != null) {
             user.setFirstJoinAt(document.getLong("firstJoinedAt"));
             user.setActiveGrant(new Grant(Document.parse(document.getString("activeGrant"))));
+            user.setCurrentIpAddress(document.getString("currentIpAddress"));
+            user.getIpHistory().addAll(document.getList("ipHistory", String.class, new ArrayList<>()));
+
+            if (document.containsKey("persistentMetadata")) user.setPersistentMetadata(APIConstants.GSON.fromJson(document.getString("persistentMetadata"), METADATA.getType()));
+
         } else {
             user.setActiveGrant(Grant.DEFAULT_GRANT(uuid));
             this.saveUser(user);
@@ -80,8 +98,11 @@ public class UserHandler implements IModule {
 
         document.put("uniqueId", user.getUniqueId().toString());
         document.put("name", user.getName());
+        document.put("currentIpAddress", user.getCurrentIpAddress());
+        document.put("ipHistory", user.getIpHistory());
         document.put("firstJoinedAt", user.getFirstJoinAt());
         document.put("activeGrant", user.getActiveGrant().toDocument().toJson());
+        document.put("persistentMetadata", APIConstants.GSON.toJson(user.getPersistentMetadata(), METADATA.getType()));
 
         this.collection.replaceOne(query, document, new ReplaceOptions().upsert(true));
     }

@@ -22,7 +22,7 @@ public class PunishmentUpdatePacket extends ServerResponsePacket {
     @Override
     public void onReceiveExecuteServer() {
         CoreAPI.getInstance().getPunishmentHandler().updatePunishment(this.punishment);
-        CoreAPI.getInstance().getPunishmentHandler().savePunishment(this.punishment);
+        CoreAPI.getInstance().getPunishmentHandler().savePunishment(this.punishment, true);
     }
 
     @Override

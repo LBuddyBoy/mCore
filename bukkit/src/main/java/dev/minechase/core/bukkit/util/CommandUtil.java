@@ -1,5 +1,7 @@
 package dev.minechase.core.bukkit.util;
 
+import dev.minechase.core.api.user.model.User;
+import dev.minechase.core.bukkit.CorePlugin;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -12,7 +14,13 @@ public class CommandUtil {
     }
 
     public static String getSenderName(CommandSender sender) {
-        return sender instanceof Player senderPlayer ? senderPlayer.getName() : "&a&lCONSOLE";
+        User senderUser = null;
+
+        if (sender instanceof Player senderPlayer) {
+            senderUser = CorePlugin.getInstance().getUserHandler().getUser(senderPlayer.getUniqueId());
+        }
+
+        return senderUser != null ? senderUser.getColoredName() : "&4&lCONSOLE";
     }
 
 }

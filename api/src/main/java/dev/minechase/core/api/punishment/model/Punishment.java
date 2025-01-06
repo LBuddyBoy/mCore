@@ -22,14 +22,16 @@ public class Punishment extends Documented implements IRemovable, ISendable, IEx
     private final PunishmentType type;
     private final long sentAt, duration;
     private final String reason, server;
+    private final boolean shadow, sentSilent;
 
     private List<PunishmentProof> proof = new ArrayList<>();
 
     private UUID removedBy = null;
     private String removedReason = null;
     private long removedAt = 0L;
+    private boolean removedSilent = false;
 
-    public Punishment(UUID senderUUID, UUID targetUUID, PunishmentType type, long duration, String reason, String server) {
+    public Punishment(UUID senderUUID, UUID targetUUID, PunishmentType type, long duration, String reason, String server, boolean shadow, boolean sentSilent) {
         this.id = UUID.randomUUID();
         this.senderUUID = senderUUID;
         this.targetUUID = targetUUID;
@@ -38,6 +40,8 @@ public class Punishment extends Documented implements IRemovable, ISendable, IEx
         this.duration = duration;
         this.reason = reason;
         this.server = server;
+        this.shadow = shadow;
+        this.sentSilent = sentSilent;
     }
 
     public Punishment(Document document) {
@@ -53,6 +57,8 @@ public class Punishment extends Documented implements IRemovable, ISendable, IEx
         this.removedBy = this.deserializeUUID(document.getString("removedBy"));
         this.removedReason = document.getString("removedReason");
         this.removedAt = document.getLong("removedAt");
+        this.shadow = document.getBoolean("shadow", false);
+        this.sentSilent = document.getBoolean("sentSilent", false);
     }
 
     public void supplyProof(UUID senderUUID, String link) {
@@ -81,6 +87,8 @@ public class Punishment extends Documented implements IRemovable, ISendable, IEx
         document.put("removedBy", this.removedBy);
         document.put("removedReason", this.removedReason);
         document.put("removedAt", this.removedAt);
+        document.put("shadow", this.shadow);
+        document.put("sentSilent", this.sentSilent);
 
         return document;
     }

@@ -8,9 +8,11 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.api.CoreAPI;
+import dev.minechase.core.api.api.IExpirable;
 import dev.minechase.core.api.punishment.cache.PunishmentCacheLoader;
 import dev.minechase.core.api.punishment.model.Punishment;
 import dev.minechase.core.api.punishment.model.PunishmentProof;
+import dev.minechase.core.api.punishment.model.PunishmentType;
 import lombok.Getter;
 import org.bson.Document;
 
@@ -47,6 +49,7 @@ public class PunishmentHandler implements IModule {
         if (punishmentsIfPresent != null) {
             punishmentsIfPresent.whenCompleteAsync((punishments, throwable) -> {
                 if (throwable != null) {
+                    throwable.printStackTrace();
                     return;
                 }
 
@@ -57,7 +60,12 @@ public class PunishmentHandler implements IModule {
         }
     }
 
-    public void savePunishment(Punishment punishment) {
+    public void savePunishment(Punishment punishment, boolean async) {
+        if (async) {
+            CompletableFuture.runAsync(() -> savePunishment(punishment, false), CoreAPI.POOL);
+            return;
+        }
+
         this.collection.replaceOne(Filters.eq("id", punishment.getId().toString()), punishment.toDocument(), new ReplaceOptions().upsert(true));
     }
 
@@ -67,6 +75,18 @@ public class PunishmentHandler implements IModule {
         if (punishments != null) return punishments;
 
         return this.punishments.get(targetUUID);
+    }
+
+    public CompletableFuture<List<Punishment>> getPunishmentsByType(UUID targetUUID, PunishmentType type) {
+        return this.getPunishments(targetUUID).thenApplyAsync((punishments) -> punishments.stream().filter(punishment -> punishment.getType() == type).toList());
+    }
+
+    public CompletableFuture<List<Punishment>> getActivePunishments(UUID targetUUID) {
+        return this.getPunishments(targetUUID).thenApplyAsync((punishments) -> punishments.stream().filter(IExpirable::isActive).toList());
+    }
+
+    public CompletableFuture<List<Punishment>> getActivePunishmentsByType(UUID targetUUID, PunishmentType type) {
+        return this.getPunishments(targetUUID).thenApplyAsync((punishments) -> punishments.stream().filter(punishment -> punishment.isActive() && punishment.getType() == type).toList());
     }
 
 }

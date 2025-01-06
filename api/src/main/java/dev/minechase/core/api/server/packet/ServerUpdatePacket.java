@@ -21,7 +21,7 @@ public class ServerUpdatePacket extends ServerResponsePacket {
     @Override
     public void onReceiveExecuteServer() {
         CoreAPI.getInstance().getServerHandler().updateServer(this.server);
-        CoreAPI.getInstance().getServerHandler().saveServer(this.server);
+        CoreAPI.getInstance().getServerHandler().saveServer(this.server, true);
     }
 
     @Override

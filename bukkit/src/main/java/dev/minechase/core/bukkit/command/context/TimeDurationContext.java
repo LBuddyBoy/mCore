@@ -35,6 +35,6 @@ public class TimeDurationContext extends CommonCommandContext<TimeDuration> {
 
     @Override
     public Collection<String> getCompletions(BukkitCommandCompletionContext context) throws InvalidCommandArgument {
-        return context.getSender().hasPermission("arrow.command.mute.permanent") ? Arrays.asList("7d", "14d", "30d", "perm") : Arrays.asList("7d", "14d", "30d");
+        return Arrays.asList("7d", "14d", "30d", "perm");
     }
 }

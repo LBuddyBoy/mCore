@@ -42,6 +42,8 @@ public class QueuePlayerTask extends BukkitRunnable {
 
         CoreServer server = CorePlugin.getInstance().getServerHandler().getLocalServer();
 
+        CorePlugin.getInstance().updateLocalServer();
+
         if (server.isHub()) return;
 
         List<QueuePlayer> players = server.getSortedQueuePlayers();

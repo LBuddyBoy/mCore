@@ -1,6 +1,7 @@
 package dev.minechase.core.bukkit.packet;
 
 import dev.lbuddyboy.commons.api.redis.packet.Packet;
+import dev.lbuddyboy.commons.util.CC;
 import dev.minechase.core.bukkit.CoreConstants;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -8,15 +9,15 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GlobalStaffMessagePacket implements Packet {
+public class StaffMessagePacket implements Packet {
 
     private final List<String> messages = new ArrayList<>();
 
-    public GlobalStaffMessagePacket(String message) {
+    public StaffMessagePacket(String message) {
         this.messages.add(message);
     }
 
-    public GlobalStaffMessagePacket(List<String> messages) {
+    public StaffMessagePacket(List<String> messages) {
         this.messages.addAll(messages);
     }
 
@@ -27,6 +28,8 @@ public class GlobalStaffMessagePacket implements Packet {
 
             this.messages.forEach(player::sendMessage);
         }
+
+        this.messages.forEach(s -> Bukkit.getConsoleSender().sendMessage(CC.translate(s)));
     }
 
 }

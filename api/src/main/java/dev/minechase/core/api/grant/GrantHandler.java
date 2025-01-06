@@ -68,7 +68,12 @@ public class GrantHandler implements IModule {
         }
     }
 
-    public void saveGrant(Grant grant) {
+    public void saveGrant(Grant grant, boolean async) {
+        if (async) {
+            CompletableFuture.runAsync(() -> saveGrant(grant, false), CoreAPI.POOL);
+            return;
+        }
+
         this.collection.replaceOne(Filters.eq("id", grant.getId().toString()), grant.toDocument(), new ReplaceOptions().upsert(true));
 
         /**

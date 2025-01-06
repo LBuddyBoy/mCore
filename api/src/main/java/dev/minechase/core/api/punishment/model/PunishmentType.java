@@ -1,12 +1,18 @@
 package dev.minechase.core.api.punishment.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum PunishmentType {
 
-    BLACKLIST,
-    BAN,
-    MUTE,
-    SHADOW_MUTE,
-    KICK,
-    WARN
+    BLACKLIST("blacklisted"),
+    BAN("banned"),
+    MUTE("muted"),
+    KICK("kicked"),
+    WARN("warned");
+
+    private final String plural;
 
 }

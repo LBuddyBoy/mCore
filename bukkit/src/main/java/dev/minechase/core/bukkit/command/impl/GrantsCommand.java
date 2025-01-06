@@ -17,13 +17,14 @@ public class GrantsCommand extends BaseCommand {
     @CommandCompletion("@players")
     public void grants(Player sender, @Name("player") AsyncCorePlayer player) {
         player.getUUID().whenCompleteAsyncExcept(uuid -> {
-            sender.sendMessage(CC.translate("&aLoading " + player.getName() + "'s grants..."));
+            sender.sendMessage(CC.translate("&aLoading " + player.getName() + "'s grants, this may take a few seconds..."));
 
             CorePlugin.getInstance().getGrantHandler().getSortedGrants(uuid).whenCompleteAsync(((grants, throwable) -> {
                 new ViewGrantsMenu(uuid, grants).openMenu(sender);
             }));
 
         }, (throwable -> sender.sendMessage(CoreConstants.INVALID_NAME(player))));
+
     }
 
     @CommandAlias("grant")

@@ -19,6 +19,7 @@ import lombok.Getter;
 import org.bson.Document;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -52,6 +53,8 @@ public abstract class ServerHandler<T> implements IModule {
         }
 
         this.createLocalServer();
+        if (this.getLocalServer() == null) return;
+        this.getLocalServer().markOnline();
     }
 
     @Override
@@ -102,7 +105,12 @@ public abstract class ServerHandler<T> implements IModule {
         this.serversCollection.deleteOne(Filters.eq("name", server.getName()));
     }
 
-    public void saveServer(CoreServer server) {
+    public void saveServer(CoreServer server, boolean async) {
+        if (async) {
+            CompletableFuture.runAsync(() -> saveServer(server, false), CoreAPI.POOL);
+            return;
+        }
+
         this.serversCollection.replaceOne(Filters.eq("name", server.getName()), server.toDocument(), new ReplaceOptions().upsert(true));
     }
 
@@ -166,11 +174,21 @@ public abstract class ServerHandler<T> implements IModule {
         this.queuePlayers.remove(player.getPlayerUUID());
     }
 
-    public void deleteQueuePlayer(QueuePlayer player) {
+    public void deleteQueuePlayer(QueuePlayer player, boolean async) {
+        if (async) {
+            CompletableFuture.runAsync(() -> deleteQueuePlayer(player, false), CoreAPI.POOL);
+            return;
+        }
+
         this.queuePlayersCollection.deleteOne(Filters.eq("playerUUID", player.getPlayerUUID()));
     }
 
-    public void saveQueuePlayer(QueuePlayer player) {
+    public void saveQueuePlayer(QueuePlayer player, boolean async) {
+        if (async) {
+            CompletableFuture.runAsync(() -> saveQueuePlayer(player, false), CoreAPI.POOL);
+            return;
+        }
+
         this.queuePlayersCollection.replaceOne(Filters.eq("playerUUID", player.getPlayerUUID()), player.toDocument(), new ReplaceOptions().upsert(true));
     }
 

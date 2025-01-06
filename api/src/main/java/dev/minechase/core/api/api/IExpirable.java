@@ -21,6 +21,10 @@ public interface IExpirable {
         return getDuration() == -1L;
     }
 
+    default boolean isActive() {
+        return !isExpired() && (this instanceof IRemovable removable && !removable.isRemoved());
+    }
+
     default boolean isExpired() {
         if (isPermanent()) return false;
 

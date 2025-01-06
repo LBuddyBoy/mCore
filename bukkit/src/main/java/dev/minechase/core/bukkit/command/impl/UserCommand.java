@@ -21,17 +21,17 @@ public class UserCommand extends BaseCommand {
     @Subcommand("info")
     @CommandCompletion("@players")
     public void info(CommandSender sender, @Name("player") AsyncCorePlayer player) {
-        player.getUser().whenCompleteAsync((user, throwable) -> {
-            if (throwable != null || user == null) {
-                sender.sendMessage(CoreConstants.INVALID_NAME(player));
-                return;
-            }
-
+        player.getUser().whenCompleteAsyncExcept((user) -> {
             String firstJoin = TimeUtils.formatIntoDetailedString(System.currentTimeMillis() - user.getFirstJoinAt()) + " ago";
 
             sender.sendMessage(CC.translate("&a" + user.getName() + "'s Info"));
             sender.sendMessage(CC.translate("&fFirst Joined&7: &a" + (user.hasPlayedBefore() ? firstJoin : "&cNever Joined")));
             sender.sendMessage(CC.translate("&fActive Grant&7: &a" + user.getActiveGrant().getInitialRankName()));
+        }, (throwable) -> {
+            if (throwable != null) {
+                throwable.printStackTrace();
+            }
+            sender.sendMessage(CoreConstants.INVALID_NAME(player));
         });
     }
 

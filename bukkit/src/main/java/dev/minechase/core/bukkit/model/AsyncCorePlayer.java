@@ -42,8 +42,8 @@ public class AsyncCorePlayer {
      * @return Future User of a player by NAME this can be null and will produce an error if that player is not cached or doesn't have a Minecraft Account.
      */
 
-    public CompletableFuture<User> getUser() {
-        return CorePlugin.getInstance().getUserHandler().getOrCreateAsync(this.name);
+    public ExceptedFuture<User> getUser() {
+        return new ExceptedFuture<>(CorePlugin.getInstance().getUserHandler().getOrCreateAsync(this.name));
     }
 
 }

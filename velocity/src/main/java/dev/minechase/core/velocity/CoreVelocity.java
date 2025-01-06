@@ -18,7 +18,7 @@ import dev.minechase.core.api.grant.GrantHandler;
 import dev.minechase.core.api.log.LogHandler;
 import dev.minechase.core.api.punishment.PunishmentHandler;
 import dev.minechase.core.api.rank.RankHandler;
-import dev.minechase.core.api.server.model.CoreServer;
+import dev.minechase.core.api.settings.SettingsHandler;
 import dev.minechase.core.api.user.UserHandler;
 import dev.minechase.core.velocity.api.ProxyServerHandler;
 import dev.minechase.core.velocity.listener.HubListener;

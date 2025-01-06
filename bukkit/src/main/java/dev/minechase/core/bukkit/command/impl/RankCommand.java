@@ -13,11 +13,9 @@ import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.api.rank.packet.RankDeletePacket;
 import dev.minechase.core.api.rank.packet.RankUpdatePacket;
 import dev.minechase.core.bukkit.CorePlugin;
-import dev.minechase.core.bukkit.packet.GlobalStaffMessagePacket;
+import dev.minechase.core.bukkit.packet.StaffMessagePacket;
 import dev.minechase.core.bukkit.util.CommandUtil;
 import org.bukkit.command.CommandSender;
-
-import java.util.Collections;
 
 @CommandAlias("rank")
 @CommandPermission("core.command.rank")
@@ -36,7 +34,7 @@ public class RankCommand extends BaseCommand {
         String senderName = CommandUtil.getSenderName(sender);
 
         new RankUpdatePacket(rank).send();
-        new GlobalStaffMessagePacket(CC.translate("<blend:&6;&e>[Rank Handler]</>&a " + senderName + " created the '" + rank.getName() + "' rank!")).send();
+        new StaffMessagePacket(CC.translate("<blend:&6;&e>[Rank Handler]</>&a " + senderName + " created the '" + rank.getName() + "' rank!")).send();
         this.rankHandler.saveRank(rank);
         new RankCreationLog(CommandUtil.getSender(sender), rank).createLog();
     }
@@ -47,7 +45,7 @@ public class RankCommand extends BaseCommand {
         String senderName = CommandUtil.getSenderName(sender);
 
         new RankDeletePacket(rank).send();
-        new GlobalStaffMessagePacket(CC.translate(
+        new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&c " + senderName + " deleted the '" + rank.getName() + "' rank!"
         )).send();
         this.rankHandler.deleteRank(rank);
@@ -61,7 +59,7 @@ public class RankCommand extends BaseCommand {
         rank.setDisplayName(displayName);
 
         new RankUpdatePacket(rank).send();
-        new GlobalStaffMessagePacket(CC.translate(
+        new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank display name! &7(" + rank.getDisplayName() + "&7)"
         )).send();
         this.rankHandler.saveRank(rank);
@@ -75,7 +73,7 @@ public class RankCommand extends BaseCommand {
         rank.setPrimaryColor(primary.toLowerCase());
 
         new RankUpdatePacket(rank).send();
-        new GlobalStaffMessagePacket(CC.translate(
+        new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank primary color!"
         )).send();
         this.rankHandler.saveRank(rank);
@@ -89,7 +87,7 @@ public class RankCommand extends BaseCommand {
         rank.setSecondaryColor(secondary.toLowerCase());
 
         new RankUpdatePacket(rank).send();
-        new GlobalStaffMessagePacket(CC.translate(
+        new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank secondary color!"
         )).send();
         this.rankHandler.saveRank(rank);
@@ -103,7 +101,7 @@ public class RankCommand extends BaseCommand {
         rank.setWeight(weight);
 
         new RankUpdatePacket(rank).send();
-        new GlobalStaffMessagePacket(CC.translate(
+        new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank weight! &7(&b" + rank.getWeight() + "&7)"
         )).send();
         this.rankHandler.saveRank(rank);
@@ -125,7 +123,7 @@ public class RankCommand extends BaseCommand {
         rank.getPermissions().add(new ScopedPermission(permissionNode, duration.transform(), scope));
 
         new RankUpdatePacket(rank).send();
-        new GlobalStaffMessagePacket(CC.translate(
+        new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank permissions! &7(&a+" + permissionNode + "&7)"
         )).send();
         this.rankHandler.saveRank(rank);
@@ -146,7 +144,7 @@ public class RankCommand extends BaseCommand {
         rank.getPermissions().remove(permission);
 
         new RankUpdatePacket(rank).send();
-        new GlobalStaffMessagePacket(CC.translate(
+        new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank permissions! &7(&c-" + permissionNode + "&7)"
         )).send();
         this.rankHandler.saveRank(rank);
@@ -161,7 +159,7 @@ public class RankCommand extends BaseCommand {
         rank.getScopes().addAll(scope.getScopes());
 
         new RankUpdatePacket(rank).send();
-        new GlobalStaffMessagePacket(CC.translate(
+        new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank scopes! &7(&d" + StringUtils.join(scope.getScopes(), ", ") + "&7)"
         )).send();
         this.rankHandler.saveRank(rank);

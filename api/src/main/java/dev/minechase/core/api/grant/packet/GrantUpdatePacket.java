@@ -23,7 +23,7 @@ public class GrantUpdatePacket extends ServerResponsePacket {
     @Override
     public void onReceiveExecuteServer() {
         CoreAPI.getInstance().getGrantHandler().updateGrant(this.grant);
-        CoreAPI.getInstance().getGrantHandler().saveGrant(this.grant);
+        CoreAPI.getInstance().getGrantHandler().saveGrant(this.grant, true);
     }
 
     @Override

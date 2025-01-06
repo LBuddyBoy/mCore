@@ -21,7 +21,7 @@ public class QueuePlayerUpdatePacket extends ServerResponsePacket {
     @Override
     public void onReceiveExecuteServer() {
         CoreAPI.getInstance().getServerHandler().updateQueuePlayer(this.player);
-        CoreAPI.getInstance().getServerHandler().saveQueuePlayer(this.player);
+        CoreAPI.getInstance().getServerHandler().saveQueuePlayer(this.player, true);
     }
 
     @Override

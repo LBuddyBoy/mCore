@@ -22,7 +22,7 @@ public class QueuePlayerRemovePacket extends ServerResponsePacket {
     @Override
     public void onReceiveExecuteServer() {
         CoreAPI.getInstance().getServerHandler().removeQueuePlayer(this.player);
-        CoreAPI.getInstance().getServerHandler().deleteQueuePlayer(this.player);
+        CoreAPI.getInstance().getServerHandler().deleteQueuePlayer(this.player, true);
     }
 
     @Override

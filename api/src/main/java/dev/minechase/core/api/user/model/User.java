@@ -6,6 +6,7 @@ import dev.minechase.core.api.rank.model.Rank;
 import lombok.Data;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -15,9 +16,14 @@ import java.util.concurrent.CompletableFuture;
 public class User {
 
     private final UUID uniqueId;
-    private String name;
+    private String name, currentIpAddress;
     private long firstJoinAt;
     private Grant activeGrant;
+    private List<String> ipHistory = new ArrayList<>();
+    private UserMetadata persistentMetadata = new UserMetadata();
+
+    private transient boolean changedIps;
+    private transient UserMetadata localMetadata = new UserMetadata();
 
     public User(UUID uniqueId) {
         this.uniqueId = uniqueId;
@@ -33,7 +39,13 @@ public class User {
     }
 
     public Rank getRank() {
+        if (this.activeGrant == null) return null;
+
         return this.activeGrant.getRank();
+    }
+
+    public String getColoredName() {
+        return this.getRank() == null ? "&f" + this.name : "<blend:" + this.getRank().getPrimaryColor() + ";" + this.getRank().getSecondaryColor() + ">" + this.name + "</>";
     }
 
     public void updateActiveGrant() {
