@@ -21,7 +21,7 @@ import java.util.UUID;
 public class Rank extends Documented implements IScoped {
 
     private final UUID id;
-    private String name, displayName, primaryColor, secondaryColor;
+    private String name, prefix, suffix, displayName, primaryColor, secondaryColor;
     private int weight;
     private boolean staffRank, defaultRank;
     private String materialString;
@@ -33,6 +33,8 @@ public class Rank extends Documented implements IScoped {
         this.id = UUID.randomUUID();
         this.name = name.toLowerCase();
         this.displayName = this.name;
+        this.prefix = "";
+        this.suffix = "";
         this.primaryColor = "&7";
         this.secondaryColor = "&f";
         this.weight = 1000;
@@ -51,6 +53,8 @@ public class Rank extends Documented implements IScoped {
         this.primaryColor = document.getString("primaryColor");
         this.secondaryColor = document.getString("secondaryColor");
         this.weight = document.getInteger("weight");
+        this.prefix = document.get("prefix", "");
+        this.suffix = document.get("suffix", "");
         this.materialString = document.getString("materialString");
         this.staffRank = document.getBoolean("staffRank", false);
         this.defaultRank = document.getBoolean("defaultRank", false);
@@ -65,6 +69,8 @@ public class Rank extends Documented implements IScoped {
                 .append("id", this.id.toString())
                 .append("name", this.name)
                 .append("displayName", this.displayName)
+                .append("prefix", this.prefix)
+                .append("suffix", this.suffix)
                 .append("primaryColor", this.primaryColor)
                 .append("secondaryColor", this.secondaryColor)
                 .append("materialString", this.materialString)

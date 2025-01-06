@@ -59,18 +59,15 @@ public class CoreConstants {
                         return Prompt.END_OF_CONVERSATION;
                     }
 
-                    String scopesString = StringUtils.join(scopes, ",");
-                    Grant grant = new Grant(
-                            sender.getUniqueId(),
+                    Tasks.run(() -> CorePlugin.getInstance().getGrantHandler().grant(
+                            sender,
                             target,
                             rank,
+                            scopes,
                             duration.transform(),
-                            r,
-                            new MultiScope(scopesString)
-                    );
+                            r
+                    ));
 
-                    new GrantUpdatePacket(grant).send();
-                    ctx.getForWhom().sendRawMessage(CC.translate("&aSuccessfully granted " + UUIDUtils.getName(target) + " the &f" + rank.getName() + "&a rank for &e" + duration.fancy() + "."));
                     return Prompt.END_OF_CONVERSATION;
                 }).echo(false).build();
     }

@@ -1,13 +1,17 @@
-package dev.minechase.core.bukkit.command.impl;
+package dev.minechase.core.bukkit.command.impl.admin;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import dev.lbuddyboy.commons.api.util.TimeDuration;
 import dev.lbuddyboy.commons.util.CC;
+import dev.minechase.core.api.api.MultiScope;
+import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.bukkit.CoreConstants;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.menu.ViewGrantsMenu;
 import dev.minechase.core.bukkit.menu.grant.GrantRankMenu;
 import dev.minechase.core.bukkit.model.AsyncCorePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class GrantsCommand extends BaseCommand {
@@ -29,11 +33,20 @@ public class GrantsCommand extends BaseCommand {
 
     @CommandAlias("grant")
     @CommandCompletion("@players")
+    @CommandPermission("core.command.grant")
     public void grant(Player sender, @Name("player") AsyncCorePlayer player) {
         player.getUUID().whenCompleteAsyncExcept(uuid -> {
-
             new GrantRankMenu(uuid).openMenu(sender);
+        }, (throwable -> sender.sendMessage(CoreConstants.INVALID_NAME(player))));
 
+    }
+
+    @CommandAlias("ogrant")
+    @CommandCompletion("@players @ranks @durations @scopes")
+    @CommandPermission("core.command.grant")
+    public void ogrant(CommandSender sender, @Name("player") AsyncCorePlayer player, @Name("rank") Rank rank, @Name("duration") TimeDuration duration, @Name("scopes") MultiScope scope, @Name("reason") String reason) {
+        player.getUUID().whenCompleteAsyncExcept(uuid -> {
+            CorePlugin.getInstance().getGrantHandler().grant(sender, uuid, rank, scope.getScopes(), duration.transform(), reason);
         }, (throwable -> sender.sendMessage(CoreConstants.INVALID_NAME(player))));
 
     }

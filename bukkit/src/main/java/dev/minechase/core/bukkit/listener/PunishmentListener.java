@@ -29,7 +29,7 @@ public class PunishmentListener implements Listener {
             }
 
             event.setCancelled(true);
-            player.sendMessage(CC.translate("<blend:&4;&c>You are currently muted for " + TimeUtils.formatIntoDetailedString(punishment.getTimeLeft()) + ".</>"));
+            player.sendMessage(CC.translate("<blend:&4;&c>You are currently muted for " + punishment.getDurationString() + ".</>"));
             return;
         }
     }

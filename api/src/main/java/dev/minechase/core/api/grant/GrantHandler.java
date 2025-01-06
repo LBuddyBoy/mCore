@@ -11,9 +11,11 @@ import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.grant.cache.GrantCacheLoader;
 import dev.minechase.core.api.grant.comparator.GrantComparator;
 import dev.minechase.core.api.grant.grant.Grant;
+import dev.minechase.core.api.grant.packet.GrantUpdatePacket;
 import dev.minechase.core.api.punishment.cache.PunishmentCacheLoader;
 import dev.minechase.core.api.punishment.model.Punishment;
 import dev.minechase.core.api.punishment.model.PunishmentProof;
+import dev.minechase.core.api.punishment.packet.PunishmentUpdatePacket;
 import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.api.user.model.User;
 import lombok.Getter;
@@ -68,6 +70,18 @@ public class GrantHandler implements IModule {
         }
     }
 
+    public List<Grant> updateGrantExpiry(List<Grant> grants) {
+        for (Grant grant : grants) {
+            if (grant.isRemoved()) continue;
+            if (!grant.isExpired()) continue;
+
+            grant.remove(null, "Expired");
+            new GrantUpdatePacket(grant).send();
+        }
+
+        return grants;
+    }
+
     public void saveGrant(Grant grant, boolean async) {
         if (async) {
             CompletableFuture.runAsync(() -> saveGrant(grant, false), CoreAPI.POOL);
@@ -93,9 +107,9 @@ public class GrantHandler implements IModule {
     public CompletableFuture<List<Grant>> getGrants(UUID targetUUID) {
         CompletableFuture<List<Grant>> grantsIfPresent = this.grants.getIfPresent(targetUUID);
 
-        if (grantsIfPresent != null) return grantsIfPresent;
+        if (grantsIfPresent != null) return grantsIfPresent.thenApplyAsync(this::updateGrantExpiry);
 
-        return this.grants.get(targetUUID);
+        return this.grants.get(targetUUID).thenApplyAsync(this::updateGrantExpiry);
     }
 
     public CompletableFuture<List<Grant>> getSortedGrants(UUID targetUUID) {

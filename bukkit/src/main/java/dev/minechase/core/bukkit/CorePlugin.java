@@ -12,6 +12,8 @@ import dev.minechase.core.api.punishment.PunishmentHandler;
 import dev.minechase.core.api.rank.RankHandler;
 import dev.minechase.core.api.server.model.CoreServer;
 import dev.minechase.core.api.server.packet.ServerUpdatePacket;
+import dev.minechase.core.bukkit.api.BukkitGrantHandler;
+import dev.minechase.core.bukkit.api.BukkitPunishmentHandler;
 import dev.minechase.core.bukkit.listener.ChatListener;
 import dev.minechase.core.bukkit.listener.PunishmentListener;
 import dev.minechase.core.bukkit.settings.SettingsHandler;
@@ -38,8 +40,8 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
     private CommandHandler commandHandler;
     private MongoHandler mongoHandler;
     private UserHandler userHandler;
-    private PunishmentHandler punishmentHandler;
-    private GrantHandler grantHandler;
+    private BukkitPunishmentHandler punishmentHandler;
+    private BukkitGrantHandler grantHandler;
     private RankHandler rankHandler;
     private SettingsHandler settingsHandler;
     private BukkitServerHandler serverHandler;
@@ -115,8 +117,8 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
                 ),
                 this.userHandler = new UserHandler(),
                 this.rankHandler = new RankHandler(),
-                this.grantHandler = new GrantHandler(),
-                this.punishmentHandler = new PunishmentHandler(),
+                this.grantHandler = new BukkitGrantHandler(),
+                this.punishmentHandler = new BukkitPunishmentHandler(),
                 this.serverHandler = new BukkitServerHandler(),
                 this.settingsHandler = new SettingsHandler(),
                 this.logHandler = new LogHandler()

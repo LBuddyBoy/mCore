@@ -39,7 +39,7 @@ public class User {
     }
 
     public Rank getRank() {
-        if (this.activeGrant == null) return null;
+        if (this.activeGrant == null) return CoreAPI.getInstance().getRankHandler().getDefaultRank();
 
         return this.activeGrant.getRank();
     }
@@ -49,7 +49,7 @@ public class User {
     }
 
     public void updateActiveGrant() {
-        CoreAPI.getInstance().getGrantHandler().getGrants(this.activeGrant.getTargetUUID()).whenCompleteAsync((grants, throwable) -> {
+        CoreAPI.getInstance().getGrantHandler().getGrants(this.uniqueId).whenCompleteAsync((grants, throwable) -> {
             List<Grant> sortedGrants = grants.stream().filter(
                     other -> other.isValidLocal() && !other.isRemoved() && !other.isExpired()
             ).sorted(Comparator.comparingInt(Grant::getWeight)).toList();

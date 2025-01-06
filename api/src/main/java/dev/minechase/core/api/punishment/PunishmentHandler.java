@@ -13,6 +13,7 @@ import dev.minechase.core.api.punishment.cache.PunishmentCacheLoader;
 import dev.minechase.core.api.punishment.model.Punishment;
 import dev.minechase.core.api.punishment.model.PunishmentProof;
 import dev.minechase.core.api.punishment.model.PunishmentType;
+import dev.minechase.core.api.punishment.packet.PunishmentUpdatePacket;
 import lombok.Getter;
 import org.bson.Document;
 
@@ -60,6 +61,18 @@ public class PunishmentHandler implements IModule {
         }
     }
 
+    public List<Punishment> updatePunishmentExpiry(List<Punishment> punishments) {
+        for (Punishment punishment : punishments) {
+            if (punishment.isRemoved()) continue;
+            if (!punishment.isExpired()) continue;
+
+            punishment.remove(null, "Expired");
+            new PunishmentUpdatePacket(punishment).send();
+        }
+
+        return punishments;
+    }
+
     public void savePunishment(Punishment punishment, boolean async) {
         if (async) {
             CompletableFuture.runAsync(() -> savePunishment(punishment, false), CoreAPI.POOL);
@@ -72,9 +85,11 @@ public class PunishmentHandler implements IModule {
     public CompletableFuture<List<Punishment>> getPunishments(UUID targetUUID) {
         CompletableFuture<List<Punishment>> punishments = this.punishments.getIfPresent(targetUUID);
 
-        if (punishments != null) return punishments;
+        if (punishments != null) {
+            return punishments.thenApplyAsync(this::updatePunishmentExpiry);
+        }
 
-        return this.punishments.get(targetUUID);
+        return this.punishments.get(targetUUID).thenApplyAsync(this::updatePunishmentExpiry);
     }
 
     public CompletableFuture<List<Punishment>> getPunishmentsByType(UUID targetUUID, PunishmentType type) {

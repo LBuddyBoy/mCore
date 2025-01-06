@@ -1,4 +1,4 @@
-package dev.minechase.core.bukkit.command.impl;
+package dev.minechase.core.bukkit.command.impl.admin;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
@@ -61,6 +61,34 @@ public class RankCommand extends BaseCommand {
         new RankUpdatePacket(rank).send();
         new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank display name! &7(" + rank.getDisplayName() + "&7)"
+        )).send();
+        this.rankHandler.saveRank(rank);
+    }
+
+    @Subcommand("prefix")
+    @CommandCompletion("@ranks <text>")
+    public void prefix(CommandSender sender, @Name("rank") Rank rank, @Name("prefix") String prefix) {
+        String senderName = CommandUtil.getSenderName(sender);
+
+        rank.setPrefix(prefix);
+
+        new RankUpdatePacket(rank).send();
+        new StaffMessagePacket(CC.translate(
+                "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank prefix! &7(" + rank.getPrefix() + "&7)"
+        )).send();
+        this.rankHandler.saveRank(rank);
+    }
+
+    @Subcommand("suffix")
+    @CommandCompletion("@ranks <text>")
+    public void suffix(CommandSender sender, @Name("rank") Rank rank, @Name("suffix") String suffix) {
+        String senderName = CommandUtil.getSenderName(sender);
+
+        rank.setSuffix(suffix);
+
+        new RankUpdatePacket(rank).send();
+        new StaffMessagePacket(CC.translate(
+                "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank suffix! &7(" + rank.getSuffix() + "&7)"
         )).send();
         this.rankHandler.saveRank(rank);
     }

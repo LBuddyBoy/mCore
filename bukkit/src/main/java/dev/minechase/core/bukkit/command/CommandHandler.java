@@ -5,11 +5,13 @@ import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.command.context.*;
 import dev.minechase.core.bukkit.command.impl.*;
+import dev.minechase.core.bukkit.command.impl.admin.*;
+import dev.minechase.core.bukkit.command.impl.punishment.PunishmentsCommand;
 import dev.minechase.core.bukkit.command.impl.punishment.impl.MuteCommand;
+import dev.minechase.core.bukkit.command.impl.staff.AltsCommand;
 import lombok.Getter;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 @Getter
 public class CommandHandler implements IModule {

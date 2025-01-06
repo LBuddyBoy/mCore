@@ -7,12 +7,14 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum PunishmentType {
 
-    BLACKLIST("blacklisted"),
-    BAN("banned"),
-    MUTE("muted"),
-    KICK("kicked"),
-    WARN("warned");
+    BLACKLIST("Blacklist", "&6", "&e", "blacklisted"),
+    BAN("Ban", "&9", "&b", "banned"),
+    MUTE("Mute", "&4", "&c", "muted"),
+    KICK("Kick", "&2", "&a", "kicked"),
+    WARN("Warn", "&7", "&f", "warned");
 
+    private final String displayName;
+    private final String primaryColor, secondaryColor;
     private final String plural;
 
 }

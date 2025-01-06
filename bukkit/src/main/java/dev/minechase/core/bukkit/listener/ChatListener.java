@@ -2,6 +2,7 @@ package dev.minechase.core.bukkit.listener;
 
 import dev.lbuddyboy.commons.util.CC;
 import dev.minechase.core.api.CoreAPI;
+import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.api.user.model.User;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.api.event.CoreChatEvent;
@@ -40,7 +41,8 @@ public class ChatListener implements Listener {
             User user = CoreAPI.getInstance().getUserHandler().getUser(player.getUniqueId());
 
             ChatColor chatColor = ChatColor.of(user.getPersistentMetadata().getOrDefault("chatcolor", "WHITE"));
-            String displayName = user.getName();
+            Rank rank = user.getRank();
+            String displayName = rank.getPrefix() + user.getName() + rank.getSuffix();
             GlobalChatSetting setting = CorePlugin.getInstance().getSettingsHandler().getSetting(GlobalChatSetting.class);
 
             if (coreChatEvent.isShadowMute()) {

@@ -1,6 +1,8 @@
 package dev.minechase.core.api.grant.grant;
 
 import dev.lbuddyboy.commons.api.APIConstants;
+import dev.lbuddyboy.commons.api.util.StringUtils;
+import dev.lbuddyboy.commons.api.util.TimeUtils;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.api.*;
 import dev.minechase.core.api.punishment.PunishmentHandler;
@@ -12,12 +14,13 @@ import lombok.EqualsAndHashCode;
 import org.bson.Document;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class Grant extends Documented implements IScoped, IRemovable, ISendable, IExpirable {
+public class Grant extends Documented implements IScoped, IRemovable, ISendable, IExpirable, Informable {
 
     public static Grant DEFAULT_GRANT(UUID targetUUID) {
         return new Grant(
@@ -90,7 +93,7 @@ public class Grant extends Documented implements IScoped, IRemovable, ISendable,
         document.put("sentAt", this.sentAt);
         document.put("duration", this.duration);
         document.put("scopes", this.scopes);
-        document.put("removedBy", this.removedBy);
+        document.put("removedBy", this.serializeUUID(this.removedBy));
         document.put("removedReason", this.removedReason);
         document.put("removedAt", this.removedAt);
 
@@ -107,6 +110,50 @@ public class Grant extends Documented implements IScoped, IRemovable, ISendable,
 
     public String getInitialRankName() {
         return this.getRank() == null ? this.initialRankName : this.getRank().getDisplayName();
+    }
+
+    @Override
+    public List<String> getBreakDown() {
+        List<String> info = new ArrayList<>(Arrays.asList(
+                "ID: " + this.id.toString(),
+                "Sender: " + this.getSenderName(),
+                "Target: " + this.getTargetName(),
+                "Rank: " + this.getInitialRankName(),
+                "Sent At: " + this.getSentAtDate(),
+                "Scopes&7: " + StringUtils.join(this.getScopes(), ", "),
+                "Duration: " + (this.isPermanent() ? "Forever" : TimeUtils.formatIntoDetailedString(this.duration)),
+                "Reason: " + this.getReason()
+        ));
+
+        if (isRemoved()) {
+            info.add("Removed At: " + this.getRemovedAtDate());
+            info.add("Removed By: " + this.getRemovedByName());
+            info.add("Removed For: " + this.getRemovedReason());
+        }
+
+        return info;
+    }
+
+    @Override
+    public List<String> getFancyBreakDown() {
+        List<String> info = new ArrayList<>(Arrays.asList(
+                "&fID&7: &e" + this.id.toString(),
+                "&fSender&7: &e" + this.getSenderName(),
+                "&fTarget&7: &e" + this.getTargetName(),
+                "&fRank&7: &e" + this.getInitialRankName(),
+                "&fSent At&7: &e" + this.getSentAtDate(),
+                "&fScopes&7: &e" + StringUtils.join(this.getScopes(), ", "),
+                "&fDuration&7: &e" + (this.isPermanent() ? "Forever" : TimeUtils.formatIntoDetailedString(this.duration)),
+                "&fReason&7: &e" + this.getReason()
+        ));
+
+        if (isRemoved()) {
+            info.add("&cRemoved At: " + this.getRemovedAtDate());
+            info.add("&cRemoved By: " + this.getRemovedByName());
+            info.add("&cRemoved For: " + this.getRemovedReason());
+        }
+
+        return info;
     }
 
 }

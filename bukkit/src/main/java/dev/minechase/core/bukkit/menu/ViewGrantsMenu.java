@@ -6,7 +6,9 @@ import dev.lbuddyboy.commons.menu.paged.IPagedMenu;
 import dev.lbuddyboy.commons.util.ItemFactory;
 import dev.minechase.core.api.grant.grant.Grant;
 import dev.minechase.core.api.grant.packet.GrantUpdatePacket;
+import dev.minechase.core.api.log.model.impl.GrantRemoveLog;
 import dev.minechase.core.api.util.UUIDUtils;
+import dev.minechase.core.bukkit.util.HeadUtil;
 import lombok.AllArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -50,10 +52,10 @@ public class ViewGrantsMenu extends IPagedMenu {
 
         @Override
         public ItemStack getItem(Player player) {
-            ItemFactory factory = new ItemFactory(Material.GREEN_WOOL);
+            ItemFactory factory = new ItemFactory(HeadUtil.DARK_GREEN_BASE_64);
 
-            if (this.grant.isTemporary()) factory = new ItemFactory(Material.YELLOW_WOOL);
-            if (this.grant.isExpired() || this.grant.isRemoved()) factory = new ItemFactory(Material.RED_WOOL);
+            if (this.grant.isTemporary()) factory = new ItemFactory(HeadUtil.YELLOW_BASE_64);
+            if (this.grant.isExpired() || this.grant.isRemoved()) factory = new ItemFactory(HeadUtil.DARK_RED_BASE_64);
 
             factory.displayName("&6" + this.grant.getSentAtDate());
             factory.lore(
@@ -91,6 +93,7 @@ public class ViewGrantsMenu extends IPagedMenu {
             this.grant.setRemovedReason("None specified");
 
             new GrantUpdatePacket(this.grant).send();
+            new GrantRemoveLog(this.grant).createLog();
         }
     }
 

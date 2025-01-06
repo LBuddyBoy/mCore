@@ -12,9 +12,16 @@ import java.util.concurrent.Executors;
 public class CoreAPI {
 
     public static boolean initiated = false;
-    public static final Executor POOL = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new ThreadFactoryBuilder().setDaemon(true).setNameFormat("%d - mCore API").build());
 
-    @Getter private static ICoreAPI instance;
+    public static final Executor POOL = Executors
+            .newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new ThreadFactoryBuilder()
+                    .setDaemon(true)
+                    .setNameFormat("%d - mCore API")
+                    .build()
+            );
+
+    @Getter
+    private static ICoreAPI instance;
 
     public static void start(ICoreAPI coreAPI) {
         if (initiated) {

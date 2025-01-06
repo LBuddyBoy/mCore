@@ -32,7 +32,9 @@ public interface IExpirable {
     }
 
     default String getDurationString() {
-        return (this.isPermanent() ? "&eForever" : TimeUtils.formatIntoDetailedString(this.getDuration()) + " (" + TimeUtils.formatIntoHHMMSS((int) (getTimeLeft() / 1000)) + ")");
+        if (isTemporary() && !this.isActive()) return TimeUtils.formatIntoDetailedString(this.getDuration()) + " (Expired)";
+
+        return (this.isPermanent() ? "Forever" : TimeUtils.formatIntoDetailedString(this.getDuration()) + " (" + TimeUtils.formatIntoHHMMSS((int) (getTimeLeft() / 1000)) + ")");
     }
 
     default boolean isTemporary() {

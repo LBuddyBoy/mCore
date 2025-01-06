@@ -87,6 +87,8 @@ public class UserHandler implements IModule {
             return user;
         }
 
+        user.updateActiveGrant();
+
         return user;
     }
 

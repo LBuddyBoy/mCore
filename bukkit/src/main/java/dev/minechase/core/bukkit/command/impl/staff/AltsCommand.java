@@ -1,4 +1,4 @@
-package dev.minechase.core.bukkit.command.impl;
+package dev.minechase.core.bukkit.command.impl.staff;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
@@ -6,10 +6,8 @@ import dev.lbuddyboy.commons.util.CC;
 import dev.minechase.core.api.user.model.User;
 import dev.minechase.core.bukkit.CoreConstants;
 import dev.minechase.core.bukkit.CorePlugin;
-import dev.minechase.core.bukkit.menu.ViewGrantsMenu;
 import dev.minechase.core.bukkit.model.AsyncCorePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 @CommandAlias("alts")
 @CommandPermission("core.command.alts")

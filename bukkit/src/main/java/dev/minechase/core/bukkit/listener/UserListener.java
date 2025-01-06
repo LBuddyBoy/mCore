@@ -2,6 +2,7 @@ package dev.minechase.core.bukkit.listener;
 
 import dev.lbuddyboy.commons.api.CommonsAPI;
 import dev.lbuddyboy.commons.api.cache.UUIDCache;
+import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.log.model.impl.NewUserLog;
 import dev.minechase.core.api.user.model.User;
 import dev.minechase.core.bukkit.CorePlugin;
@@ -25,6 +26,16 @@ public class UserListener implements Listener {
         CommonsAPI.getInstance().getUUIDCache().cache(event.getUniqueId(), event.getName(), !UUIDCache.getNamesToUuids().containsKey(event.getName().toLowerCase()));
 
         User user = CorePlugin.getInstance().getUserHandler().loadUser(playerUUID, name);
+        String ipAddress = event.getAddress().getHostAddress();
+        boolean changedIps = user.getCurrentIpAddress() != null && !user.getCurrentIpAddress().equals(ipAddress);
+
+        user.setCurrentIpAddress(ipAddress);
+
+        if (!user.getIpHistory().contains(event.getAddress().getHostAddress())) {
+            user.getIpHistory().add(event.getAddress().getHostAddress());
+        }
+
+        if (changedIps) user.save(true);
 
         CorePlugin.getInstance().getUserHandler().getUsers().put(playerUUID, user);
     }
