@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 public interface ICoreAPI {
 
     String getServerName();
-    List<String> getServerGroups();
+    List<String> getLocalServerGroups();
     MongoHandler getMongoHandler();
     RedisHandler getRedisHandler();
     PunishmentHandler getPunishmentHandler();
@@ -35,6 +35,10 @@ public interface ICoreAPI {
 
     default List<CoreServer> getHubs() {
         return this.getServerHandler().getServers().values().stream().filter(CoreServer::isHub).sorted(Comparator.comparingInt(CoreServer::getPlayerCount)).toList();
+    }
+
+    default void start() {
+        CoreAPI.start(this);
     }
 
 }

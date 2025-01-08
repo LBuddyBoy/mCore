@@ -20,7 +20,7 @@ import java.util.UUID;
 
 public class UserListener implements Listener {
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
         UUID playerUUID = event.getUniqueId();
         String name = event.getName();

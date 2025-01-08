@@ -75,6 +75,7 @@ public class User {
 
             if (this.getActiveGrant().equals(selected)) return;
 
+            CoreAPI.getInstance().getGrantHandler().onRankChange(this, this.activeGrant, selected);
             setActiveGrant(selected);
             save(true);
         });

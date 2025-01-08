@@ -1,22 +1,14 @@
 package dev.minechase.core.bukkit.menu.grant;
 
-import dev.lbuddyboy.commons.api.util.TimeDuration;
 import dev.lbuddyboy.commons.menu.IButton;
 import dev.lbuddyboy.commons.menu.paged.IPagedMenu;
 import dev.lbuddyboy.commons.util.CC;
-import dev.lbuddyboy.commons.util.ConversationBuilder;
 import dev.lbuddyboy.commons.util.ItemFactory;
-import dev.lbuddyboy.commons.util.Tasks;
 import dev.minechase.core.api.CoreAPI;
-import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.api.util.UUIDUtils;
 import dev.minechase.core.bukkit.CoreConstants;
-import dev.minechase.core.bukkit.CorePlugin;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -44,7 +36,7 @@ public class GrantScopesMenu extends IPagedMenu {
     public List<IButton> getPageButtons(Player player) {
         List<IButton> buttons = new ArrayList<>();
 
-        for (String scope : CoreAPI.getScopes()) {
+        for (String scope : CoreAPI.getInstance().getLocalServerGroups()) {
             buttons.add(new ScopeButton(scope));
         }
 

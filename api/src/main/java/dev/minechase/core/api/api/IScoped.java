@@ -13,7 +13,7 @@ public interface IScoped {
     }
 
     default boolean isValidLocal() {
-        return this.isValid(CoreAPI.getInstance().getServerGroups());
+        return this.isValid(CoreAPI.getInstance().getLocalServerGroups());
     }
 
 }

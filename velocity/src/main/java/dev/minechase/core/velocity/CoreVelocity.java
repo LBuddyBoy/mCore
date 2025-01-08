@@ -80,8 +80,7 @@ public class CoreVelocity implements ICoreAPI {
         instance = this;
         this.configFile = new Config("config");
 
-        CoreAPI.start(this);
-
+        this.start();
         this.loadModules();
         this.loadListeners();
     }
@@ -97,7 +96,7 @@ public class CoreVelocity implements ICoreAPI {
     }
 
     @Override
-    public List<String> getServerGroups() {
+    public List<String> getLocalServerGroups() {
         return Arrays.asList("GLOBAL");
     }
 

@@ -9,6 +9,7 @@ import dev.minechase.core.api.grant.grant.Grant;
 import dev.minechase.core.api.grant.packet.GrantUpdatePacket;
 import dev.minechase.core.api.log.model.impl.GrantCreationLog;
 import dev.minechase.core.api.rank.model.Rank;
+import dev.minechase.core.api.user.model.User;
 import dev.minechase.core.api.util.UUIDUtils;
 import dev.minechase.core.bukkit.util.CommandUtil;
 import org.bukkit.command.CommandSender;
@@ -37,4 +38,9 @@ public class BukkitGrantHandler extends GrantHandler {
         sender.sendMessage(CC.translate("&aSuccessfully granted " + grant.getTargetName() + " the &f" + rank.getName() + "&a rank for &e" + grant.getDurationString() + "."));
     }
 
+    @Override
+    public void onRankChange(User user, Grant previousGrant, Grant newGrant) {
+        super.onRankChange(user, previousGrant, newGrant);
+        // TODO: Add discord sync here
+    }
 }

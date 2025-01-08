@@ -25,7 +25,7 @@ public class Rank extends Documented implements IScoped {
     private String name, prefix, suffix, displayName, primaryColor, secondaryColor;
     private int weight;
     private boolean staffRank, defaultRank;
-    private String materialString;
+    private String materialString, discordRoleId;
     private final List<UUID> inheritedRanks = new ArrayList<>();
     private final List<ScopedPermission> permissions = new ArrayList<>();
     private final List<String> scopes = new ArrayList<>();;
@@ -42,6 +42,7 @@ public class Rank extends Documented implements IScoped {
         this.staffRank = false;
         this.defaultRank = false;
         this.materialString = "WHITE_WOOL";
+        this.discordRoleId = "";
         this.scopes.add("GLOBAL");
     }
 
@@ -56,6 +57,7 @@ public class Rank extends Documented implements IScoped {
         this.weight = document.getInteger("weight");
         this.prefix = document.get("prefix", "");
         this.suffix = document.get("suffix", "");
+        this.discordRoleId = document.get("discordRoleId", "");
         this.materialString = document.getString("materialString");
         this.staffRank = document.getBoolean("staffRank", false);
         this.defaultRank = document.getBoolean("defaultRank", false);
@@ -75,6 +77,7 @@ public class Rank extends Documented implements IScoped {
                 .append("primaryColor", this.primaryColor)
                 .append("secondaryColor", this.secondaryColor)
                 .append("materialString", this.materialString)
+                .append("discordRoleId", this.discordRoleId)
                 .append("staffRank", this.staffRank)
                 .append("defaultRank", this.defaultRank)
                 .append("weight", this.weight)

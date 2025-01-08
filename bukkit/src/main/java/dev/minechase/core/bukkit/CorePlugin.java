@@ -11,20 +11,18 @@ import dev.minechase.core.api.log.LogHandler;
 import dev.minechase.core.api.rank.RankHandler;
 import dev.minechase.core.api.server.model.CoreServer;
 import dev.minechase.core.api.server.packet.ServerUpdatePacket;
-import dev.minechase.core.bukkit.api.BukkitGrantHandler;
-import dev.minechase.core.bukkit.api.BukkitPermissionHandler;
-import dev.minechase.core.bukkit.api.BukkitPunishmentHandler;
-import dev.minechase.core.bukkit.api.ChatHandler;
+import dev.minechase.core.bukkit.api.*;
 import dev.minechase.core.bukkit.listener.CoreListener;
 import dev.minechase.core.bukkit.listener.PunishmentListener;
 import dev.minechase.core.bukkit.settings.SettingsHandler;
 import dev.minechase.core.api.user.UserHandler;
-import dev.minechase.core.bukkit.api.BukkitServerHandler;
 import dev.minechase.core.bukkit.command.CommandHandler;
 import dev.minechase.core.bukkit.listener.UserListener;
 import dev.minechase.core.bukkit.packet.StaffMessagePacket;
 import dev.minechase.core.bukkit.task.QueuePlayerTask;
 import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -50,13 +48,14 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
     private IPHistoryHandler ipHistoryHandler;
     private BukkitPermissionHandler permissionHandler;
     private ChatHandler chatHandler;
+    private WhitelistHandler whitelistHandler;
 
     @Override
     public void onEnable() {
         instance = this;
         this.saveDefaultConfig();
 
-        CoreAPI.start(this);
+        this.start();
 
         this.loadModules();
         this.loadListeners();
@@ -86,7 +85,7 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
     }
 
     @Override
-    public List<String> getServerGroups() {
+    public List<String> getLocalServerGroups() {
         return this.getConfig().getStringList("serverGroups");
     }
 
@@ -103,6 +102,8 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
         localServer.setPlayerCount(this.getServer().getOnlinePlayers().size());
         localServer.setMaxPlayers(this.getServer().getMaxPlayers());
         localServer.setStoppedAt(0L);
+        localServer.setGroups(this.getLocalServerGroups());
+        localServer.setPlayers(Bukkit.getOnlinePlayers().stream().map(Entity::getUniqueId).toList());
 
         new ServerUpdatePacket(localServer).send();
     }
@@ -128,7 +129,8 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
                 this.logHandler = new LogHandler(),
                 this.ipHistoryHandler = new IPHistoryHandler(),
                 this.permissionHandler = new BukkitPermissionHandler(),
-                this.chatHandler = new ChatHandler()
+                this.chatHandler = new ChatHandler(),
+                this.whitelistHandler = new WhitelistHandler()
         ));
 
         this.modules.forEach(IModule::load);

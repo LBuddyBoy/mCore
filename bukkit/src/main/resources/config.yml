@@ -15,7 +15,7 @@ mongo:
 
 whitelist:
   enabled: false
-  enforce: "PLAYER" # PLAYER & RANK
+  enforce: "BOTH" # PLAYER, RANK, or BOTH
   rank: ""
   players:
     - 'LBuddyBoy'

@@ -8,8 +8,10 @@ import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import org.bson.Document;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -21,6 +23,8 @@ public class CoreServer extends Documented {
     private int port, playerCount, maxPlayers;
     private long startedAt, stoppedAt;
     private boolean whitelisted, queuePaused;
+    private List<String> groups = new ArrayList<>();
+    private List<UUID> players = new ArrayList<>();
 
     public CoreServer(Document document) {
         this.name = document.getString("name");
@@ -32,6 +36,8 @@ public class CoreServer extends Documented {
         this.stoppedAt = document.getLong("stoppedAt");
         this.whitelisted = document.getBoolean("whitelisted");
         this.queuePaused = document.getBoolean("queuePaused");
+        this.players = new ArrayList<>(document.getList("players", String.class, new ArrayList<>()).stream().map(UUID::fromString).toList());
+        this.groups = new ArrayList<>(document.getList("groups", String.class, new ArrayList<>()));
     }
 
     @Override
@@ -45,7 +51,9 @@ public class CoreServer extends Documented {
                 .append("playerCount", this.playerCount)
                 .append("maxPlayers", this.maxPlayers)
                 .append("startedAt", this.startedAt)
-                .append("stoppedAt", this.stoppedAt);
+                .append("stoppedAt", this.stoppedAt)
+                .append("groups", this.groups)
+                .append("players", this.players.stream().map(UUID::toString).toList());
     }
 
     public void updatePositions() {
@@ -88,11 +96,13 @@ public class CoreServer extends Documented {
     public void markOnline() {
         this.startedAt = System.currentTimeMillis();
         this.stoppedAt = 0L;
+        this.players.clear();
     }
 
     public void markOffline() {
         this.stoppedAt = System.currentTimeMillis();
         this.startedAt = 0L;
+        this.players.clear();
     }
 
 }

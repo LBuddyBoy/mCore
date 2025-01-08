@@ -122,4 +122,8 @@ public class GrantHandler implements IModule {
         ).sorted(Comparator.comparingInt(Grant::getWeight)).toList());
     }
 
+    public void onRankChange(User user, Grant previousGrant, Grant newGrant) {
+        CoreAPI.getInstance().getLogger().warning("Tried called " + user.getUniqueId() + "'s rank change, but there's no API implementation.");
+    }
+
 }
