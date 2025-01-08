@@ -7,7 +7,9 @@ import dev.lbuddyboy.commons.api.util.TimeDuration;
 import dev.lbuddyboy.commons.util.CC;
 import dev.minechase.core.api.api.MultiScope;
 import dev.minechase.core.api.api.ScopedPermission;
-import dev.minechase.core.api.log.model.impl.RankCreationLog;
+import dev.minechase.core.api.log.model.impl.rank.RankCreationLog;
+import dev.minechase.core.api.log.model.impl.rank.RankDeletionLog;
+import dev.minechase.core.api.permission.packet.PlayerUpdatePermissionPacket;
 import dev.minechase.core.api.rank.RankHandler;
 import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.api.rank.packet.RankDeletePacket;
@@ -49,6 +51,7 @@ public class RankCommand extends BaseCommand {
                 "<blend:&6;&e>[Rank Handler]</>&c " + senderName + " deleted the '" + rank.getName() + "' rank!"
         )).send();
         this.rankHandler.deleteRank(rank);
+        new RankDeletionLog(CommandUtil.getSender(sender), rank).createLog();
     }
 
     @Subcommand("displayname")
@@ -148,13 +151,24 @@ public class RankCommand extends BaseCommand {
 
         String senderName = CommandUtil.getSenderName(sender);
 
-        rank.getPermissions().add(new ScopedPermission(permissionNode, duration.transform(), scope));
+        rank.getPermissions().add(new ScopedPermission(null, permissionNode, duration.transform(), scope));
 
         new RankUpdatePacket(rank).send();
         new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank permissions! &7(&a+" + permissionNode + "&7)"
         )).send();
         this.rankHandler.saveRank(rank);
+
+        CorePlugin.getInstance().getUserHandler().fetchUsersAsync().whenCompleteAsync((users, throwable) -> {
+            if (throwable != null) {
+                throwable.printStackTrace();
+                return;
+            }
+
+            users.stream().filter(user -> user.getRank() != null && (user.getRank().equals(rank) || rank.getValidInheritedRanks().contains(rank.getId()))).forEach(user -> {
+                new PlayerUpdatePermissionPacket(user.getUniqueId()).send();
+            });
+        });
     }
 
     @Subcommand("permission remove")
@@ -176,6 +190,17 @@ public class RankCommand extends BaseCommand {
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank permissions! &7(&c-" + permissionNode + "&7)"
         )).send();
         this.rankHandler.saveRank(rank);
+
+        CorePlugin.getInstance().getUserHandler().fetchUsersAsync().whenCompleteAsync((users, throwable) -> {
+            if (throwable != null) {
+                throwable.printStackTrace();
+                return;
+            }
+
+            users.stream().filter(user -> user.getRank() != null && (user.getRank().equals(rank) || rank.getValidInheritedRanks().contains(rank.getId()))).forEach(user -> {
+                new PlayerUpdatePermissionPacket(user.getUniqueId()).send();
+            });
+        });
     }
 
     @Subcommand("scope set")

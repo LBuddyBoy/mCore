@@ -1,7 +1,7 @@
 package dev.minechase.core.bukkit.api.event;
 
-import dev.minechase.core.api.grant.grant.Grant;
 import dev.minechase.core.api.punishment.model.Punishment;
+import dev.minechase.core.api.punishment.model.PunishmentSnapshot;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
@@ -10,25 +10,25 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
-public class CoreChatEvent extends Event implements Cancellable {
+public class AsyncCoreLoginEvent extends Event implements Cancellable {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
 
-    private boolean cancelled, shadowMute = false;
-    private final Player player;
-    private final String message;
-    private final List<Punishment> punishments;
+    private boolean cancelled;
+    private final UUID uniqueId;
+    private final String name;
+    private final List<PunishmentSnapshot> punishments;
+    private String kickMessage;
 
-    private Object packet;
-
-    public CoreChatEvent(Player player, String message, List<Punishment> punishments) {
+    public AsyncCoreLoginEvent(UUID uniqueId, String name, List<PunishmentSnapshot> punishments) {
         super(true);
 
-        this.player = player;
-        this.message = message;
+        this.uniqueId = uniqueId;
+        this.name = name;
         this.punishments = punishments;
     }
 

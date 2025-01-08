@@ -7,11 +7,14 @@ import dev.minechase.core.api.punishment.PunishmentHandler;
 import dev.minechase.core.api.punishment.model.Punishment;
 import dev.minechase.core.api.punishment.model.PunishmentType;
 import dev.minechase.core.api.punishment.packet.PunishmentUpdatePacket;
+import dev.minechase.core.api.user.model.User;
+import dev.minechase.core.api.util.UUIDUtils;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.packet.GlobalMessagePacket;
 import dev.minechase.core.bukkit.packet.PlayerMessagePacket;
 import dev.minechase.core.bukkit.packet.StaffMessagePacket;
 import dev.minechase.core.bukkit.util.CommandUtil;
+import dev.minechase.core.velocity.packet.PlayerKickPacket;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -20,7 +23,9 @@ import java.util.UUID;
 
 public class BukkitPunishmentHandler extends PunishmentHandler {
 
-    public void punish(CommandSender sender, PunishmentType type, UUID targetUUID, String reason, long duration, boolean shadow, boolean silent) {
+    public void punish(CommandSender sender, PunishmentType type, UUID targetUUID, String reason, long duration, boolean ipRelated, boolean shadow, boolean silent) {
+        sender.sendMessage(CC.translate("&aPunishing " + UUIDUtils.getName(targetUUID) + ", this may take a few seconds..."));
+
         CorePlugin.getInstance().getUserHandler().getOrCreateAsync(targetUUID).whenCompleteAsync(((user, throwable) -> {
             if (throwable != null) {
                 throwable.printStackTrace();
@@ -28,9 +33,11 @@ public class BukkitPunishmentHandler extends PunishmentHandler {
             }
 
             CorePlugin.getInstance().getPunishmentHandler().getActivePunishmentsByType(targetUUID, type).whenCompleteAsync((punishments, t) -> {
-                if (!punishments.isEmpty()) {
-                    sender.sendMessage(CC.translate("<blend:&4;&c>That player is already " + type.getPlural() + ".</>"));
-                    return;
+                if (type != PunishmentType.KICK && type != PunishmentType.WARN) {
+                    if (!punishments.isEmpty()) {
+                        sender.sendMessage(CC.translate("<blend:&4;&c>That player is already " + type.getPlural() + ".</>"));
+                        return;
+                    }
                 }
 
                 Punishment punishment = new Punishment(
@@ -40,13 +47,16 @@ public class BukkitPunishmentHandler extends PunishmentHandler {
                         duration,
                         reason,
                         CorePlugin.getInstance().getServerName(),
+                        (sender instanceof Player player ? player.getAddress().getHostName() : null),
+                        user.getCurrentIpAddress(),
+                        ipRelated,
                         shadow,
                         silent
                 );
 
                 new PunishmentUpdatePacket(punishment).send();
 
-                String text = CommandUtil.getSenderName(sender) + "&a permanently " + type.getPlural() + " " + user.getColoredName() + "&a for '" + reason + "'";
+                String text = CommandUtil.getSenderName(sender) + "&a" + (type == PunishmentType.KICK || type == PunishmentType.WARN ? "" : " permanently") + " " + type.getPlural() + " " + user.getColoredName() + "&a for '" + reason + "'";
 
                 if (!punishment.isPermanent()) {
                     text = CommandUtil.getSenderName(sender) + "&a temporarily " + type.getPlural() + " " + user.getColoredName() + "&a for '" + reason + "'";;
@@ -54,13 +64,7 @@ public class BukkitPunishmentHandler extends PunishmentHandler {
 
                 if (punishment.isSentSilent()) text += " &8[S]";
 
-                if (silent) {
-                    new StaffMessagePacket(CC.translate(text)).send();
-                    return;
-                }
-
                 new PunishmentCreationLog(text, punishment).createLog();
-                new GlobalMessagePacket(CC.translate(text)).send();
 
                 if (type == PunishmentType.MUTE || type == PunishmentType.WARN) {
                     new PlayerMessagePacket(CC.translate(Arrays.asList(
@@ -69,12 +73,33 @@ public class BukkitPunishmentHandler extends PunishmentHandler {
                             "<blend:&4;&c>Duration: " + punishment.getDurationString() + "</>",
                             " "
                     )), targetUUID).send();
+                } else {
+                    new PlayerKickPacket(targetUUID, punishment.getKickMessage()).send();
+
+                    CorePlugin.getInstance().getUserHandler().fetchAlts(user).whenCompleteAsync(((users, altThrowable) -> {
+                        if (altThrowable != null) {
+                            altThrowable.printStackTrace();
+                            return;
+                        }
+
+                        for (User other : users) {
+                            new PlayerKickPacket(other.getUniqueId(), punishment.getAltKickMessage(punishment.getTargetUUID())).send();
+                        }
+                    }));
+                }
+
+                if (silent) {
+                    new StaffMessagePacket(CC.translate(text)).send();
+                } else {
+                    new GlobalMessagePacket(CC.translate(text)).send();
                 }
             });
         }));
     }
 
     public void unpunish(CommandSender sender, PunishmentType type, UUID targetUUID, String reason, boolean silent) {
+        sender.sendMessage(CC.translate("&aUnpunishing " + UUIDUtils.getName(targetUUID) + ", this may take a few seconds..."));
+
         CorePlugin.getInstance().getUserHandler().getOrCreateAsync(targetUUID).whenCompleteAsync(((user, throwable) -> {
             if (throwable != null) {
                 throwable.printStackTrace();
@@ -83,18 +108,13 @@ public class BukkitPunishmentHandler extends PunishmentHandler {
 
             CorePlugin.getInstance().getPunishmentHandler().getActivePunishmentsByType(targetUUID, type).whenCompleteAsync((punishments, t) -> {
                 if (punishments.isEmpty()) {
-                    sender.sendMessage(CC.translate("<blend:&4;&c>That player is already " + type.getPlural() + ".</>"));
+                    sender.sendMessage(CC.translate("<blend:&4;&c>That player is not " + type.getPlural() + ".</>"));
                     return;
                 }
 
                 String text = CommandUtil.getSenderName(sender) + "&a un" + type.getPlural() + " " + user.getColoredName() + "&a for '" + reason + "'";
 
                 if (silent) text += " &8[S]";
-
-                if (silent) {
-                    new StaffMessagePacket(CC.translate(text)).send();
-                    return;
-                }
 
                 for (Punishment punishment : punishments) {
                     punishment.setRemovedBy(CommandUtil.getSender(sender));
@@ -104,9 +124,14 @@ public class BukkitPunishmentHandler extends PunishmentHandler {
 
                     new PunishmentUpdatePacket(punishment).send();
                     new PunishmentRemoveLog(text, punishment).createLog();
+                    break;
                 }
 
-                new GlobalMessagePacket(CC.translate(text)).send();
+                if (silent) {
+                    new StaffMessagePacket(CC.translate(text)).send();
+                } else {
+                    new GlobalMessagePacket(CC.translate(text)).send();
+                }
 
                 if (type == PunishmentType.MUTE || type == PunishmentType.WARN) {
                     new PlayerMessagePacket(

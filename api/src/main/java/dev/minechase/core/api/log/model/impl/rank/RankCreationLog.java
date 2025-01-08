@@ -1,18 +1,18 @@
-package dev.minechase.core.api.log.model.impl;
+package dev.minechase.core.api.log.model.impl.rank;
 
 import dev.minechase.core.api.log.model.CoreLog;
 import dev.minechase.core.api.log.model.CoreLogType;
+import dev.minechase.core.api.log.model.SenderLog;
 import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.api.util.UUIDUtils;
 import lombok.Getter;
 import org.bson.Document;
 
-import javax.print.Doc;
 import java.util.List;
 import java.util.UUID;
 
 @Getter
-public class RankCreationLog extends CoreLog {
+public class RankCreationLog extends CoreLog implements SenderLog {
 
     private final UUID actorUUID;
     private final String initialRankName;
@@ -35,7 +35,7 @@ public class RankCreationLog extends CoreLog {
 
     @Override
     public String getDisplayMaterial() {
-        return "PAPER";
+        return "LIME_DYE";
     }
 
     @Override
@@ -61,4 +61,8 @@ public class RankCreationLog extends CoreLog {
         return log;
     }
 
+    @Override
+    public UUID getSenderUUID() {
+        return this.actorUUID;
+    }
 }

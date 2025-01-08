@@ -1,10 +1,9 @@
-package dev.minechase.core.bukkit.menu.settings;
+package dev.minechase.core.bukkit.settings.menu;
 
 import dev.lbuddyboy.commons.menu.IButton;
 import dev.lbuddyboy.commons.menu.paged.IPagedMenu;
 import dev.lbuddyboy.commons.util.CC;
 import dev.lbuddyboy.commons.util.ItemFactory;
-import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.settings.model.ISetting;
 import dev.minechase.core.bukkit.util.WordUtil;
@@ -29,6 +28,8 @@ public class SettingsMenu extends IPagedMenu {
         List<IButton> buttons = new ArrayList<>();
 
         for (ISetting setting : CorePlugin.getInstance().getSettingsHandler().getSortedSettings()) {
+            if (!setting.getPermission().isEmpty() && !player.hasPermission(setting.getPermission())) continue;
+
             buttons.add(new SettingButton(setting));
         }
 
@@ -59,14 +60,7 @@ public class SettingsMenu extends IPagedMenu {
 
         @Override
         public void action(Player player, ClickType clickType, int slot) {
-            boolean status = this.setting.toggle(player.getUniqueId());
-
-            if (status) {
-                player.sendMessage(CC.translate("<blend:&2;&a>[Settings] You enabled your " + this.setting.getDisplayName() + "</>"));
-            } else {
-                player.sendMessage(CC.translate("<blend:&4;&c>[Settings] You disabled your " + this.setting.getDisplayName() + "</>"));
-            }
-
+            this.setting.toggle(player.getUniqueId());
             updateMenu(player, true);
         }
     }

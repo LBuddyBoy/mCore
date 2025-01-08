@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 public class UserHandler implements IModule {
 
     private static final Pattern UUID_PATTERN = Pattern.compile("(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)");
-    private static final TypeToken<UserMetadata> METADATA = new TypeToken<>() {};
 
     private Map<UUID, User> users;
     private MongoCollection<Document> collection;
@@ -65,26 +64,14 @@ public class UserHandler implements IModule {
         return UUIDUtils.fetchName(uuid).thenApplyAsync(name -> loadUser(uuid, name));
     }
 
-    public CompletableFuture<List<User>> fetchUsersAsync() {
-        return CompletableFuture.supplyAsync(() -> UUIDCache.getUuidToNames().entrySet().stream().map(entry -> loadUser(entry.getKey(), entry.getValue())).toList());
-    }
-
     public User loadUser(UUID uuid, String name) {
         User user = new User(uuid, name);
         Document document = this.collection.find(Filters.eq("uniqueId", uuid.toString())).first();
 
         if (document != null) {
-            user.setFirstJoinAt(document.getLong("firstJoinedAt"));
-            user.setActiveGrant(new Grant(Document.parse(document.getString("activeGrant"))));
-            user.setCurrentIpAddress(document.getString("currentIpAddress"));
-            user.getIpHistory().addAll(document.getList("ipHistory", String.class, new ArrayList<>()));
-
-            if (document.containsKey("persistentMetadata")) user.setPersistentMetadata(APIConstants.GSON.fromJson(document.getString("persistentMetadata"), METADATA.getType()));
-
+            user.load(document);
         } else {
-            user.setActiveGrant(Grant.DEFAULT_GRANT(uuid));
-            this.saveUser(user);
-            return user;
+            return this.saveUser(user);
         }
 
         user.updateActiveGrant();
@@ -92,21 +79,17 @@ public class UserHandler implements IModule {
         return user;
     }
 
-    public void saveUser(User user) {
-        Bson query = Filters.eq("uniqueId", user.getUniqueId().toString());
-        Document document = this.collection.find(query).first();
+    public User saveUser(User user) {
+        this.collection.replaceOne(Filters.eq("uniqueId", user.getUniqueId().toString()), user.toDocument(), new ReplaceOptions().upsert(true));
+        return user;
+    }
 
-        if (document == null) document = new Document();
+    public CompletableFuture<List<User>> fetchUsersAsync() {
+        return CompletableFuture.supplyAsync(() -> UUIDCache.getUuidToNames().entrySet().stream().map(entry -> loadUser(entry.getKey(), entry.getValue())).toList());
+    }
 
-        document.put("uniqueId", user.getUniqueId().toString());
-        document.put("name", user.getName());
-        document.put("currentIpAddress", user.getCurrentIpAddress());
-        document.put("ipHistory", user.getIpHistory());
-        document.put("firstJoinedAt", user.getFirstJoinAt());
-        document.put("activeGrant", user.getActiveGrant().toDocument().toJson());
-        document.put("persistentMetadata", APIConstants.GSON.toJson(user.getPersistentMetadata(), METADATA.getType()));
-
-        this.collection.replaceOne(query, document, new ReplaceOptions().upsert(true));
+    public CompletableFuture<List<User>> fetchAlts(User user) {
+        return this.fetchUsersAsync().thenApplyAsync(users -> users.stream().filter(other -> !other.getUniqueId().equals(user.getUniqueId()) && user.getCurrentIpAddress() != null && other.getCurrentIpAddress() != null && other.getCurrentIpAddress().equals(user.getCurrentIpAddress())).toList());
     }
 
 }

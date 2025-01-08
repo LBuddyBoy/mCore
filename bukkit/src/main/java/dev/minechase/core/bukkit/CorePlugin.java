@@ -6,15 +6,16 @@ import dev.lbuddyboy.commons.api.redis.RedisHandler;
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.ICoreAPI;
-import dev.minechase.core.api.grant.GrantHandler;
+import dev.minechase.core.api.iphistory.IPHistoryHandler;
 import dev.minechase.core.api.log.LogHandler;
-import dev.minechase.core.api.punishment.PunishmentHandler;
 import dev.minechase.core.api.rank.RankHandler;
 import dev.minechase.core.api.server.model.CoreServer;
 import dev.minechase.core.api.server.packet.ServerUpdatePacket;
 import dev.minechase.core.bukkit.api.BukkitGrantHandler;
+import dev.minechase.core.bukkit.api.BukkitPermissionHandler;
 import dev.minechase.core.bukkit.api.BukkitPunishmentHandler;
-import dev.minechase.core.bukkit.listener.ChatListener;
+import dev.minechase.core.bukkit.api.ChatHandler;
+import dev.minechase.core.bukkit.listener.CoreListener;
 import dev.minechase.core.bukkit.listener.PunishmentListener;
 import dev.minechase.core.bukkit.settings.SettingsHandler;
 import dev.minechase.core.api.user.UserHandler;
@@ -46,6 +47,9 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
     private SettingsHandler settingsHandler;
     private BukkitServerHandler serverHandler;
     private LogHandler logHandler;
+    private IPHistoryHandler ipHistoryHandler;
+    private BukkitPermissionHandler permissionHandler;
+    private ChatHandler chatHandler;
 
     @Override
     public void onEnable() {
@@ -121,7 +125,10 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
                 this.punishmentHandler = new BukkitPunishmentHandler(),
                 this.serverHandler = new BukkitServerHandler(),
                 this.settingsHandler = new SettingsHandler(),
-                this.logHandler = new LogHandler()
+                this.logHandler = new LogHandler(),
+                this.ipHistoryHandler = new IPHistoryHandler(),
+                this.permissionHandler = new BukkitPermissionHandler(),
+                this.chatHandler = new ChatHandler()
         ));
 
         this.modules.forEach(IModule::load);
@@ -132,7 +139,7 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
     }
 
     private void loadListeners() {
-        this.getServer().getPluginManager().registerEvents(new ChatListener(), this);
+        this.getServer().getPluginManager().registerEvents(new CoreListener(), this);
         this.getServer().getPluginManager().registerEvents(new PunishmentListener(), this);
         this.getServer().getPluginManager().registerEvents(new UserListener(), this);
     }

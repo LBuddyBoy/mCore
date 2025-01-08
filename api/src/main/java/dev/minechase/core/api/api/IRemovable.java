@@ -9,6 +9,7 @@ import java.util.UUID;
 public interface IRemovable {
 
     String getRemovedReason();
+    String getRemovedOn();
     UUID getRemovedBy();
     long getRemovedAt();
     default boolean isRemovable() {

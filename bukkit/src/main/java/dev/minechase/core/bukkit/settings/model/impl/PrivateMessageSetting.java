@@ -54,4 +54,9 @@ public class PrivateMessageSetting implements ISetting {
         return "&c&lOFF";
     }
 
+    @Override
+    public String getPermission() {
+        return "";
+    }
+
 }

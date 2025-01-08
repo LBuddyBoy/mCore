@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -91,12 +92,25 @@ public class Rank extends Documented implements IScoped {
         return this.permissions.stream().filter(permission -> !permission.isExpired()).toList();
     }
 
+    public List<ScopedPermission> getLocalPermissions() {
+        return this.getActivePermissions().stream().filter(IScoped::isValidLocal).toList();
+    }
+
     public boolean hasPermission(String permissionNode) {
         return this.getActivePermissions().stream().anyMatch(permission -> permission.getPermissionNode().equals(permissionNode));
     }
 
     public List<UUID> getValidInheritedRanks() {
         return this.inheritedRanks.stream().filter(rankId -> CoreAPI.getInstance().getRankHandler().getRanks().containsKey(rankId)).toList();
+    }
+
+    public List<ScopedPermission> getCombinedLocalPermissions() {
+        return new ArrayList<>(getValidInheritedRanks().stream()
+                .map(CoreAPI.getInstance().getRankHandler().getRanks()::get)
+                .flatMap(rank -> rank.getLocalPermissions().stream())
+                .toList()) {{
+                    addAll(Rank.this.getLocalPermissions());
+        }};
     }
 
 }

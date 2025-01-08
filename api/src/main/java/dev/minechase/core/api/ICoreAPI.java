@@ -3,7 +3,9 @@ package dev.minechase.core.api;
 import dev.lbuddyboy.commons.api.mongo.MongoHandler;
 import dev.lbuddyboy.commons.api.redis.RedisHandler;
 import dev.minechase.core.api.grant.GrantHandler;
+import dev.minechase.core.api.iphistory.IPHistoryHandler;
 import dev.minechase.core.api.log.LogHandler;
+import dev.minechase.core.api.permission.PermissionHandler;
 import dev.minechase.core.api.punishment.PunishmentHandler;
 import dev.minechase.core.api.server.ServerHandler;
 import dev.minechase.core.api.rank.RankHandler;
@@ -23,6 +25,8 @@ public interface ICoreAPI {
     PunishmentHandler getPunishmentHandler();
     GrantHandler getGrantHandler();
     RankHandler getRankHandler();
+    PermissionHandler getPermissionHandler();
+    IPHistoryHandler getIpHistoryHandler();
     ServerHandler<?> getServerHandler();
     LogHandler getLogHandler();
     UserHandler getUserHandler();

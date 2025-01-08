@@ -7,8 +7,10 @@ import dev.minechase.core.bukkit.command.context.*;
 import dev.minechase.core.bukkit.command.impl.*;
 import dev.minechase.core.bukkit.command.impl.admin.*;
 import dev.minechase.core.bukkit.command.impl.punishment.PunishmentsCommand;
-import dev.minechase.core.bukkit.command.impl.punishment.impl.MuteCommand;
+import dev.minechase.core.bukkit.command.impl.punishment.impl.*;
 import dev.minechase.core.bukkit.command.impl.staff.AltsCommand;
+import dev.minechase.core.bukkit.command.impl.staff.IPHistoryCommand;
+import dev.minechase.core.bukkit.command.impl.staff.StaffCommand;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -26,12 +28,14 @@ public class CommandHandler implements IModule {
                 new RankContext(),
                 new MultiScopeContext(),
                 new TimeDurationContext(),
+                new UUIDContext(),
                 new CoreServerContext(),
                 new CorePlayerContext()
         ).forEach(context -> context.register(this.commandManager));
 
         this.commandManager.getCommandCompletions().registerCompletion("rankPermissions", new RankContext.RankPermissionCompletion());
 
+        this.commandManager.registerCommand(new CoreCommand());
         this.commandManager.registerCommand(new AltsCommand());
         this.commandManager.registerCommand(new RankCommand());
         this.commandManager.registerCommand(new GrantsCommand());
@@ -41,8 +45,20 @@ public class CommandHandler implements IModule {
         this.commandManager.registerCommand(new HubCommand());
         this.commandManager.registerCommand(new SettingsCommand());
         this.commandManager.registerCommand(new ServersCommand());
-        this.commandManager.registerCommand(new PunishmentsCommand());
+        this.commandManager.registerCommand(new IPHistoryCommand());
+        this.commandManager.registerCommand(new AdminCommand());
+        this.commandManager.registerCommand(new StaffCommand());
+
+        /*
+        Punishments
+         */
+
+        this.commandManager.registerCommand(new BanCommand());
+        this.commandManager.registerCommand(new BlacklistCommand());
+        this.commandManager.registerCommand(new KickCommand());
         this.commandManager.registerCommand(new MuteCommand());
+        this.commandManager.registerCommand(new WarnCommand());
+        this.commandManager.registerCommand(new PunishmentsCommand());
     }
 
     @Override

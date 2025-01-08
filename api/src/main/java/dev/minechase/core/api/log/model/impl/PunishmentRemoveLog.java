@@ -1,15 +1,15 @@
 package dev.minechase.core.api.log.model.impl;
 
-import dev.minechase.core.api.log.model.CoreLog;
-import dev.minechase.core.api.log.model.CoreLogType;
+import dev.minechase.core.api.log.model.*;
 import dev.minechase.core.api.punishment.model.Punishment;
 import lombok.Getter;
 import org.bson.Document;
 
 import java.util.List;
+import java.util.UUID;
 
 @Getter
-public class PunishmentRemoveLog extends CoreLog {
+public class PunishmentRemoveLog extends CoreLog implements SenderLog, TargetLog, ScopedLog {
 
     private final Punishment punishment;
 
@@ -49,6 +49,21 @@ public class PunishmentRemoveLog extends CoreLog {
         log.add("&7&m-----------------------");
 
         return log;
+    }
+
+    @Override
+    public UUID getSenderUUID() {
+        return this.punishment.getRemovedBy();
+    }
+
+    @Override
+    public String getSentOn() {
+        return this.punishment.getRemovedOn();
+    }
+
+    @Override
+    public UUID getTargetUUID() {
+        return this.punishment.getTargetUUID();
     }
 
 }

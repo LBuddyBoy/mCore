@@ -28,6 +28,7 @@ public class Grant extends Documented implements IScoped, IRemovable, ISendable,
                 targetUUID,
                 CoreAPI.getInstance().getRankHandler().getDefaultRank(),
                 -1L,
+                CoreAPI.getInstance().getServerName(),
                 "Default Grant",
                 new MultiScope("GLOBAL")
         );
@@ -37,18 +38,20 @@ public class Grant extends Documented implements IScoped, IRemovable, ISendable,
     private final UUID rankId;
     private final long sentAt, duration;
     private final List<String> scopes = new ArrayList<>();
-    private final String initialRankName, reason;
+    private final String initialRankName, sentOn, reason;
     private final boolean removable;
 
     private UUID removedBy = null;
     private String removedReason = null;
+    private String removedOn = null;
     private long removedAt = 0L;
 
-    public Grant(UUID senderUUID, UUID targetUUID, Rank rank, long duration, String reason, MultiScope scope) {
+    public Grant(UUID senderUUID, UUID targetUUID, Rank rank, long duration, String sentOn, String reason, MultiScope scope) {
         this.id = UUID.randomUUID();
         this.senderUUID = senderUUID;
         this.targetUUID = targetUUID;
         this.initialRankName = rank.getName();
+        this.sentOn = sentOn;
         this.reason = reason;
         this.rankId = rank.getId();
         this.sentAt = System.currentTimeMillis();
@@ -62,6 +65,7 @@ public class Grant extends Documented implements IScoped, IRemovable, ISendable,
         this.senderUUID = this.deserializeUUID(document.getString("senderUUID"));
         this.targetUUID = this.deserializeUUID(document.getString("targetUUID"));
         this.rankId = this.deserializeUUID(document.getString("rankId"));
+        this.sentOn = document.getString("sentOn");
         this.reason = document.getString("reason");
         this.initialRankName = document.getString("initialRankName");
         this.sentAt = document.getLong("sentAt");
@@ -69,6 +73,7 @@ public class Grant extends Documented implements IScoped, IRemovable, ISendable,
         this.removable = document.getBoolean("removable");
         this.scopes.addAll(document.getList("scopes", String.class, new ArrayList<>()));
         this.removedBy = this.deserializeUUID(document.getString("removedBy"));
+        this.removedOn = document.getString("removedOn");
         this.removedReason = document.getString("removedReason");
         this.removedAt = document.getLong("removedAt");
     }
@@ -77,6 +82,7 @@ public class Grant extends Documented implements IScoped, IRemovable, ISendable,
         this.removedBy = removedBy;
         this.removedReason = removedReason;
         this.removedAt = System.currentTimeMillis();
+        this.removedOn = CoreAPI.getInstance().getServerName();
     }
 
     @Override
@@ -88,12 +94,14 @@ public class Grant extends Documented implements IScoped, IRemovable, ISendable,
         document.put("targetUUID", this.targetUUID.toString());
         document.put("initialRankName", this.initialRankName);
         document.put("removable", this.removable);
+        document.put("sentOn", this.sentOn);
         document.put("reason", this.reason);
         document.put("rankId", this.rankId.toString());
         document.put("sentAt", this.sentAt);
         document.put("duration", this.duration);
         document.put("scopes", this.scopes);
         document.put("removedBy", this.serializeUUID(this.removedBy));
+        document.put("removedOn", this.removedOn);
         document.put("removedReason", this.removedReason);
         document.put("removedAt", this.removedAt);
 
@@ -129,6 +137,7 @@ public class Grant extends Documented implements IScoped, IRemovable, ISendable,
             info.add("Removed At: " + this.getRemovedAtDate());
             info.add("Removed By: " + this.getRemovedByName());
             info.add("Removed For: " + this.getRemovedReason());
+            info.add("Removed On: " + this.getRemovedOn());
         }
 
         return info;
@@ -151,6 +160,7 @@ public class Grant extends Documented implements IScoped, IRemovable, ISendable,
             info.add("&cRemoved At: " + this.getRemovedAtDate());
             info.add("&cRemoved By: " + this.getRemovedByName());
             info.add("&cRemoved For: " + this.getRemovedReason());
+            info.add("&cRemoved On: " + this.getRemovedOn());
         }
 
         return info;

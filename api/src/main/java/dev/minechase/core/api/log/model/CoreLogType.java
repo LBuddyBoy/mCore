@@ -1,6 +1,8 @@
 package dev.minechase.core.api.log.model;
 
 import dev.minechase.core.api.log.model.impl.*;
+import dev.minechase.core.api.log.model.impl.rank.RankCreationLog;
+import dev.minechase.core.api.log.model.impl.rank.RankDeletionLog;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bson.Document;
@@ -11,7 +13,9 @@ import java.util.function.Function;
 @AllArgsConstructor
 public enum CoreLogType {
 
+    IP_CHANGED("&d&lUSER IP CHANGED", IPChangedLog::new),
     RANK_CREATED("&a&lRANK CREATED", RankCreationLog::new),
+    RANK_DELETED("&c&lRANK DELETED", RankDeletionLog::new),
     GRANT_CREATED("&b&lGRANT CREATED", GrantCreationLog::new),
     GRANT_REMOVED("&b&lGRANT REMOVED", GrantRemoveLog::new),
     PUNISHMENT_CREATED("&c&lPUNISHMENT CREATED", PunishmentCreationLog::new),

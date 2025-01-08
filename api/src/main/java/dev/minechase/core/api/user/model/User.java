@@ -1,10 +1,13 @@
 package dev.minechase.core.api.user.model;
 
+import com.google.gson.reflect.TypeToken;
+import dev.lbuddyboy.commons.api.APIConstants;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.grant.grant.Grant;
 import dev.minechase.core.api.rank.model.Rank;
 import lombok.Data;
 import lombok.Getter;
+import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -19,7 +22,6 @@ public class User {
     private String name, currentIpAddress;
     private long firstJoinAt;
     private Grant activeGrant;
-    private List<String> ipHistory = new ArrayList<>();
     private UserMetadata persistentMetadata = new UserMetadata();
 
     private transient boolean changedIps;
@@ -32,6 +34,7 @@ public class User {
     public User(UUID uniqueId, String name) {
         this.uniqueId = uniqueId;
         this.name = name;
+        this.activeGrant = Grant.DEFAULT_GRANT(this.uniqueId);
     }
 
     public boolean hasPlayedBefore() {
@@ -45,7 +48,15 @@ public class User {
     }
 
     public String getColoredName() {
-        return this.getRank() == null ? "&f" + this.name : "<blend:" + this.getRank().getPrimaryColor() + ";" + this.getRank().getSecondaryColor() + ">" + this.name + "</>";
+        Rank rank = this.getRank();
+
+        return rank == null ? "&f" + this.name : "<blend:" + rank.getPrimaryColor() + ";" + rank.getSecondaryColor() + ">" + this.name + "</>";
+    }
+
+    public String getDisplayName() {
+        Rank rank = this.getRank();
+
+        return rank == null ? "&f" + this.name : rank.getPrefix() + this.name + rank.getSuffix();
     }
 
     public void updateActiveGrant() {
@@ -77,5 +88,27 @@ public class User {
 
         CoreAPI.getInstance().getUserHandler().saveUser(this);
     }
+
+    public void load(Document document) {
+        this.firstJoinAt = document.getLong("firstJoinedAt");
+        this.activeGrant = new Grant(Document.parse(document.getString("activeGrant")));
+        this.currentIpAddress = document.getString("currentIpAddress");
+        this.persistentMetadata = APIConstants.GSON.fromJson(document.getString("persistentMetadata"), METADATA.getType());
+    }
+
+    public Document toDocument() {
+        Document document = new Document();
+
+        document.put("uniqueId", this.uniqueId.toString());
+        document.put("name", this.name);
+        document.put("currentIpAddress", this.currentIpAddress);
+        document.put("firstJoinedAt", this.firstJoinAt);
+        document.put("activeGrant", this.activeGrant.toDocument().toJson());
+        document.put("persistentMetadata", APIConstants.GSON.toJson(this.persistentMetadata, METADATA.getType()));
+
+        return document;
+    }
+
+    private static final TypeToken<UserMetadata> METADATA = new TypeToken<>() {};
 
 }

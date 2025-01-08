@@ -2,7 +2,8 @@ package dev.minechase.core.api.log.model.impl;
 
 import dev.minechase.core.api.log.model.CoreLog;
 import dev.minechase.core.api.log.model.CoreLogType;
-import dev.minechase.core.api.rank.model.Rank;
+import dev.minechase.core.api.log.model.SenderLog;
+import dev.minechase.core.api.log.model.TargetLog;
 import dev.minechase.core.api.util.UUIDUtils;
 import lombok.Getter;
 import org.bson.Document;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-public class NewUserLog extends CoreLog {
+public class NewUserLog extends CoreLog implements TargetLog {
 
     private final UUID actorUUID;
 
@@ -50,4 +51,8 @@ public class NewUserLog extends CoreLog {
         return log;
     }
 
+    @Override
+    public UUID getTargetUUID() {
+        return this.actorUUID;
+    }
 }

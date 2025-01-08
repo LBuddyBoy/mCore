@@ -11,7 +11,7 @@ public class GlobalChatSetting implements ISetting {
 
     @Override
     public int getPriority() {
-        return 0;
+        return 10;
     }
 
     @Override
@@ -52,6 +52,11 @@ public class GlobalChatSetting implements ISetting {
     @Override
     public String getDisabledText() {
         return "&c&lOFF";
+    }
+
+    @Override
+    public String getPermission() {
+        return "";
     }
 
 }

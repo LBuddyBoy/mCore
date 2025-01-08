@@ -15,7 +15,9 @@ import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.ICoreAPI;
 import dev.minechase.core.api.grant.GrantHandler;
+import dev.minechase.core.api.iphistory.IPHistoryHandler;
 import dev.minechase.core.api.log.LogHandler;
+import dev.minechase.core.api.permission.PermissionHandler;
 import dev.minechase.core.api.punishment.PunishmentHandler;
 import dev.minechase.core.api.rank.RankHandler;
 import dev.minechase.core.api.user.UserHandler;
@@ -63,7 +65,8 @@ public class CoreVelocity implements ICoreAPI {
     private RankHandler rankHandler;
     private ProxyServerHandler serverHandler;
     private LogHandler logHandler;
-
+    private IPHistoryHandler ipHistoryHandler;
+    private PermissionHandler permissionHandler;
 
     @Inject
     public CoreVelocity(ProxyServer proxy, Logger logger, @DataDirectory Path dataDirectory) {
@@ -124,7 +127,9 @@ public class CoreVelocity implements ICoreAPI {
                 this.grantHandler = new GrantHandler(),
                 this.punishmentHandler = new PunishmentHandler(),
                 this.serverHandler = new ProxyServerHandler(),
-                this.logHandler = new LogHandler()
+                this.logHandler = new LogHandler(),
+                this.ipHistoryHandler = new IPHistoryHandler(),
+                this.permissionHandler = new PermissionHandler()
         ));
 
         this.modules.forEach(IModule::load);

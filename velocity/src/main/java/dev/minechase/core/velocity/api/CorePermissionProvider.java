@@ -11,6 +11,8 @@ import dev.minechase.core.api.user.model.User;
 import dev.minechase.core.velocity.CoreVelocity;
 import net.kyori.adventure.permission.PermissionChecker;
 
+import java.util.List;
+
 public class CorePermissionProvider implements com.velocitypowered.api.permission.PermissionProvider {
 
     @Override
@@ -20,10 +22,10 @@ public class CorePermissionProvider implements com.velocitypowered.api.permissio
 
         return permission -> {
 
-            Rank rank = CoreVelocity.getInstance().getUserHandler().getUser(player.getUniqueId()).getRank();
+            User user = CoreVelocity.getInstance().getUserHandler().getUser(player.getUniqueId());
+            Rank rank = user.getRank();
 
-            for (ScopedPermission scopedPermission : rank.getActivePermissions()) {
-                if (scopedPermission.isValidLocal()) continue;
+            for (ScopedPermission scopedPermission : rank.getCombinedLocalPermissions()) {
                 if (!scopedPermission.getPermissionNode().equalsIgnoreCase(permission)) continue;
 
                 return Tristate.fromBoolean(true);

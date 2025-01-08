@@ -2,6 +2,7 @@ package dev.minechase.core.bukkit.api;
 
 import dev.lbuddyboy.commons.api.util.StringUtils;
 import dev.lbuddyboy.commons.util.CC;
+import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.api.MultiScope;
 import dev.minechase.core.api.grant.GrantHandler;
 import dev.minechase.core.api.grant.grant.Grant;
@@ -25,6 +26,7 @@ public class BukkitGrantHandler extends GrantHandler {
                 targetUUID,
                 rank,
                 duration,
+                CoreAPI.getInstance().getServerName(),
                 reason,
                 new MultiScope(scopesString)
         );

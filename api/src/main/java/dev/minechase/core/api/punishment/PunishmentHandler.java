@@ -12,11 +12,13 @@ import dev.minechase.core.api.api.IExpirable;
 import dev.minechase.core.api.punishment.cache.PunishmentCacheLoader;
 import dev.minechase.core.api.punishment.model.Punishment;
 import dev.minechase.core.api.punishment.model.PunishmentProof;
+import dev.minechase.core.api.punishment.model.PunishmentSnapshot;
 import dev.minechase.core.api.punishment.model.PunishmentType;
 import dev.minechase.core.api.punishment.packet.PunishmentUpdatePacket;
 import lombok.Getter;
 import org.bson.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -102,6 +104,42 @@ public class PunishmentHandler implements IModule {
 
     public CompletableFuture<List<Punishment>> getActivePunishmentsByType(UUID targetUUID, PunishmentType type) {
         return this.getPunishments(targetUUID).thenApplyAsync((punishments) -> punishments.stream().filter(punishment -> punishment.isActive() && punishment.getType() == type).toList());
+    }
+
+    public CompletableFuture<List<Punishment>> fetchAllPunishments() {
+        return CompletableFuture.supplyAsync(() -> this.collection.find().map(Punishment::new).into(new ArrayList<>()), CoreAPI.POOL);
+    }
+
+    public CompletableFuture<List<Punishment>> fetchPunishmentsRelating(UUID targetUUID, String ipAddress) {
+        return this.fetchAllPunishments().thenApplyAsync(punishments -> punishments.stream().filter(punishment -> (punishment.isIpRelated() && punishment.getTargetIp().equals(ipAddress)) || (punishment.getTargetUUID().equals(targetUUID))).toList());
+    }
+
+    /**
+     *
+     * Fetches all punishments of a player & their ip address, then maps them to a snapshot
+     *
+     * @param targetUUID targets unique id
+     * @param ipAddress ip address of the target
+     *
+     * @return Completable future of punishment snapshots
+     */
+
+    public CompletableFuture<List<PunishmentSnapshot>> fetchSnapshotsRelating(UUID targetUUID, String ipAddress) {
+        return this.fetchAllPunishments().thenApplyAsync(punishments -> punishments
+                .stream()
+                .filter(punishment -> (punishment.isIpRelated() && punishment.getTargetIp().equals(ipAddress)) || (punishment.getTargetUUID().equals(targetUUID)))
+                .map(punishment -> new PunishmentSnapshot(punishment, (punishment.isIpRelated() && punishment.getTargetIp().equals(ipAddress)) && !punishment.getTargetUUID().equals(targetUUID)))
+                .toList()
+        );
+    }
+
+    public CompletableFuture<List<PunishmentSnapshot>> fetchSnapshotsRelating(String ipAddress) {
+        return this.fetchAllPunishments().thenApplyAsync(punishments -> punishments
+                .stream()
+                .filter(punishment -> (punishment.isIpRelated() && punishment.getTargetIp().equals(ipAddress)))
+                .map(punishment -> new PunishmentSnapshot(punishment, true))
+                .toList()
+        );
     }
 
 }

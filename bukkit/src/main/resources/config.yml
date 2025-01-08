@@ -12,3 +12,22 @@ mongo:
     username: ""
     password: ""
     database: ""
+
+whitelist:
+  enabled: false
+  enforce: "PLAYER" # PLAYER & RANK
+  rank: ""
+  players:
+    - 'LBuddyBoy'
+    - 'SeekDev'
+
+chat:
+  slowed:
+    enabled: false
+    secondsDelay: 3
+    duration: -1
+    mutedAt: 0
+  muted:
+    enabled: false
+    duration: -1
+    mutedAt: 0

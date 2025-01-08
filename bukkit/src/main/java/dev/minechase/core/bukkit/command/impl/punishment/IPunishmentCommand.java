@@ -11,8 +11,12 @@ public interface IPunishmentCommand {
 
     PunishmentType getPunishmentType();
 
+    default void punish(CommandSender sender, UUID targetUUID, String reason, long duration, boolean ipRelated, boolean shadow, boolean silent) {
+        CorePlugin.getInstance().getPunishmentHandler().punish(sender, getPunishmentType(), targetUUID, reason, duration, ipRelated, shadow, silent);
+    }
+
     default void punish(CommandSender sender, UUID targetUUID, String reason, long duration, boolean shadow, boolean silent) {
-        CorePlugin.getInstance().getPunishmentHandler().punish(sender, getPunishmentType(), targetUUID, reason, duration, shadow, silent);
+        CorePlugin.getInstance().getPunishmentHandler().punish(sender, getPunishmentType(), targetUUID, reason, duration, false, shadow, silent);
     }
 
     default void unpunish(CommandSender sender, UUID targetUUID, String reason, boolean silent) {

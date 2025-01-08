@@ -3,8 +3,10 @@ package dev.minechase.core.bukkit.settings;
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.bukkit.settings.model.ISetting;
+import dev.minechase.core.bukkit.settings.model.impl.AdminChatSetting;
 import dev.minechase.core.bukkit.settings.model.impl.GlobalChatSetting;
 import dev.minechase.core.bukkit.settings.model.impl.PrivateMessageSetting;
+import dev.minechase.core.bukkit.settings.model.impl.StaffChatSetting;
 import lombok.Getter;
 
 import java.util.*;
@@ -22,6 +24,8 @@ public class SettingsHandler implements IModule {
     public void load() {
         this.registerSetting(new GlobalChatSetting());
         this.registerSetting(new PrivateMessageSetting());
+        this.registerSetting(new StaffChatSetting());
+        this.registerSetting(new AdminChatSetting());
     }
 
     @Override

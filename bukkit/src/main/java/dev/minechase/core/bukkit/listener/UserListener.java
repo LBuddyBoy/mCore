@@ -3,6 +3,8 @@ package dev.minechase.core.bukkit.listener;
 import dev.lbuddyboy.commons.api.CommonsAPI;
 import dev.lbuddyboy.commons.api.cache.UUIDCache;
 import dev.minechase.core.api.CoreAPI;
+import dev.minechase.core.api.iphistory.model.HistoricalIP;
+import dev.minechase.core.api.iphistory.packet.HistoricalIPUpdatePacket;
 import dev.minechase.core.api.log.model.impl.NewUserLog;
 import dev.minechase.core.api.user.model.User;
 import dev.minechase.core.bukkit.CorePlugin;
@@ -31,16 +33,16 @@ public class UserListener implements Listener {
 
         user.setCurrentIpAddress(ipAddress);
 
-        if (!user.getIpHistory().contains(event.getAddress().getHostAddress())) {
-            user.getIpHistory().add(event.getAddress().getHostAddress());
+        if (changedIps) {
+            CorePlugin.getInstance().getIpHistoryHandler().applyChange(playerUUID, ipAddress);
+        } else {
+            CorePlugin.getInstance().getIpHistoryHandler().applyLogin(playerUUID, ipAddress);
         }
-
-        if (changedIps) user.save(true);
 
         CorePlugin.getInstance().getUserHandler().getUsers().put(playerUUID, user);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         User user = CorePlugin.getInstance().getUserHandler().getUser(player.getUniqueId());
@@ -50,6 +52,7 @@ public class UserListener implements Listener {
             new NewUserLog(player.getUniqueId()).createLog();
         }
 
+        CorePlugin.getInstance().getPermissionHandler().updatePermissions(player.getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

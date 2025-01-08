@@ -1,15 +1,15 @@
 package dev.minechase.core.api.log.model.impl;
 
 import dev.minechase.core.api.grant.grant.Grant;
-import dev.minechase.core.api.log.model.CoreLog;
-import dev.minechase.core.api.log.model.CoreLogType;
+import dev.minechase.core.api.log.model.*;
 import lombok.Getter;
 import org.bson.Document;
 
 import java.util.List;
+import java.util.UUID;
 
 @Getter
-public class GrantRemoveLog extends CoreLog {
+public class GrantRemoveLog extends CoreLog implements SenderLog, TargetLog, ScopedLog {
 
     private final Grant grant;
 
@@ -49,6 +49,21 @@ public class GrantRemoveLog extends CoreLog {
         log.add("&7&m-----------------------");
 
         return log;
+    }
+
+    @Override
+    public UUID getSenderUUID() {
+        return this.grant.getRemovedBy();
+    }
+
+    @Override
+    public String getSentOn() {
+        return this.grant.getRemovedOn();
+    }
+
+    @Override
+    public UUID getTargetUUID() {
+        return this.grant.getTargetUUID();
     }
 
 }
