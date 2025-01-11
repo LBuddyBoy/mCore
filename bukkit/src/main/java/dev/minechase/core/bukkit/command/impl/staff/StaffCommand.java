@@ -5,6 +5,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Name;
 import co.aikar.commands.annotation.Optional;
+import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import dev.lbuddyboy.commons.api.util.TimeDuration;
 import dev.lbuddyboy.commons.util.CC;
 import dev.lbuddyboy.commons.util.Tasks;
@@ -12,9 +13,11 @@ import dev.minechase.core.api.user.model.User;
 import dev.minechase.core.api.user.model.UserMetadata;
 import dev.minechase.core.bukkit.CoreConstants;
 import dev.minechase.core.bukkit.CorePlugin;
+import dev.minechase.core.bukkit.mod.ModModeHandler;
 import dev.minechase.core.bukkit.packet.StaffMessagePacket;
 import dev.minechase.core.bukkit.settings.model.impl.StaffChatSetting;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -84,6 +87,46 @@ public class StaffCommand extends BaseCommand {
 
             Bukkit.broadcastMessage(CC.translate(senderName + "&a cleared the chat."));
         });
+    }
+
+    @CommandAlias("staffmode|h|staff|modmode|mod")
+    @CommandPermission(CoreConstants.STAFF_PERM)
+    public void staffMode(CommandSender sender, @Name("player") @Optional OnlinePlayer target) {
+        if (sender instanceof Player senderPlayer && target == null) {
+            target = new OnlinePlayer(senderPlayer);
+        }
+
+        if (target == null) return;
+
+        if (target.getPlayer().getGameMode() == GameMode.SPECTATOR) {
+            target.getPlayer().setGameMode(GameMode.CREATIVE);
+            return;
+        }
+
+        if (CorePlugin.getInstance().getModModeHandler().isActive(target.getPlayer())) {
+            CorePlugin.getInstance().getModModeHandler().deactivate(target.getPlayer());
+            return;
+        }
+
+        CorePlugin.getInstance().getModModeHandler().activate(target.getPlayer());
+    }
+
+    @CommandAlias("freeze|ss")
+    @CommandPermission(CoreConstants.STAFF_PERM)
+    public void freeze(CommandSender sender, @Name("player") OnlinePlayer target) {
+        if (target.getPlayer().getGameMode() == GameMode.SPECTATOR) {
+            target.getPlayer().setGameMode(GameMode.CREATIVE);
+            return;
+        }
+
+        if (CorePlugin.getInstance().getModModeHandler().isFrozen(target.getPlayer())) {
+            CorePlugin.getInstance().getModModeHandler().unfreeze(target.getPlayer());
+            sender.sendMessage(CC.translate("<blend:&2;&a>Successfully unfroze " + target.getPlayer().getName() + ".</>"));
+            return;
+        }
+
+        CorePlugin.getInstance().getModModeHandler().freeze(target.getPlayer());
+        sender.sendMessage(CC.translate("<blend:&2;&a>Successfully froze " + target.getPlayer().getName() + ".</>"));
     }
 
 }

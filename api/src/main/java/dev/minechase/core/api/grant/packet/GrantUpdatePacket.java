@@ -1,10 +1,8 @@
 package dev.minechase.core.api.grant.packet;
 
 import dev.minechase.core.api.CoreAPI;
-import dev.minechase.core.api.grant.grant.Grant;
+import dev.minechase.core.api.grant.model.Grant;
 import dev.minechase.core.api.packet.ServerResponsePacket;
-import dev.minechase.core.api.punishment.model.Punishment;
-import dev.minechase.core.api.server.model.CoreServer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

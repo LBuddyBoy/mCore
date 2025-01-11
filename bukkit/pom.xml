@@ -62,6 +62,10 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>gravemc-repo</id>
+            <url>https://repo.gravemc.net/releases/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -83,5 +87,23 @@
             <version>1.1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>dev.iiahmed</groupId>
+            <artifactId>ModernDisguise</artifactId>
+            <version>3.5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.5.1</version>
+            <scope>compile</scope>
+        </dependency>
+<!--        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.5.1</version>
+            <scope>compile</scope>
+        </dependency>-->
     </dependencies>
 </project>

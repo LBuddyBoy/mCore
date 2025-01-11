@@ -169,9 +169,9 @@ public abstract class ServerHandler<T> implements IModule {
     public void removeQueuePlayer(QueuePlayer player) {
         CoreServer server = player.getServer();
 
-        if (server != null) server.updatePositions();
-
         this.queuePlayers.remove(player.getPlayerUUID());
+
+        if (server != null) server.updatePositions();
     }
 
     public void deleteQueuePlayer(QueuePlayer player, boolean async) {
@@ -180,7 +180,7 @@ public abstract class ServerHandler<T> implements IModule {
             return;
         }
 
-        this.queuePlayersCollection.deleteOne(Filters.eq("playerUUID", player.getPlayerUUID()));
+        this.queuePlayersCollection.deleteOne(Filters.eq("playerUUID", player.getPlayerUUID().toString()));
     }
 
     public void saveQueuePlayer(QueuePlayer player, boolean async) {
@@ -189,7 +189,7 @@ public abstract class ServerHandler<T> implements IModule {
             return;
         }
 
-        this.queuePlayersCollection.replaceOne(Filters.eq("playerUUID", player.getPlayerUUID()), player.toDocument(), new ReplaceOptions().upsert(true));
+        this.queuePlayersCollection.replaceOne(Filters.eq("playerUUID", player.getPlayerUUID().toString()), player.toDocument(), new ReplaceOptions().upsert(true));
     }
 
 }

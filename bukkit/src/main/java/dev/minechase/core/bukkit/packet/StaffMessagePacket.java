@@ -29,7 +29,7 @@ public class StaffMessagePacket implements Packet {
             this.messages.forEach(player::sendMessage);
         }
 
-        this.messages.forEach(s -> Bukkit.getConsoleSender().sendMessage(CC.translate(s)));
+        this.messages.forEach(s -> Bukkit.getConsoleSender().sendMessage(s));
     }
 
 }

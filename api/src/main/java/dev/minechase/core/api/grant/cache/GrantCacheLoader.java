@@ -3,8 +3,7 @@ package dev.minechase.core.api.grant.cache;
 import com.github.benmanes.caffeine.cache.AsyncCacheLoader;
 import com.mongodb.client.model.Filters;
 import dev.minechase.core.api.CoreAPI;
-import dev.minechase.core.api.grant.grant.Grant;
-import dev.minechase.core.api.punishment.model.Punishment;
+import dev.minechase.core.api.grant.model.Grant;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;

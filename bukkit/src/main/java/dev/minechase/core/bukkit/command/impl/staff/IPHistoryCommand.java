@@ -9,6 +9,7 @@ import dev.lbuddyboy.commons.util.CC;
 import dev.minechase.core.bukkit.CoreConstants;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.menu.ViewGrantsMenu;
+import dev.minechase.core.bukkit.menu.iphistory.ViewIPHistoryMenu;
 import dev.minechase.core.bukkit.model.AsyncCorePlayer;
 import org.bukkit.entity.Player;
 
@@ -28,7 +29,7 @@ public class IPHistoryCommand extends BaseCommand {
                     return;
                 }
 
-
+                new ViewIPHistoryMenu(uuid, ips.values().stream().toList()).openMenu(sender);
             });
 
         }, (throwable -> sender.sendMessage(CoreConstants.INVALID_NAME(player))));

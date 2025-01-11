@@ -43,4 +43,15 @@ public class ExceptedFuture<T> {
         });
     }
 
+    public CompletableFuture<T> whenCompleteExcept(Consumer<T> consumer, Consumer<Throwable> exception) {
+        return this.future.whenComplete((t, throwable) -> {
+            if (throwable != null) {
+                exception.accept(throwable);
+                return;
+            }
+
+            consumer.accept(t);
+        });
+    }
+
 }

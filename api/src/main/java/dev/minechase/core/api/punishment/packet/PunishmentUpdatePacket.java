@@ -1,7 +1,6 @@
 package dev.minechase.core.api.punishment.packet;
 
 import dev.minechase.core.api.CoreAPI;
-import dev.minechase.core.api.grant.grant.Grant;
 import dev.minechase.core.api.packet.ServerResponsePacket;
 import dev.minechase.core.api.punishment.model.Punishment;
 import lombok.AllArgsConstructor;

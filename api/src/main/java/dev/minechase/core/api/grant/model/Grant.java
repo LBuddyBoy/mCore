@@ -1,13 +1,9 @@
-package dev.minechase.core.api.grant.grant;
+package dev.minechase.core.api.grant.model;
 
-import dev.lbuddyboy.commons.api.APIConstants;
 import dev.lbuddyboy.commons.api.util.StringUtils;
 import dev.lbuddyboy.commons.api.util.TimeUtils;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.api.*;
-import dev.minechase.core.api.punishment.PunishmentHandler;
-import dev.minechase.core.api.punishment.model.PunishmentProof;
-import dev.minechase.core.api.punishment.model.PunishmentType;
 import dev.minechase.core.api.rank.model.Rank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -1,5 +1,6 @@
 package dev.minechase.core.bukkit.api;
 
+import dev.lbuddyboy.commons.util.Tasks;
 import dev.minechase.core.api.server.ServerHandler;
 import dev.minechase.core.api.server.model.CoreServer;
 import dev.minechase.core.api.server.model.ServerStatus;
@@ -17,7 +18,9 @@ public class BukkitServerHandler extends ServerHandler<Player> {
 
         if (getLocalServer() == null) return;
 
-        getLocalServer().setStartedAt(System.currentTimeMillis());
-        CorePlugin.getInstance().updateLocalServer();
+        Tasks.run(() -> {
+            getLocalServer().setStartedAt(System.currentTimeMillis());
+            CorePlugin.getInstance().updateLocalServer();
+        });
     }
 }

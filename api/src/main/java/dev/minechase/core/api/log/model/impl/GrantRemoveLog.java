@@ -1,6 +1,6 @@
 package dev.minechase.core.api.log.model.impl;
 
-import dev.minechase.core.api.grant.grant.Grant;
+import dev.minechase.core.api.grant.model.Grant;
 import dev.minechase.core.api.log.model.*;
 import lombok.Getter;
 import org.bson.Document;

@@ -3,13 +3,12 @@ package dev.minechase.core.api.user.model;
 import com.google.gson.reflect.TypeToken;
 import dev.lbuddyboy.commons.api.APIConstants;
 import dev.minechase.core.api.CoreAPI;
-import dev.minechase.core.api.grant.grant.Grant;
+import dev.minechase.core.api.grant.model.Grant;
 import dev.minechase.core.api.rank.model.Rank;
+import dev.minechase.core.api.tag.model.Tag;
 import lombok.Data;
-import lombok.Getter;
 import org.bson.Document;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -39,6 +38,12 @@ public class User {
 
     public boolean hasPlayedBefore() {
         return this.firstJoinAt > 0;
+    }
+
+    public Tag getActiveTag() {
+        UUID activeTag = this.persistentMetadata.getUUID(ACTIVE_TAG_KEY);
+
+        return CoreAPI.getInstance().getTagHandler().getLocalTags().get(activeTag);
     }
 
     public Rank getRank() {
@@ -95,6 +100,8 @@ public class User {
         this.activeGrant = new Grant(Document.parse(document.getString("activeGrant")));
         this.currentIpAddress = document.getString("currentIpAddress");
         this.persistentMetadata = APIConstants.GSON.fromJson(document.getString("persistentMetadata"), METADATA.getType());
+
+        this.updateActiveGrant();
     }
 
     public Document toDocument() {
@@ -110,6 +117,7 @@ public class User {
         return document;
     }
 
-    private static final TypeToken<UserMetadata> METADATA = new TypeToken<>() {};
+    public static final String ACTIVE_TAG_KEY = "active_tag";
+    public static final TypeToken<UserMetadata> METADATA = new TypeToken<>() {};
 
 }

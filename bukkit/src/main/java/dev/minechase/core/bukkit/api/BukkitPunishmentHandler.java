@@ -121,6 +121,7 @@ public class BukkitPunishmentHandler extends PunishmentHandler {
                     punishment.setRemovedAt(System.currentTimeMillis());
                     punishment.setRemovedReason(reason);
                     punishment.setRemovedSilent(silent);
+                    punishment.setRemovedOn(CorePlugin.getInstance().getServerName());
 
                     new PunishmentUpdatePacket(punishment).send();
                     new PunishmentRemoveLog(text, punishment).createLog();

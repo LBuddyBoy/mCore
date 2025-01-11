@@ -52,13 +52,13 @@ public class CoreListener implements Listener {
             return;
         }
 
-        if (player.hasPermission("core.command.staffchat") && CorePlugin.getInstance().getSettingsHandler().getSetting(StaffChatSetting.class).isEnabled(player.getUniqueId())) {
-            new StaffMessagePacket(CC.translate("&9[Staff Chat] " + user.getDisplayName() + "&7: &f") + event.getMessage()).send();
+        if (player.hasPermission("core.command.adminchat") && CorePlugin.getInstance().getSettingsHandler().getSetting(AdminChatSetting.class).isEnabled(player.getUniqueId())) {
+            new StaffMessagePacket(CC.translate("&c[Admin Chat] " + user.getDisplayName() + "&7: &f") + event.getMessage()).send();
             return;
         }
 
-        if (player.hasPermission("core.command.adminchat") && CorePlugin.getInstance().getSettingsHandler().getSetting(AdminChatSetting.class).isEnabled(player.getUniqueId())) {
-            new StaffMessagePacket(CC.translate("&c[Admin Chat] " + user.getDisplayName() + "&7: &f") + event.getMessage()).send();
+        if (player.hasPermission("core.command.staffchat") && CorePlugin.getInstance().getSettingsHandler().getSetting(StaffChatSetting.class).isEnabled(player.getUniqueId())) {
+            new StaffMessagePacket(CC.translate("&9[Staff Chat] " + user.getDisplayName() + "&7: &f") + event.getMessage()).send();
             return;
         }
 

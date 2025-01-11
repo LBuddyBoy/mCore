@@ -37,7 +37,6 @@ public class RankCommand extends BaseCommand {
 
         new RankUpdatePacket(rank).send();
         new StaffMessagePacket(CC.translate("<blend:&6;&e>[Rank Handler]</>&a " + senderName + " created the '" + rank.getName() + "' rank!")).send();
-        this.rankHandler.saveRank(rank);
         new RankCreationLog(CommandUtil.getSender(sender), rank).createLog();
     }
 
@@ -65,7 +64,6 @@ public class RankCommand extends BaseCommand {
         new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank display name! &7(" + rank.getDisplayName() + "&7)"
         )).send();
-        this.rankHandler.saveRank(rank);
     }
 
     @Subcommand("prefix")
@@ -79,7 +77,6 @@ public class RankCommand extends BaseCommand {
         new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank prefix! &7(" + rank.getPrefix() + "&7)"
         )).send();
-        this.rankHandler.saveRank(rank);
     }
 
     @Subcommand("suffix")
@@ -93,7 +90,6 @@ public class RankCommand extends BaseCommand {
         new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank suffix! &7(" + rank.getSuffix() + "&7)"
         )).send();
-        this.rankHandler.saveRank(rank);
     }
 
     @Subcommand("primary")
@@ -107,7 +103,6 @@ public class RankCommand extends BaseCommand {
         new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank primary color!"
         )).send();
-        this.rankHandler.saveRank(rank);
     }
 
     @Subcommand("secondary")
@@ -121,7 +116,6 @@ public class RankCommand extends BaseCommand {
         new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank secondary color!"
         )).send();
-        this.rankHandler.saveRank(rank);
     }
 
     @Subcommand("weight")
@@ -135,7 +129,6 @@ public class RankCommand extends BaseCommand {
         new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank weight! &7(&b" + rank.getWeight() + "&7)"
         )).send();
-        this.rankHandler.saveRank(rank);
     }
 
     @Subcommand("permission add")
@@ -151,13 +144,12 @@ public class RankCommand extends BaseCommand {
 
         String senderName = CommandUtil.getSenderName(sender);
 
-        rank.getPermissions().add(new ScopedPermission(null, permissionNode, duration.transform(), scope));
+        rank.getPermissions().add(new ScopedPermission(CommandUtil.getSender(sender), null, permissionNode, duration.transform(), CorePlugin.getInstance().getServerName(), "Rank Edit", scope));
 
         new RankUpdatePacket(rank).send();
         new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank permissions! &7(&a+" + permissionNode + "&7)"
         )).send();
-        this.rankHandler.saveRank(rank);
 
         CorePlugin.getInstance().getUserHandler().fetchUsersAsync().whenCompleteAsync((users, throwable) -> {
             if (throwable != null) {
@@ -189,7 +181,6 @@ public class RankCommand extends BaseCommand {
         new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank permissions! &7(&c-" + permissionNode + "&7)"
         )).send();
-        this.rankHandler.saveRank(rank);
 
         CorePlugin.getInstance().getUserHandler().fetchUsersAsync().whenCompleteAsync((users, throwable) -> {
             if (throwable != null) {
@@ -215,7 +206,6 @@ public class RankCommand extends BaseCommand {
         new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank scopes! &7(&d" + StringUtils.join(scope.getScopes(), ", ") + "&7)"
         )).send();
-        this.rankHandler.saveRank(rank);
     }
 
 }

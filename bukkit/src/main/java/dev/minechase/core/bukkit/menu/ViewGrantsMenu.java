@@ -4,13 +4,13 @@ import dev.lbuddyboy.commons.api.util.StringUtils;
 import dev.lbuddyboy.commons.menu.IButton;
 import dev.lbuddyboy.commons.menu.paged.IPagedMenu;
 import dev.lbuddyboy.commons.util.ItemFactory;
-import dev.minechase.core.api.grant.grant.Grant;
+import dev.minechase.core.api.grant.model.Grant;
 import dev.minechase.core.api.grant.packet.GrantUpdatePacket;
 import dev.minechase.core.api.log.model.impl.GrantRemoveLog;
 import dev.minechase.core.api.util.UUIDUtils;
+import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.util.HeadUtil;
 import lombok.AllArgsConstructor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -73,6 +73,7 @@ public class ViewGrantsMenu extends IPagedMenu {
                 factory.addToLore("&fRemoved Reason&7: &c" + this.grant.getRemovedReason());
                 factory.addToLore("&fRemoved By&7: &c" + this.grant.getRemovedByName());
                 factory.addToLore("&fRemoved At&7: &c" + this.grant.getRemovedAtDate());
+                factory.addToLore("&fRemoved On&7: &c" + this.grant.getRemovedOn());
                 factory.addToLore("&7&m--------------------------");
             } else {
                 factory.addToLore("&cClick to remove this grant.");
@@ -91,6 +92,7 @@ public class ViewGrantsMenu extends IPagedMenu {
             this.grant.setRemovedBy(player.getUniqueId());
             this.grant.setRemovedAt(System.currentTimeMillis());
             this.grant.setRemovedReason("None specified");
+            this.grant.setRemovedOn(CorePlugin.getInstance().getServerName());
 
             new GrantUpdatePacket(this.grant).send();
             new GrantRemoveLog(this.grant).createLog();

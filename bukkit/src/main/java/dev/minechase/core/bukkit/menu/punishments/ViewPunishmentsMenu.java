@@ -84,6 +84,7 @@ public class ViewPunishmentsMenu extends IPagedMenu {
                 factory.addToLore("&fRemoved Reason&7: &c" + this.punishment.getRemovedReason());
                 factory.addToLore("&fRemoved By&7: &c" + this.punishment.getRemovedByName());
                 factory.addToLore("&fRemoved At&7: &c" + this.punishment.getRemovedAtDate());
+                factory.addToLore("&fRemoved On&7: &c" + this.punishment.getRemovedOn());
                 factory.addToLore("&7&m--------------------------");
             } else {
                 factory.addToLore("&cClick to remove this punishment.");

@@ -105,6 +105,7 @@ public class UserMetadata {
 
     public UUID getUUID(String key) {
         if (!contains(key)) return null;
+        if (get(key) == null) return null;
 
         return UUID.fromString(get(key));
     }

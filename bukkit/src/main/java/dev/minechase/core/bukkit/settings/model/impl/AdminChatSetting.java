@@ -6,7 +6,7 @@ public class AdminChatSetting implements ISetting {
 
     @Override
     public String getId() {
-        return "staff_chat";
+        return "admin_chat";
     }
 
     @Override

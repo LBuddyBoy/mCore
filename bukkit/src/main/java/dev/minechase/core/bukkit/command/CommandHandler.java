@@ -11,6 +11,7 @@ import dev.minechase.core.bukkit.command.impl.punishment.impl.*;
 import dev.minechase.core.bukkit.command.impl.staff.AltsCommand;
 import dev.minechase.core.bukkit.command.impl.staff.IPHistoryCommand;
 import dev.minechase.core.bukkit.command.impl.staff.StaffCommand;
+import dev.minechase.core.bukkit.command.impl.staff.TwoFactorCommand;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -26,6 +27,7 @@ public class CommandHandler implements IModule {
 
         Arrays.asList(
                 new RankContext(),
+                new TagContext(),
                 new MultiScopeContext(),
                 new TimeDurationContext(),
                 new UUIDContext(),
@@ -38,6 +40,7 @@ public class CommandHandler implements IModule {
         this.commandManager.registerCommand(new CoreCommand());
         this.commandManager.registerCommand(new AltsCommand());
         this.commandManager.registerCommand(new RankCommand());
+        this.commandManager.registerCommand(new TagCommand());
         this.commandManager.registerCommand(new GrantsCommand());
         this.commandManager.registerCommand(new UserCommand());
         this.commandManager.registerCommand(new QueueCommand());
@@ -48,6 +51,8 @@ public class CommandHandler implements IModule {
         this.commandManager.registerCommand(new IPHistoryCommand());
         this.commandManager.registerCommand(new AdminCommand());
         this.commandManager.registerCommand(new StaffCommand());
+        this.commandManager.registerCommand(new DisguiseCommand());
+        this.commandManager.registerCommand(new TwoFactorCommand());
 
         /*
         Punishments

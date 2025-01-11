@@ -1,13 +1,9 @@
 package dev.minechase.core.bukkit;
 
-import dev.lbuddyboy.commons.api.util.StringUtils;
 import dev.lbuddyboy.commons.api.util.TimeDuration;
 import dev.lbuddyboy.commons.util.CC;
 import dev.lbuddyboy.commons.util.ConversationBuilder;
 import dev.lbuddyboy.commons.util.Tasks;
-import dev.minechase.core.api.api.MultiScope;
-import dev.minechase.core.api.grant.grant.Grant;
-import dev.minechase.core.api.grant.packet.GrantUpdatePacket;
 import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.api.util.UUIDUtils;
 import dev.minechase.core.bukkit.model.AsyncCorePlayer;
@@ -22,12 +18,15 @@ import java.util.UUID;
 
 public class CoreConstants {
 
-    public static String STAFF_PERM = "core.staff";
-    public static String ADMIN_PERM = "core.admin";
-    public static String QUEUE_BYPASS_PERM = "core.queue.bypass";
+    public static final String STAFF_PERM = "core.staff";
+    public static final String ADMIN_PERM = "core.admin";
+    public static final String QUEUE_BYPASS_PERM = "core.queue.bypass";
     public static List<String> BYPASS_LIST = Arrays.asList(
             "2732a2e3-2641-4888-81e7-de4282debeea"
     );
+    public static final String TOTP_SETUP_KEY = "totp_setup";
+    public static final String TOTP_CODE_KEY = "totp_code";
+    public static final String TOTP_SECRET_KEY = "totp_secret";
 
     public static boolean isBypassed(CommandSender sender) {
         if (sender instanceof Player player) {

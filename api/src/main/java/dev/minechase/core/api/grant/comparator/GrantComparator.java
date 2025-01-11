@@ -1,6 +1,6 @@
 package dev.minechase.core.api.grant.comparator;
 
-import dev.minechase.core.api.grant.grant.Grant;
+import dev.minechase.core.api.grant.model.Grant;
 
 import java.util.Comparator;
 

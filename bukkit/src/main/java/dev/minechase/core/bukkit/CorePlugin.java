@@ -1,9 +1,12 @@
 package dev.minechase.core.bukkit;
 
+import dev.iiahmed.disguise.DisguiseManager;
+import dev.iiahmed.disguise.DisguiseProvider;
 import dev.lbuddyboy.commons.api.CommonsAPI;
 import dev.lbuddyboy.commons.api.mongo.MongoHandler;
 import dev.lbuddyboy.commons.api.redis.RedisHandler;
 import dev.lbuddyboy.commons.api.util.IModule;
+import dev.lbuddyboy.commons.util.CC;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.ICoreAPI;
 import dev.minechase.core.api.iphistory.IPHistoryHandler;
@@ -11,9 +14,12 @@ import dev.minechase.core.api.log.LogHandler;
 import dev.minechase.core.api.rank.RankHandler;
 import dev.minechase.core.api.server.model.CoreServer;
 import dev.minechase.core.api.server.packet.ServerUpdatePacket;
+import dev.minechase.core.api.tag.TagHandler;
 import dev.minechase.core.bukkit.api.*;
 import dev.minechase.core.bukkit.listener.CoreListener;
 import dev.minechase.core.bukkit.listener.PunishmentListener;
+import dev.minechase.core.bukkit.listener.TotpListener;
+import dev.minechase.core.bukkit.mod.ModModeHandler;
 import dev.minechase.core.bukkit.settings.SettingsHandler;
 import dev.minechase.core.api.user.UserHandler;
 import dev.minechase.core.bukkit.command.CommandHandler;
@@ -36,6 +42,7 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
     private static CorePlugin instance;
 
     private final List<IModule> modules = new ArrayList<>();
+
     private CommandHandler commandHandler;
     private MongoHandler mongoHandler;
     private UserHandler userHandler;
@@ -47,8 +54,10 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
     private LogHandler logHandler;
     private IPHistoryHandler ipHistoryHandler;
     private BukkitPermissionHandler permissionHandler;
+    private TagHandler tagHandler;
     private ChatHandler chatHandler;
     private WhitelistHandler whitelistHandler;
+    private ModModeHandler modModeHandler;
 
     @Override
     public void onEnable() {
@@ -61,20 +70,20 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
         this.loadListeners();
         this.loadTasks();
 
-        new StaffMessagePacket(Arrays.asList(
+        new StaffMessagePacket(CC.translate(Arrays.asList(
                 "&7&m------------------------",
                 "&6" + getServerName() + " &eis now &aonline&e!",
                 "&7&m------------------------"
-        )).send();
+        ))).send();
     }
 
     @Override
     public void onDisable() {
-        new StaffMessagePacket(Arrays.asList(
+        new StaffMessagePacket(CC.translate(Arrays.asList(
                 "&7&m------------------------",
                 "&6" + getServerName() + " &eis now &coffline&e!",
                 "&7&m------------------------"
-        )).send();
+        ))).send();
 
         this.modules.forEach(IModule::unload);
     }
@@ -109,6 +118,9 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
     }
 
     private void loadModules() {
+        DisguiseManager.initialize(this, true);
+        DisguiseManager.getProvider().allowOverrideChat(false);
+
         this.modules.addAll(Arrays.asList(
                 this.commandHandler = new CommandHandler(),
                 this.mongoHandler = new MongoHandler(
@@ -129,8 +141,10 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
                 this.logHandler = new LogHandler(),
                 this.ipHistoryHandler = new IPHistoryHandler(),
                 this.permissionHandler = new BukkitPermissionHandler(),
+                this.tagHandler = new TagHandler(),
                 this.chatHandler = new ChatHandler(),
-                this.whitelistHandler = new WhitelistHandler()
+                this.whitelistHandler = new WhitelistHandler(),
+                this.modModeHandler = new ModModeHandler()
         ));
 
         this.modules.forEach(IModule::load);
@@ -144,6 +158,7 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
         this.getServer().getPluginManager().registerEvents(new CoreListener(), this);
         this.getServer().getPluginManager().registerEvents(new PunishmentListener(), this);
         this.getServer().getPluginManager().registerEvents(new UserListener(), this);
+        this.getServer().getPluginManager().registerEvents(new TotpListener(), this);
     }
 
 }

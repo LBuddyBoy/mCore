@@ -10,6 +10,7 @@ import dev.minechase.core.api.punishment.PunishmentHandler;
 import dev.minechase.core.api.server.ServerHandler;
 import dev.minechase.core.api.rank.RankHandler;
 import dev.minechase.core.api.server.model.CoreServer;
+import dev.minechase.core.api.tag.TagHandler;
 import dev.minechase.core.api.user.UserHandler;
 
 import java.util.Comparator;
@@ -28,6 +29,7 @@ public interface ICoreAPI {
     PermissionHandler getPermissionHandler();
     IPHistoryHandler getIpHistoryHandler();
     ServerHandler<?> getServerHandler();
+    TagHandler getTagHandler();
     LogHandler getLogHandler();
     UserHandler getUserHandler();
     void updateLocalServer();

@@ -37,6 +37,7 @@ public class RankDeletePacket extends ServerResponsePacket {
                 grant.setRemovedAt(System.currentTimeMillis());
                 grant.setRemovedReason("Rank Deleted");
                 grant.setRemovedBy(null);
+                grant.setRemovedOn(CoreAPI.getInstance().getServerName());
 
                 new GrantUpdatePacket(grant).send();
             });

@@ -1,20 +1,15 @@
 package dev.minechase.core.api.user;
 
-import com.google.gson.reflect.TypeToken;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
-import dev.lbuddyboy.commons.api.APIConstants;
 import dev.lbuddyboy.commons.api.cache.UUIDCache;
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.api.CoreAPI;
-import dev.minechase.core.api.grant.grant.Grant;
 import dev.minechase.core.api.user.model.User;
-import dev.minechase.core.api.user.model.UserMetadata;
 import dev.minechase.core.api.util.UUIDUtils;
 import lombok.Getter;
 import org.bson.Document;
-import org.bson.conversions.Bson;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -73,8 +68,6 @@ public class UserHandler implements IModule {
         } else {
             return this.saveUser(user);
         }
-
-        user.updateActiveGrant();
 
         return user;
     }

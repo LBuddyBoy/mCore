@@ -2,7 +2,6 @@ package dev.minechase.core.api.grant;
 
 import com.github.benmanes.caffeine.cache.AsyncLoadingCache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.google.gson.reflect.TypeToken;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
@@ -10,13 +9,8 @@ import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.grant.cache.GrantCacheLoader;
 import dev.minechase.core.api.grant.comparator.GrantComparator;
-import dev.minechase.core.api.grant.grant.Grant;
+import dev.minechase.core.api.grant.model.Grant;
 import dev.minechase.core.api.grant.packet.GrantUpdatePacket;
-import dev.minechase.core.api.punishment.cache.PunishmentCacheLoader;
-import dev.minechase.core.api.punishment.model.Punishment;
-import dev.minechase.core.api.punishment.model.PunishmentProof;
-import dev.minechase.core.api.punishment.packet.PunishmentUpdatePacket;
-import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.api.user.model.User;
 import lombok.Getter;
 import org.bson.Document;
@@ -68,6 +62,11 @@ public class GrantHandler implements IModule {
                 this.grants.put(grant.getTargetUUID(), CompletableFuture.completedFuture(grants));
             });
         }
+
+        User user = CoreAPI.getInstance().getUserHandler().getUser(grant.getTargetUUID());
+        if (user == null) return;
+
+        user.updateActiveGrant();
     }
 
     public List<Grant> updateGrantExpiry(List<Grant> grants) {
@@ -89,19 +88,6 @@ public class GrantHandler implements IModule {
         }
 
         this.collection.replaceOne(Filters.eq("id", grant.getId().toString()), grant.toDocument(), new ReplaceOptions().upsert(true));
-
-        /**
-         * Update user's grant everytime their grants are saved.
-         */
-
-        CoreAPI.getInstance().getUserHandler().getOrCreateAsync(grant.getTargetUUID()).whenCompleteAsync(((user, t) -> {
-            if (t != null) {
-                t.printStackTrace();
-                return;
-            }
-
-            user.updateActiveGrant();
-        }));
     }
 
     public CompletableFuture<List<Grant>> getGrants(UUID targetUUID) {
