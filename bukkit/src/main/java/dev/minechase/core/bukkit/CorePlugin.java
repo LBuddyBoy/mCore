@@ -11,6 +11,7 @@ import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.ICoreAPI;
 import dev.minechase.core.api.iphistory.IPHistoryHandler;
 import dev.minechase.core.api.log.LogHandler;
+import dev.minechase.core.api.prefix.PrefixHandler;
 import dev.minechase.core.api.rank.RankHandler;
 import dev.minechase.core.api.server.model.CoreServer;
 import dev.minechase.core.api.server.packet.ServerUpdatePacket;
@@ -54,10 +55,14 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
     private LogHandler logHandler;
     private IPHistoryHandler ipHistoryHandler;
     private BukkitPermissionHandler permissionHandler;
+    private PrefixHandler prefixHandler;
     private TagHandler tagHandler;
+    private BukkitReportHandler reportHandler;
     private ChatHandler chatHandler;
-    private WhitelistHandler whitelistHandler;
     private ModModeHandler modModeHandler;
+    private RebootHandler rebootHandler;
+    private WhitelistHandler whitelistHandler;
+    private TipHandler tipHandler;
 
     @Override
     public void onEnable() {
@@ -141,10 +146,14 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
                 this.logHandler = new LogHandler(),
                 this.ipHistoryHandler = new IPHistoryHandler(),
                 this.permissionHandler = new BukkitPermissionHandler(),
+                this.prefixHandler = new PrefixHandler(),
                 this.tagHandler = new TagHandler(),
+                this.reportHandler = new BukkitReportHandler(),
                 this.chatHandler = new ChatHandler(),
+                this.modModeHandler = new ModModeHandler(),
+                this.rebootHandler = new RebootHandler(),
                 this.whitelistHandler = new WhitelistHandler(),
-                this.modModeHandler = new ModModeHandler()
+                this.tipHandler = new TipHandler()
         ));
 
         this.modules.forEach(IModule::load);

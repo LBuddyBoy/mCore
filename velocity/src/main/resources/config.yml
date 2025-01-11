@@ -1,5 +1,6 @@
 serverName: "Proxy"
-serverGroup: "GLOBAL"
+serverGroups:
+  - 'GLOBAL'
 
 mongo:
   host: "localhost"
@@ -10,3 +11,35 @@ mongo:
     username: ""
     password: ""
     database: ""
+
+lock-down:
+  active: false
+  message: "&cExample Network is currently locked down\nOnly Default ranks and up can join.\n Check out our website for more info www.example.net"
+  rank: "Default"
+  motd:
+    normal:
+      line-one: '            <blend:&6;&e>Example Network</> &#FF0000[1.13-1.21]'
+      line-two: '              <blend:#38E500;#00BC0B>&lMAINTENANCE IS ACTIVE</>'
+    legacy:
+      line-one: '            &6Core Network &c[1.13-1.21]'
+      line-two: '              &a&lMAINTENANCE IS ACTIVE'
+    favicon: "server-icon.png"
+  bypass: []
+  ip-bypass: []
+  duration: -1
+  started-at: -1
+
+motd-timer:
+  override-lockdown: false
+  center-context: true
+  header: "<blend:#327637;#c9ff99>→ MOTD Timer Header</>"
+
+motds:
+  discord:
+    favicon: "server-icon.png"
+    normal:
+      line-one: '            <blend:&6;&e>Example Network</> &#FF0000[1.13-1.21]'
+      line-two: '            &a&l» &9&lDISCORD &9discord.gg/example &a&l«'
+    legacy:
+      line-one: '            &6Example Network &c[1.13-1.21]'
+      line-two: '            &a&l» &9&lDISCORD &9discord.gg/example &a&l«'

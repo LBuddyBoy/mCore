@@ -1,5 +1,6 @@
 package dev.minechase.core.velocity;
 
+import co.aikar.commands.VelocityCommandManager;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.Subscribe;
@@ -18,13 +19,19 @@ import dev.minechase.core.api.grant.GrantHandler;
 import dev.minechase.core.api.iphistory.IPHistoryHandler;
 import dev.minechase.core.api.log.LogHandler;
 import dev.minechase.core.api.permission.PermissionHandler;
+import dev.minechase.core.api.prefix.PrefixHandler;
 import dev.minechase.core.api.punishment.PunishmentHandler;
 import dev.minechase.core.api.rank.RankHandler;
+import dev.minechase.core.api.report.ReportHandler;
+import dev.minechase.core.api.tag.TagHandler;
 import dev.minechase.core.api.user.UserHandler;
 import dev.minechase.core.velocity.api.ProxyServerHandler;
+import dev.minechase.core.velocity.command.CommandHandler;
 import dev.minechase.core.velocity.listener.HubListener;
 import dev.minechase.core.velocity.listener.PermissionListener;
 import dev.minechase.core.velocity.listener.UserListener;
+import dev.minechase.core.velocity.lockdown.LockdownHandler;
+import dev.minechase.core.velocity.motd.MOTDHandler;
 import dev.minechase.core.velocity.util.config.Config;
 import lombok.Getter;
 import net.md_5.bungee.config.Configuration;
@@ -58,6 +65,7 @@ public class CoreVelocity implements ICoreAPI {
     private final List<IModule> modules = new ArrayList<>();
     private Config configFile;
 
+    private CommandHandler commandHandler;
     private MongoHandler mongoHandler;
     private UserHandler userHandler;
     private PunishmentHandler punishmentHandler;
@@ -67,6 +75,11 @@ public class CoreVelocity implements ICoreAPI {
     private LogHandler logHandler;
     private IPHistoryHandler ipHistoryHandler;
     private PermissionHandler permissionHandler;
+    private ReportHandler reportHandler;
+    private PrefixHandler prefixHandler;
+    private TagHandler tagHandler;
+    private LockdownHandler lockdownHandler;
+    private MOTDHandler motdHandler;
 
     @Inject
     public CoreVelocity(ProxyServer proxy, Logger logger, @DataDirectory Path dataDirectory) {
@@ -81,6 +94,9 @@ public class CoreVelocity implements ICoreAPI {
         this.configFile = new Config("config");
 
         this.start();
+
+        for (CoreLocale value : CoreLocale.values()) value.loadDefault();
+
         this.loadModules();
         this.loadListeners();
     }
@@ -92,12 +108,12 @@ public class CoreVelocity implements ICoreAPI {
 
     @Override
     public String getServerName() {
-        return "Proxy";
+        return this.getConfig().getString("serverName");
     }
 
     @Override
     public List<String> getLocalServerGroups() {
-        return Arrays.asList("GLOBAL");
+        return this.getConfig().getStringList("serverGroups");
     }
 
     public RedisHandler getRedisHandler() {
@@ -111,7 +127,7 @@ public class CoreVelocity implements ICoreAPI {
 
     private void loadModules() {
         this.modules.addAll(Arrays.asList(
-//                this.commandHandler = new CommandHandler(),
+                this.commandHandler = new CommandHandler(new VelocityCommandManager(proxy, instance)),
                 this.mongoHandler = new MongoHandler(
                         getConfig().getString("mongo.host"),
                         getConfig().getInt("mongo.port"),
@@ -128,7 +144,12 @@ public class CoreVelocity implements ICoreAPI {
                 this.serverHandler = new ProxyServerHandler(),
                 this.logHandler = new LogHandler(),
                 this.ipHistoryHandler = new IPHistoryHandler(),
-                this.permissionHandler = new PermissionHandler()
+                this.permissionHandler = new PermissionHandler(),
+                this.prefixHandler = new PrefixHandler(),
+                this.reportHandler = new ReportHandler(),
+                this.tagHandler = new TagHandler(),
+                this.lockdownHandler = new LockdownHandler(),
+                this.motdHandler = new MOTDHandler()
         ));
 
         this.modules.forEach(IModule::load);
@@ -138,6 +159,7 @@ public class CoreVelocity implements ICoreAPI {
         this.getProxy().getEventManager().register(this, new HubListener());
         this.getProxy().getEventManager().register(this, new PermissionListener());
         this.getProxy().getEventManager().register(this, new UserListener());
+        this.getProxy().getEventManager().register(this, this.motdHandler);
     }
 
     public void reload() {

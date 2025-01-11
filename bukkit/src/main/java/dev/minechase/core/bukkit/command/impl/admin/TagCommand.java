@@ -113,6 +113,7 @@ public class TagCommand extends BaseCommand {
 
     @Subcommand("scope set")
     @CommandCompletion("@tags @scopes")
+    @CommandPermission("core.command.tag")
     public void scopeSet(CommandSender sender, @Name("tag") Tag tag, @Name("scope") MultiScope scope) {
         String senderName = CommandUtil.getSenderName(sender);
 

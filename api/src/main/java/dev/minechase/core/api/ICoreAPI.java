@@ -6,7 +6,9 @@ import dev.minechase.core.api.grant.GrantHandler;
 import dev.minechase.core.api.iphistory.IPHistoryHandler;
 import dev.minechase.core.api.log.LogHandler;
 import dev.minechase.core.api.permission.PermissionHandler;
+import dev.minechase.core.api.prefix.PrefixHandler;
 import dev.minechase.core.api.punishment.PunishmentHandler;
+import dev.minechase.core.api.report.ReportHandler;
 import dev.minechase.core.api.server.ServerHandler;
 import dev.minechase.core.api.rank.RankHandler;
 import dev.minechase.core.api.server.model.CoreServer;
@@ -29,6 +31,8 @@ public interface ICoreAPI {
     PermissionHandler getPermissionHandler();
     IPHistoryHandler getIpHistoryHandler();
     ServerHandler<?> getServerHandler();
+    PrefixHandler getPrefixHandler();
+    ReportHandler getReportHandler();
     TagHandler getTagHandler();
     LogHandler getLogHandler();
     UserHandler getUserHandler();

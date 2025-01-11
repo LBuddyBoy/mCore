@@ -1,12 +1,9 @@
 package dev.minechase.core.velocity.listener;
 
-import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
-import com.velocitypowered.api.event.player.ServerPostConnectEvent;
-import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import dev.minechase.core.api.user.model.User;
@@ -14,7 +11,6 @@ import dev.minechase.core.velocity.CoreVelocity;
 import dev.minechase.core.velocity.util.CC;
 import net.kyori.adventure.text.Component;
 
-import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
 public class UserListener {

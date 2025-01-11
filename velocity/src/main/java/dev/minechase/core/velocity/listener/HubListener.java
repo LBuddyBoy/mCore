@@ -1,14 +1,9 @@
 package dev.minechase.core.velocity.listener;
 
-import com.velocitypowered.api.event.ResultedEvent;
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.connection.LoginEvent;
-import com.velocitypowered.api.event.connection.PostLoginEvent;
-import com.velocitypowered.api.event.connection.PreLoginEvent;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.server.model.CoreServer;
 import dev.minechase.core.velocity.CoreVelocity;
 import dev.minechase.core.velocity.util.CC;

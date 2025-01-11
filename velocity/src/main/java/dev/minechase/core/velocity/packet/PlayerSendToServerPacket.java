@@ -1,6 +1,5 @@
 package dev.minechase.core.velocity.packet;
 
-import com.velocitypowered.api.proxy.server.RegisteredServer;
 import dev.lbuddyboy.commons.api.redis.packet.Packet;
 import dev.minechase.core.api.util.UUIDUtils;
 import dev.minechase.core.velocity.CoreVelocity;

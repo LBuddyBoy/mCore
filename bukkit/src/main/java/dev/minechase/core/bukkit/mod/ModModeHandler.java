@@ -8,6 +8,7 @@ import dev.minechase.core.bukkit.mod.model.ModItem;
 import dev.minechase.core.bukkit.mod.model.ModMode;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -190,7 +191,7 @@ public class ModModeHandler implements IModule, Listener {
         ItemStack item = event.getItem();
 
         if (item == null) return;
-        if (ModItem.RANDOM_TP.getItem().isSimilar(item)) return;
+        if (!ModItem.RANDOM_TP.getItem().isSimilar(item)) return;
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
         ModItem.RANDOM_TP.getConsumer().accept(player, null);
@@ -203,7 +204,7 @@ public class ModModeHandler implements IModule, Listener {
         ItemStack item = event.getItem();
 
         if (item == null) return;
-        if (ModItem.SPECTATOR.getItem().isSimilar(item)) return;
+        if (!ModItem.SPECTATOR.getItem().isSimilar(item)) return;
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
         ModItem.SPECTATOR.getConsumer().accept(player, null);
@@ -214,6 +215,8 @@ public class ModModeHandler implements IModule, Listener {
     private void onGameModeChange(PlayerGameModeChangeEvent event) {
         Player player = event.getPlayer();
         if (!isActive(player)) return;
+        if (player.getGameMode() == GameMode.CREATIVE && event.getNewGameMode() == GameMode.SPECTATOR) return;
+        if (player.getGameMode() == GameMode.SPECTATOR && event.getNewGameMode() == GameMode.CREATIVE) return;
 
         event.setCancelled(true);
     }

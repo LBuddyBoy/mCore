@@ -27,6 +27,7 @@ public class CommandHandler implements IModule {
 
         Arrays.asList(
                 new RankContext(),
+                new PrefixContext(),
                 new TagContext(),
                 new MultiScopeContext(),
                 new TimeDurationContext(),
@@ -37,9 +38,13 @@ public class CommandHandler implements IModule {
 
         this.commandManager.getCommandCompletions().registerCompletion("rankPermissions", new RankContext.RankPermissionCompletion());
 
+        this.commandManager.registerCommand(new ReportCommand());
         this.commandManager.registerCommand(new CoreCommand());
         this.commandManager.registerCommand(new AltsCommand());
+        this.commandManager.registerCommand(new RebootCommand());
+        this.commandManager.registerCommand(new FilterCommand());
         this.commandManager.registerCommand(new RankCommand());
+        this.commandManager.registerCommand(new PrefixCommand());
         this.commandManager.registerCommand(new TagCommand());
         this.commandManager.registerCommand(new GrantsCommand());
         this.commandManager.registerCommand(new UserCommand());

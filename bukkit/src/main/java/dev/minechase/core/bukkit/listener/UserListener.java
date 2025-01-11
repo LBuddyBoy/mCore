@@ -80,6 +80,8 @@ public class UserListener implements Listener {
         Player player = event.getPlayer();
         User user = CorePlugin.getInstance().getUserHandler().getUser(player.getUniqueId());
 
+        user.getPendingMessages().clear();
+
         user.save(true);
         CorePlugin.getInstance().getUserHandler().getUsers().remove(player.getUniqueId());
     }

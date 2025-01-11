@@ -4,11 +4,13 @@ import com.google.gson.reflect.TypeToken;
 import dev.lbuddyboy.commons.api.APIConstants;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.grant.model.Grant;
+import dev.minechase.core.api.prefix.model.Prefix;
 import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.api.tag.model.Tag;
 import lombok.Data;
 import org.bson.Document;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +24,7 @@ public class User {
     private long firstJoinAt;
     private Grant activeGrant;
     private UserMetadata persistentMetadata = new UserMetadata();
+    private List<String> pendingMessages = new ArrayList<>();
 
     private transient boolean changedIps;
     private transient UserMetadata localMetadata = new UserMetadata();
@@ -46,6 +49,12 @@ public class User {
         return CoreAPI.getInstance().getTagHandler().getLocalTags().get(activeTag);
     }
 
+    public Prefix getActivePrefix() {
+        UUID activePrefix = this.persistentMetadata.getUUID(ACTIVE_PREFIX_KEY);
+
+        return CoreAPI.getInstance().getPrefixHandler().getLocalPrefixes().get(activePrefix);
+    }
+
     public Rank getRank() {
         if (this.activeGrant == null) return CoreAPI.getInstance().getRankHandler().getDefaultRank();
 
@@ -64,25 +73,30 @@ public class User {
         return rank == null ? "&f" + this.name : rank.getPrefix() + this.name + rank.getSuffix();
     }
 
-    public void updateActiveGrant() {
-        CoreAPI.getInstance().getGrantHandler().getGrants(this.uniqueId).whenCompleteAsync((grants, throwable) -> {
+    public CompletableFuture<Grant> updateActiveGrant() {
+        return CoreAPI.getInstance().getGrantHandler().getGrants(this.uniqueId).thenApplyAsync(grants -> {
             List<Grant> sortedGrants = grants.stream().filter(
                     other -> other.isValidLocal() && !other.isRemoved() && !other.isExpired()
             ).sorted(Comparator.comparingInt(Grant::getWeight)).toList();
 
             if (sortedGrants.isEmpty()) {
-                setActiveGrant(Grant.DEFAULT_GRANT(this.uniqueId));
+                Grant grant = Grant.DEFAULT_GRANT(this.uniqueId);
+                setActiveGrant(grant);
                 save(true);
-                return;
+                CoreAPI.getInstance().getPermissionHandler().updatePermissions(this.uniqueId);
+                return grant;
             }
 
             Grant selected = sortedGrants.getFirst();
 
-            if (this.getActiveGrant().equals(selected)) return;
+            if (this.getActiveGrant().equals(selected)) return this.getActiveGrant();
 
             CoreAPI.getInstance().getGrantHandler().onRankChange(this, this.activeGrant, selected);
             setActiveGrant(selected);
             save(true);
+            CoreAPI.getInstance().getPermissionHandler().updatePermissions(this.uniqueId);
+
+            return selected;
         });
     }
 
@@ -100,6 +114,7 @@ public class User {
         this.activeGrant = new Grant(Document.parse(document.getString("activeGrant")));
         this.currentIpAddress = document.getString("currentIpAddress");
         this.persistentMetadata = APIConstants.GSON.fromJson(document.getString("persistentMetadata"), METADATA.getType());
+        this.pendingMessages = document.getList("pendingMessages", String.class, new ArrayList<>());
 
         this.updateActiveGrant();
     }
@@ -111,6 +126,7 @@ public class User {
         document.put("name", this.name);
         document.put("currentIpAddress", this.currentIpAddress);
         document.put("firstJoinedAt", this.firstJoinAt);
+        document.put("pendingMessages", this.pendingMessages);
         document.put("activeGrant", this.activeGrant.toDocument().toJson());
         document.put("persistentMetadata", APIConstants.GSON.toJson(this.persistentMetadata, METADATA.getType()));
 
@@ -118,6 +134,7 @@ public class User {
     }
 
     public static final String ACTIVE_TAG_KEY = "active_tag";
+    public static final String ACTIVE_PREFIX_KEY = "active_prefix";
     public static final TypeToken<UserMetadata> METADATA = new TypeToken<>() {};
 
 }

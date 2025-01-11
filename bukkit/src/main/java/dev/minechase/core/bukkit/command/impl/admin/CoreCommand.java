@@ -5,6 +5,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Name;
 import co.aikar.commands.annotation.Subcommand;
+import dev.lbuddyboy.commons.api.util.IModule;
 import dev.lbuddyboy.commons.api.util.TimeDuration;
 import dev.lbuddyboy.commons.util.CC;
 import dev.minechase.core.api.CoreAPI;
@@ -26,6 +27,14 @@ public class CoreCommand extends BaseCommand {
     private static final UUID SENDER_UUID = null;
     private static final UUID TARGET_UUID = UUID.fromString("2732a2e3-2641-4888-81e7-de4282debeea");
     private static final String TARGET_IP = "testing_ip";
+
+    @Subcommand("reload")
+    @CommandPermission("core.owner")
+    public void reload(CommandSender sender) {
+        CorePlugin.getInstance().reloadConfig();
+        CorePlugin.getInstance().getModules().forEach(IModule::reload);
+        sender.sendMessage(CC.translate("&aReloaded mCore config.yml"));
+    }
 
     @Subcommand("test punishments save")
     @CommandPermission("core.owner")

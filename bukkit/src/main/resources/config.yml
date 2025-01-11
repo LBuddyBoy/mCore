@@ -1,7 +1,18 @@
 serverName: "Hub-01"
-serverGroup:
+serverGroups:
   - 'GLOBAL'
   - 'HUBS'
+
+filter:
+  - "nigger"
+  - "nigga"
+  - "faggot"
+  - "bean"
+  - "beaner"
+  - "gook"
+  - "chink"
+
+rebootEvery: "24h"
 
 mongo:
   host: "localhost"
@@ -31,3 +42,14 @@ chat:
     enabled: false
     duration: -1
     mutedAt: 0
+
+tips:
+  enabled: true
+  announceEvery: "5m"
+  messages:
+    example_1:
+      - '<blend:&6;&e>Example #1 Tip Message</>'
+    example_2:
+      - '<blend:&6;&e>Example #2 Tip Message</>'
+    example_3:
+      - '<blend:&6;&e>Example #3 Tip Message</>'
