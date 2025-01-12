@@ -10,7 +10,7 @@ import dev.minechase.core.velocity.CoreVelocity;
 import java.net.InetSocketAddress;
 import java.util.Optional;
 
-public class ProxyServerHandler extends ServerHandler<Player> {
+public class ProxyServerHandler extends ServerHandler {
 
     @Override
     public void load() {

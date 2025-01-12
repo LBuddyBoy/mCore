@@ -1,4 +1,4 @@
-package dev.minechase.core.api.log.model.impl;
+package dev.minechase.core.api.log.model.impl.punishment;
 
 import dev.minechase.core.api.log.model.*;
 import dev.minechase.core.api.punishment.model.Punishment;

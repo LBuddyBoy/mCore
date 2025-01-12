@@ -1,5 +1,6 @@
 package dev.minechase.core.bukkit.listener;
 
+import com.mojang.authlib.properties.Property;
 import dev.lbuddyboy.commons.api.CommonsAPI;
 import dev.lbuddyboy.commons.api.cache.UUIDCache;
 import dev.lbuddyboy.commons.api.util.StringUtils;
@@ -12,6 +13,7 @@ import dev.minechase.core.api.user.model.User;
 import dev.minechase.core.bukkit.CoreConstants;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.util.totp.TwoFactorUtil;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -44,6 +46,11 @@ public class UserListener implements Listener {
         User user = CorePlugin.getInstance().getUserHandler().getUser(player.getUniqueId());
         String ipAddress = player.getAddress().getAddress().getHostAddress();
         boolean changedIps = user.getCurrentIpAddress() != null && !user.getCurrentIpAddress().equals(ipAddress);
+        Property property = ((CraftPlayer)player).getProfile().getProperties().get("textures").stream().findFirst().orElse(null);
+
+        if (property != null) {
+            user.getPersistentMetadata().set(User.HEAD_TEXTURE_KEY, property.value());
+        }
 
         CorePlugin.getInstance().getPermissionHandler().updatePermissions(player.getUniqueId());
 

@@ -28,11 +28,11 @@ public enum ModItem {
     })),
 
     REPORTS(new ItemFactory(Material.BOOKSHELF).displayName("<blend:&6;&e>Reports</>").build(), 3, ((player, target) -> {
-
+        player.chat("/reports");
     })),
 
     ONLINE_STAFF(new ItemFactory(Material.PLAYER_HEAD).displayName("<blend:&6;&e>Online Staff</>").build(), 5, ((player, target) -> {
-
+        player.chat("/onlinestaff");
     })),
 
     THRU_COMPASS(new ItemFactory(Material.COMPASS).displayName("<blend:&6;&e>Thru Compass</>").build(), 7, ((player, target) -> {

@@ -13,6 +13,7 @@
         <module>api</module>
         <module>bukkit</module>
         <module>velocity</module>
+        <module>jda</module>
     </modules>
 
     <properties>

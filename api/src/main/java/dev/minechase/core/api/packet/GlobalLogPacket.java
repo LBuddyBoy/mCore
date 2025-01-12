@@ -21,6 +21,8 @@ public class GlobalLogPacket implements Packet {
 
     @Override
     public void receive() {
+        if (CoreAPI.getInstance().getLogger() == null) return;
+
         this.messages.forEach(s -> {
             CoreAPI.getInstance().getLogger().info(s);
         });

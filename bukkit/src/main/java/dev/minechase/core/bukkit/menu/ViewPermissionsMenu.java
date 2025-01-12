@@ -3,14 +3,20 @@ package dev.minechase.core.bukkit.menu;
 import dev.lbuddyboy.commons.api.util.StringUtils;
 import dev.lbuddyboy.commons.menu.IButton;
 import dev.lbuddyboy.commons.menu.paged.IPagedMenu;
+import dev.lbuddyboy.commons.util.CC;
+import dev.lbuddyboy.commons.util.ConversationBuilder;
 import dev.lbuddyboy.commons.util.ItemFactory;
+import dev.lbuddyboy.commons.util.Tasks;
 import dev.minechase.core.api.api.ScopedPermission;
+import dev.minechase.core.api.grant.packet.GrantUpdatePacket;
+import dev.minechase.core.api.log.model.impl.grant.GrantRemoveLog;
 import dev.minechase.core.api.log.model.impl.permission.PermissionRemoveLog;
 import dev.minechase.core.api.permission.packet.PermissionUpdatePacket;
 import dev.minechase.core.api.util.UUIDUtils;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.util.HeadUtil;
 import lombok.AllArgsConstructor;
+import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -89,13 +95,25 @@ public class ViewPermissionsMenu extends IPagedMenu {
                 return;
             }
 
-            this.permission.setRemovedBy(player.getUniqueId());
-            this.permission.setRemovedAt(System.currentTimeMillis());
-            this.permission.setRemovedReason("None specified");
-            this.permission.setRemovedOn(CorePlugin.getInstance().getServerName());
+            player.closeInventory();
+            player.beginConversation(new ConversationBuilder(player).stringPrompt("&aType 'cancel' to cancel this process, otherwise type the reason of removal.", (ctx, response) -> {
 
-            new PermissionUpdatePacket(this.permission).send();
-            new PermissionRemoveLog(this.permission).createLog();
+                if (!response.equalsIgnoreCase("cancel")) {
+                    this.permission.setRemovedBy(player.getUniqueId());
+                    this.permission.setRemovedAt(System.currentTimeMillis());
+                    this.permission.setRemovedReason(response);
+                    this.permission.setRemovedOn(CorePlugin.getInstance().getServerName());
+
+                    new PermissionUpdatePacket(this.permission).send();
+                    new PermissionRemoveLog(this.permission).createLog();
+                } else {
+                    ctx.getForWhom().sendRawMessage(CC.translate("&cProcess cancelled."));
+                }
+
+                Tasks.run(() -> openMenu(player));
+
+                return Prompt.END_OF_CONVERSATION;
+            }).echo(false).build());
         }
     }
 

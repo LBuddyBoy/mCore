@@ -1,8 +1,8 @@
 package dev.minechase.core.bukkit.api;
 
 import dev.lbuddyboy.commons.util.CC;
-import dev.minechase.core.api.log.model.impl.PunishmentCreationLog;
-import dev.minechase.core.api.log.model.impl.PunishmentRemoveLog;
+import dev.minechase.core.api.log.model.impl.punishment.PunishmentCreationLog;
+import dev.minechase.core.api.log.model.impl.punishment.PunishmentRemoveLog;
 import dev.minechase.core.api.punishment.PunishmentHandler;
 import dev.minechase.core.api.punishment.model.Punishment;
 import dev.minechase.core.api.punishment.model.PunishmentType;

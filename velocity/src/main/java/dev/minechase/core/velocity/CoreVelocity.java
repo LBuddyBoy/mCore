@@ -18,11 +18,13 @@ import dev.minechase.core.api.ICoreAPI;
 import dev.minechase.core.api.grant.GrantHandler;
 import dev.minechase.core.api.iphistory.IPHistoryHandler;
 import dev.minechase.core.api.log.LogHandler;
+import dev.minechase.core.api.note.NoteHandler;
 import dev.minechase.core.api.permission.PermissionHandler;
 import dev.minechase.core.api.prefix.PrefixHandler;
 import dev.minechase.core.api.punishment.PunishmentHandler;
 import dev.minechase.core.api.rank.RankHandler;
 import dev.minechase.core.api.report.ReportHandler;
+import dev.minechase.core.api.sync.SyncHandler;
 import dev.minechase.core.api.tag.TagHandler;
 import dev.minechase.core.api.user.UserHandler;
 import dev.minechase.core.velocity.api.ProxyServerHandler;
@@ -78,6 +80,8 @@ public class CoreVelocity implements ICoreAPI {
     private ReportHandler reportHandler;
     private PrefixHandler prefixHandler;
     private TagHandler tagHandler;
+    private NoteHandler noteHandler;
+    private SyncHandler syncHandler;
     private LockdownHandler lockdownHandler;
     private MOTDHandler motdHandler;
 
@@ -148,6 +152,8 @@ public class CoreVelocity implements ICoreAPI {
                 this.prefixHandler = new PrefixHandler(),
                 this.reportHandler = new ReportHandler(),
                 this.tagHandler = new TagHandler(),
+                this.noteHandler = new NoteHandler(),
+                this.syncHandler = new SyncHandler(),
                 this.lockdownHandler = new LockdownHandler(),
                 this.motdHandler = new MOTDHandler()
         ));

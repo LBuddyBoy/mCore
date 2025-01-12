@@ -20,12 +20,16 @@ public class ServerUpdatePacket extends ServerResponsePacket {
 
     @Override
     public void onReceiveExecuteServer() {
+        if (CoreAPI.getInstance().getServerHandler() == null) return;
+
         CoreAPI.getInstance().getServerHandler().updateServer(this.server);
         CoreAPI.getInstance().getServerHandler().saveServer(this.server, true);
     }
 
     @Override
     public void onReceiveOtherServer() {
+        if (CoreAPI.getInstance().getServerHandler() == null) return;
+
         CoreAPI.getInstance().getServerHandler().updateServer(this.server);
     }
 

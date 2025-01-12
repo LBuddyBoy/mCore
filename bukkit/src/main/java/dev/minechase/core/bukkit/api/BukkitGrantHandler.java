@@ -9,7 +9,7 @@ import dev.minechase.core.api.api.ScopedPermission;
 import dev.minechase.core.api.grant.GrantHandler;
 import dev.minechase.core.api.grant.model.Grant;
 import dev.minechase.core.api.grant.packet.GrantUpdatePacket;
-import dev.minechase.core.api.log.model.impl.GrantCreationLog;
+import dev.minechase.core.api.log.model.impl.grant.GrantCreationLog;
 import dev.minechase.core.api.log.model.impl.permission.PermissionCreationLog;
 import dev.minechase.core.api.permission.packet.PermissionUpdatePacket;
 import dev.minechase.core.api.rank.model.Rank;

@@ -1,6 +1,7 @@
 package dev.minechase.core.bukkit.packet;
 
 import dev.lbuddyboy.commons.api.redis.packet.Packet;
+import dev.lbuddyboy.commons.util.CC;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -28,7 +29,7 @@ public class PlayerMessagePacket implements Packet {
         Player player = Bukkit.getPlayer(this.playerUUID);
         if (player == null) return;
 
-        this.messages.forEach(player::sendMessage);
+        this.messages.forEach(s -> player.sendMessage(CC.translate(s)));
     }
 
 }

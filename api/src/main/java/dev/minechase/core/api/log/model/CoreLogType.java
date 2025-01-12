@@ -1,8 +1,12 @@
 package dev.minechase.core.api.log.model;
 
 import dev.minechase.core.api.log.model.impl.*;
+import dev.minechase.core.api.log.model.impl.grant.GrantCreationLog;
+import dev.minechase.core.api.log.model.impl.grant.GrantRemoveLog;
 import dev.minechase.core.api.log.model.impl.permission.PermissionCreationLog;
 import dev.minechase.core.api.log.model.impl.permission.PermissionRemoveLog;
+import dev.minechase.core.api.log.model.impl.punishment.PunishmentCreationLog;
+import dev.minechase.core.api.log.model.impl.punishment.PunishmentRemoveLog;
 import dev.minechase.core.api.log.model.impl.rank.RankCreationLog;
 import dev.minechase.core.api.log.model.impl.rank.RankDeletionLog;
 import lombok.AllArgsConstructor;

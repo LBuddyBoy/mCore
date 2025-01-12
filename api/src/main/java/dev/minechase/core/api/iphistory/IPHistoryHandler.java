@@ -61,7 +61,7 @@ public class IPHistoryHandler implements IModule {
             return;
         }
 
-        this.collection.replaceOne(Filters.eq("ipAddress", historicalIP.getIpAddress()), historicalIP.toDocument(), new ReplaceOptions().upsert(true));
+        this.collection.replaceOne(Filters.eq("id", historicalIP.getId().toString()), historicalIP.toDocument(), new ReplaceOptions().upsert(true));
     }
 
     public CompletableFuture<Map<String, HistoricalIP>> getHistoricalIps(UUID playerUUID) {

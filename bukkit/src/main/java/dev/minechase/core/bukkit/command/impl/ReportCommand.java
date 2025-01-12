@@ -10,6 +10,7 @@ import dev.minechase.core.api.user.model.User;
 import dev.minechase.core.bukkit.CoreConstants;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.menu.ViewGrantsMenu;
+import dev.minechase.core.bukkit.menu.ViewReportsMenu;
 import dev.minechase.core.bukkit.model.AsyncCorePlayer;
 import dev.minechase.core.bukkit.packet.ReportCreatePacket;
 import dev.minechase.core.bukkit.packet.StaffMessagePacket;
@@ -19,6 +20,12 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 public class ReportCommand extends BaseCommand {
+
+    @CommandAlias("reports")
+    @CommandPermission("core.command.reports")
+    public void reports(Player sender) {
+        new ViewReportsMenu().openMenu(sender);
+    }
 
     @CommandAlias("report")
     @CommandCompletion("@players")

@@ -1,4 +1,4 @@
-package dev.minechase.core.api.log.model.impl;
+package dev.minechase.core.api.log.model.impl.grant;
 
 import dev.minechase.core.api.grant.model.Grant;
 import dev.minechase.core.api.log.model.*;
@@ -9,17 +9,17 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-public class GrantCreationLog extends CoreLog implements SenderLog, TargetLog, ScopedLog {
+public class GrantRemoveLog extends CoreLog implements SenderLog, TargetLog, ScopedLog {
 
     private final Grant grant;
 
-    public GrantCreationLog(Grant grant) {
-        super("&6" + grant.getSenderName() + "&e granted &6" + grant.getTargetName() + "&e the &6" + grant.getInitialRankName() + "&e rank.", CoreLogType.GRANT_CREATED);
+    public GrantRemoveLog(Grant grant) {
+        super("&6" + grant.getSenderName() + "&e removed &6" + grant.getTargetName() + "'s&e &6" + grant.getInitialRankName() + "&e grant.", CoreLogType.GRANT_CREATED);
 
         this.grant = grant;
     }
 
-    public GrantCreationLog(Document document) {
+    public GrantRemoveLog(Document document) {
         super(document);
         this.grant = new Grant(Document.parse(document.getString("grant")));
     }
@@ -53,12 +53,12 @@ public class GrantCreationLog extends CoreLog implements SenderLog, TargetLog, S
 
     @Override
     public UUID getSenderUUID() {
-        return this.grant.getSenderUUID();
+        return this.grant.getRemovedBy();
     }
 
     @Override
     public String getSentOn() {
-        return this.grant.getSentOn();
+        return this.grant.getRemovedOn();
     }
 
     @Override

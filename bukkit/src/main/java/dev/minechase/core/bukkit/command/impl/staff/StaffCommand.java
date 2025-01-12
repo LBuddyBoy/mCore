@@ -13,6 +13,7 @@ import dev.minechase.core.api.user.model.User;
 import dev.minechase.core.api.user.model.UserMetadata;
 import dev.minechase.core.bukkit.CoreConstants;
 import dev.minechase.core.bukkit.CorePlugin;
+import dev.minechase.core.bukkit.menu.ViewOnlineStaffMenu;
 import dev.minechase.core.bukkit.mod.ModModeHandler;
 import dev.minechase.core.bukkit.packet.StaffMessagePacket;
 import dev.minechase.core.bukkit.settings.model.impl.StaffChatSetting;
@@ -111,6 +112,25 @@ public class StaffCommand extends BaseCommand {
         CorePlugin.getInstance().getModModeHandler().activate(target.getPlayer());
     }
 
+    @CommandAlias("vanish|v")
+    @CommandPermission(CoreConstants.STAFF_PERM)
+    public void vanish(CommandSender sender, @Name("player") @Optional OnlinePlayer target) {
+        if (sender instanceof Player senderPlayer && target == null) {
+            target = new OnlinePlayer(senderPlayer);
+        }
+
+        if (target == null) return;
+
+        if (CorePlugin.getInstance().getModModeHandler().isVanished(target.getPlayer())) {
+            CorePlugin.getInstance().getModModeHandler().deactivateVanish(target.getPlayer());
+            target.getPlayer().sendMessage(CC.translate("&aYour vanish is no longer active."));
+            return;
+        }
+
+        CorePlugin.getInstance().getModModeHandler().activateVanish(target.getPlayer());
+        target.getPlayer().sendMessage(CC.translate("&aYour vanish is now activated."));
+    }
+
     @CommandAlias("freeze|ss")
     @CommandPermission(CoreConstants.STAFF_PERM)
     public void freeze(CommandSender sender, @Name("player") OnlinePlayer target) {
@@ -127,6 +147,12 @@ public class StaffCommand extends BaseCommand {
 
         CorePlugin.getInstance().getModModeHandler().freeze(target.getPlayer());
         sender.sendMessage(CC.translate("<blend:&2;&a>Successfully froze " + target.getPlayer().getName() + ".</>"));
+    }
+
+    @CommandAlias("onlinestaff")
+    @CommandPermission(CoreConstants.STAFF_PERM)
+    public void onlinestaff(Player sender) {
+        new ViewOnlineStaffMenu().openMenu(sender);
     }
 
 }

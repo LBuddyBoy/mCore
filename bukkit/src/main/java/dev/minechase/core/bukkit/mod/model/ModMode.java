@@ -28,7 +28,7 @@ public class ModMode {
             player.getInventory().setItem(item.getSlot() - 1, item.getItem().clone());
         }
 
-        this.vanishOn();
+        CorePlugin.getInstance().getModModeHandler().activateVanish(this.player);
     }
 
     public void unload() {
@@ -36,25 +36,7 @@ public class ModMode {
         player.getInventory().setContents(this.inventoryContents.clone());
         player.setGameMode(this.gameMode);
 
-        this.vanishOff();
-    }
-
-    public void vanishOn() {
-        for (Player other : Bukkit.getOnlinePlayers()) {
-            if (other.hasPermission(CoreConstants.STAFF_PERM)) continue;
-
-            other.hidePlayer(CorePlugin.getInstance(), this.player);
-        }
-
-        this.vanished = true;
-    }
-
-    public void vanishOff() {
-        for (Player other : Bukkit.getOnlinePlayers()) {
-            other.showPlayer(CorePlugin.getInstance(), this.player);
-        }
-
-        this.vanished = false;
+        CorePlugin.getInstance().getModModeHandler().deactivateVanish(this.player);
     }
 
 }

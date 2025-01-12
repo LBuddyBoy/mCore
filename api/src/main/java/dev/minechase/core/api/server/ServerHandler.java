@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Getter
-public abstract class ServerHandler<T> implements IModule {
+public class ServerHandler implements IModule {
 
     private final Map<String, CoreServer> servers;
     private final Map<UUID, QueuePlayer> queuePlayers;

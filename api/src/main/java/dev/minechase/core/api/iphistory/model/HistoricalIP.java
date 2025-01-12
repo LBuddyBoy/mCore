@@ -15,13 +15,14 @@ import java.util.*;
 @Getter
 public class HistoricalIP extends Documented implements Informable {
 
-    private final UUID playerUUID;
+    private final UUID id, playerUUID;
     private final String ipAddress;
     private final List<Long> logins;
     private final long originalChangedAt;
     @Setter private long lastChangedAt;
 
     public HistoricalIP(UUID playerUUID, String ipAddress) {
+        this.id = UUID.randomUUID();
         this.playerUUID = playerUUID;
         this.ipAddress = ipAddress;
         this.originalChangedAt = System.currentTimeMillis();
@@ -30,6 +31,7 @@ public class HistoricalIP extends Documented implements Informable {
     }
 
     public HistoricalIP(Document document) {
+        this.id = this.deserializeUUID(document.getString("id"));
         this.playerUUID = this.deserializeUUID(document.getString("playerUUID"));
         this.ipAddress = document.getString("ipAddress");
         this.originalChangedAt = document.getLong("originalChangedAt");
@@ -48,6 +50,7 @@ public class HistoricalIP extends Documented implements Informable {
     @Override
     public Document toDocument() {
         return new Document()
+                .append("id", this.serializeUUID(this.id))
                 .append("playerUUID", this.serializeUUID(this.playerUUID))
                 .append("ipAddress", this.ipAddress)
                 .append("originalChangedAt", this.originalChangedAt)

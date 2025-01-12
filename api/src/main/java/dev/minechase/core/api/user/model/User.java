@@ -25,6 +25,8 @@ public class User {
     private Grant activeGrant;
     private UserMetadata persistentMetadata = new UserMetadata();
     private List<String> pendingMessages = new ArrayList<>();
+    private UUID disguiseRank;
+    private String disguiseName;
 
     private transient boolean changedIps;
     private transient UserMetadata localMetadata = new UserMetadata();
@@ -64,13 +66,26 @@ public class User {
     public String getColoredName() {
         Rank rank = this.getRank();
 
-        return rank == null ? "&f" + this.name : "<blend:" + rank.getPrimaryColor() + ";" + rank.getSecondaryColor() + ">" + this.name + "</>";
+        return rank == null ? "&f" + this.name : "<blend:" + rank.getPrimaryColor() + ";" + rank.getSecondaryColor() + ">" + this.getEditedName() + "</>";
+    }
+
+    public String getEditedName() {
+        return isDisguised() ? this.disguiseName : this.name;
+    }
+
+    public boolean isDisguised() {
+        return this.disguiseName != null && this.disguiseRank != null;
     }
 
     public String getDisplayName() {
         Rank rank = this.getRank();
 
         return rank == null ? "&f" + this.name : rank.getPrefix() + this.name + rank.getSuffix();
+    }
+
+    public void disguise(String name, Rank rank) {
+        this.disguiseName = name;
+        this.disguiseRank = rank.getId();
     }
 
     public CompletableFuture<Grant> updateActiveGrant() {
@@ -115,6 +130,8 @@ public class User {
         this.currentIpAddress = document.getString("currentIpAddress");
         this.persistentMetadata = APIConstants.GSON.fromJson(document.getString("persistentMetadata"), METADATA.getType());
         this.pendingMessages = document.getList("pendingMessages", String.class, new ArrayList<>());
+        this.disguiseRank = (document.getString("disguiseRank") == null ? null : UUID.fromString(document.getString("disguiseRank")));
+        this.disguiseName = document.getString("disguiseName");
 
         this.updateActiveGrant();
     }
@@ -129,12 +146,16 @@ public class User {
         document.put("pendingMessages", this.pendingMessages);
         document.put("activeGrant", this.activeGrant.toDocument().toJson());
         document.put("persistentMetadata", APIConstants.GSON.toJson(this.persistentMetadata, METADATA.getType()));
+        document.put("disguiseRank", (this.disguiseRank == null ? null : this.disguiseRank.toString()));
+        document.put("disguiseName", this.disguiseName);
 
         return document;
     }
 
+    public static final String SYNCED_KEY = "discord_synced";
     public static final String ACTIVE_TAG_KEY = "active_tag";
     public static final String ACTIVE_PREFIX_KEY = "active_prefix";
+    public static final String HEAD_TEXTURE_KEY = "head_texture";
     public static final TypeToken<UserMetadata> METADATA = new TypeToken<>() {};
 
 }

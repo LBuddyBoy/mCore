@@ -66,6 +66,19 @@ public class RankCommand extends BaseCommand {
         )).send();
     }
 
+    @Subcommand("discordid")
+    @CommandCompletion("@ranks <discord id>")
+    public void discordid(CommandSender sender, @Name("rank") Rank rank, @Name("discordId") String discordId) {
+        String senderName = CommandUtil.getSenderName(sender);
+
+        rank.setDiscordRoleId(discordId);
+
+        new RankUpdatePacket(rank).send();
+        new StaffMessagePacket(CC.translate(
+                "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank discord id! &7(" + rank.getDiscordRoleId() + "&7)"
+        )).send();
+    }
+
     @Subcommand("prefix")
     @CommandCompletion("@ranks <text>")
     public void prefix(CommandSender sender, @Name("rank") Rank rank, @Name("prefix") String prefix) {

@@ -3,6 +3,7 @@ package dev.minechase.core.api.punishment.model;
 import dev.lbuddyboy.commons.api.APIConstants;
 import dev.lbuddyboy.commons.api.util.StringUtils;
 import dev.lbuddyboy.commons.api.util.TimeUtils;
+import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.api.*;
 import dev.minechase.core.api.punishment.PunishmentHandler;
 import dev.minechase.core.api.util.Symbols;
@@ -79,6 +80,7 @@ public class Punishment extends Documented implements IRemovable, ISendable, IEx
         this.removedBy = removedBy;
         this.removedReason = removedReason;
         this.removedAt = System.currentTimeMillis();
+        this.removedOn = CoreAPI.getInstance().getServerName();
     }
 
     @Override

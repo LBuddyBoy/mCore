@@ -11,10 +11,12 @@ import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.ICoreAPI;
 import dev.minechase.core.api.iphistory.IPHistoryHandler;
 import dev.minechase.core.api.log.LogHandler;
+import dev.minechase.core.api.note.NoteHandler;
 import dev.minechase.core.api.prefix.PrefixHandler;
 import dev.minechase.core.api.rank.RankHandler;
 import dev.minechase.core.api.server.model.CoreServer;
 import dev.minechase.core.api.server.packet.ServerUpdatePacket;
+import dev.minechase.core.api.sync.SyncHandler;
 import dev.minechase.core.api.tag.TagHandler;
 import dev.minechase.core.bukkit.api.*;
 import dev.minechase.core.bukkit.listener.CoreListener;
@@ -57,6 +59,8 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
     private BukkitPermissionHandler permissionHandler;
     private PrefixHandler prefixHandler;
     private TagHandler tagHandler;
+    private NoteHandler noteHandler;
+    private SyncHandler syncHandler;
     private BukkitReportHandler reportHandler;
     private ChatHandler chatHandler;
     private ModModeHandler modModeHandler;
@@ -149,6 +153,8 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
                 this.prefixHandler = new PrefixHandler(),
                 this.tagHandler = new TagHandler(),
                 this.reportHandler = new BukkitReportHandler(),
+                this.noteHandler = new NoteHandler(),
+                this.syncHandler = new SyncHandler(),
                 this.chatHandler = new ChatHandler(),
                 this.modModeHandler = new ModModeHandler(),
                 this.rebootHandler = new RebootHandler(),

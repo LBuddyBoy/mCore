@@ -8,10 +8,7 @@ import dev.minechase.core.bukkit.command.impl.*;
 import dev.minechase.core.bukkit.command.impl.admin.*;
 import dev.minechase.core.bukkit.command.impl.punishment.PunishmentsCommand;
 import dev.minechase.core.bukkit.command.impl.punishment.impl.*;
-import dev.minechase.core.bukkit.command.impl.staff.AltsCommand;
-import dev.minechase.core.bukkit.command.impl.staff.IPHistoryCommand;
-import dev.minechase.core.bukkit.command.impl.staff.StaffCommand;
-import dev.minechase.core.bukkit.command.impl.staff.TwoFactorCommand;
+import dev.minechase.core.bukkit.command.impl.staff.*;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -58,6 +55,8 @@ public class CommandHandler implements IModule {
         this.commandManager.registerCommand(new StaffCommand());
         this.commandManager.registerCommand(new DisguiseCommand());
         this.commandManager.registerCommand(new TwoFactorCommand());
+        this.commandManager.registerCommand(new NoteCommand());
+        this.commandManager.registerCommand(new SyncCommand());
 
         /*
         Punishments

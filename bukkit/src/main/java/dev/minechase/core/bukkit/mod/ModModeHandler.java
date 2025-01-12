@@ -2,6 +2,7 @@ package dev.minechase.core.bukkit.mod;
 
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.lbuddyboy.commons.util.CC;
+import dev.minechase.core.api.user.model.User;
 import dev.minechase.core.bukkit.CoreConstants;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.mod.model.ModItem;
@@ -31,7 +32,8 @@ import java.util.UUID;
 public class ModModeHandler implements IModule, Listener {
 
     public static final String FROZEN_METADATA = "FROZEN";
-    
+    public static final String VANISHED_METADATA = "vanished";
+
     private final Map<UUID, ModMode> modModes;
 
     public ModModeHandler() {
@@ -52,7 +54,13 @@ public class ModModeHandler implements IModule, Listener {
     public boolean isActive(Player player) {
         return CorePlugin.getInstance().getModModeHandler().getModModes().containsKey(player.getUniqueId());
     }
-    
+
+    public boolean isVanished(Player player) {
+        User user = CorePlugin.getInstance().getUserHandler().getUser(player.getUniqueId());
+
+        return user.getLocalMetadata().getBooleanOrDefault(VANISHED_METADATA, false);
+    }
+
     public boolean isFrozen(Player player) {
         return player.hasMetadata(FROZEN_METADATA);
     }
@@ -80,6 +88,28 @@ public class ModModeHandler implements IModule, Listener {
         ).forEach(s -> player.sendMessage(CC.translate(s)));
     }
 
+    public void activateVanish(Player player) {
+        User user = CorePlugin.getInstance().getUserHandler().getUser(player.getUniqueId());
+
+        user.getLocalMetadata().setBoolean(VANISHED_METADATA, true);
+
+        for (Player other : Bukkit.getOnlinePlayers()) {
+            if (other.hasPermission(CoreConstants.STAFF_PERM)) continue;
+
+            other.hidePlayer(CorePlugin.getInstance(), player);
+        }
+    }
+
+    public void deactivateVanish(Player player) {
+        User user = CorePlugin.getInstance().getUserHandler().getUser(player.getUniqueId());
+
+        user.getLocalMetadata().setBoolean(VANISHED_METADATA, false);
+
+        for (Player other : Bukkit.getOnlinePlayers()) {
+            other.showPlayer(CorePlugin.getInstance(), player);
+        }
+    }
+
     public void activate(Player player) {
         if (this.modModes.containsKey(player.getUniqueId())) return;
 
@@ -100,7 +130,7 @@ public class ModModeHandler implements IModule, Listener {
         Player player = event.getPlayer();
 
         for (Player other : Bukkit.getOnlinePlayers()) {
-            if (!isActive(other)) continue;
+            if (!isVanished(other)) continue;
 
             player.hidePlayer(CorePlugin.getInstance(), other);
         }
@@ -208,6 +238,32 @@ public class ModModeHandler implements IModule, Listener {
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
         ModItem.SPECTATOR.getConsumer().accept(player, null);
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    private void onReports(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        ItemStack item = event.getItem();
+
+        if (item == null) return;
+        if (!ModItem.REPORTS.getItem().isSimilar(item)) return;
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+
+        ModItem.REPORTS.getConsumer().accept(player, null);
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    private void onOnlineStaff(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        ItemStack item = event.getItem();
+
+        if (item == null) return;
+        if (!ModItem.ONLINE_STAFF.getItem().isSimilar(item)) return;
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+
+        ModItem.ONLINE_STAFF.getConsumer().accept(player, null);
         event.setCancelled(true);
     }
 
