@@ -41,7 +41,7 @@ public class FixCommand extends BaseCommand {
             return;
         }
 
-        sender.sendMessage(CC.translate("<blend:&2;&a>Successfully fixed the item in your main hand!</>"));
+        sender.sendMessage(CC.translate("&6Successfully fixed the item in your main hand!</>"));
     }
 
     @CommandAlias("fixall|repairall")

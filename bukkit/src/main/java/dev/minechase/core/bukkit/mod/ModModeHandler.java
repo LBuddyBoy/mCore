@@ -70,7 +70,7 @@ public class ModModeHandler implements IModule, Listener {
         Arrays.asList(
                 " ",
                 "<blend:&4;&c>YOU HAVE BEEN FROZEN</>",
-                "<blend:&4;&c>You have 3 minutes to join discord.gg/minechase</>",
+                "<blend:&4;&c>You have 3 minutes to join minechase.net/discord</>",
                 "",
                 "<blend:&7:&f>Failure to do so in time, will result in a ban.</>",
                 " "

@@ -42,13 +42,11 @@ public class GameModeCommand extends BaseCommand {
 
         player.setGameMode(gameMode);
         if (sender.equals(player)) {
-            player.sendMessage(CC.translate("&fGameMode&7: &6" + gameMode.name()));
+            player.sendMessage(CC.translate("&6Your gamemode has been updated to &f" + gameMode.name()));
         } else {
-            sender.sendMessage(CC.translate("&f" + player.getName() + "'s GameMode&7: &6" + gameMode.name()));
-            sender.sendMessage(CC.translate("&fGameMode&7: &6" + gameMode.name()));
+            sender.sendMessage(CC.translate("&f" + player.getName() + "&6's gamemode updated to &f" + gameMode.name()));
         }
     }
-
     @CommandAlias("gmc")
     @CommandPermission("core.command.gamemode.creative")
     @CommandCompletion("@players")

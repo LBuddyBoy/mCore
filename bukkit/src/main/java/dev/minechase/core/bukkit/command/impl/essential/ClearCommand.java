@@ -42,8 +42,8 @@ public class ClearCommand extends BaseCommand {
         if (sender.equals(player)) {
             player.sendMessage(CC.translate("<blend:&2;&a>You have cleared your inventory.</>"));
         } else {
-            sender.sendMessage(CC.translate("<blend:&2;&a>You have cleared " + player.getName() + "'s inventory.</>"));
-            player.sendMessage(CC.translate("<blend:&2;&a>" + CommandUtil.getSenderName(sender) + " has cleared your inventory.</>"));
+            sender.sendMessage(CC.translate("&6You have cleared &f" + player.getName() + "&6's inventory."));
+            player.sendMessage(CC.translate("&f" + CommandUtil.getSenderName(sender) + " &6has cleared your inventory."));
         }
     }
 

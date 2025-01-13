@@ -20,7 +20,7 @@ public class SpawnCommand extends BaseCommand {
     public void setspawn(Player sender) {
         sender.getWorld().setSpawnLocation(sender.getLocation().clone());
         sender.getWorld().save();
-        sender.sendMessage(CC.translate("<blend:&2;&a>Updated the world spawn.</>"));
+        sender.sendMessage(CC.translate("&6Spawnpoint has been updated!"));
     }
 
 }

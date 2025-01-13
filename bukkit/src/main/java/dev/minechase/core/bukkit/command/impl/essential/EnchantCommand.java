@@ -24,7 +24,7 @@ public class EnchantCommand extends BaseCommand {
         }
 
         item.addUnsafeEnchantment(enchantment, level);
-        sender.sendMessage(CC.translate("<blend:&2;&a>Updated the enchants for the item in your hand.</>"));
+        sender.sendMessage(CC.translate("&6Updated the enchants for the item in your hand."));
     }
 
 }

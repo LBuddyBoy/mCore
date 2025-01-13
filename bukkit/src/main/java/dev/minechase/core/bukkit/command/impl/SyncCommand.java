@@ -42,8 +42,8 @@ public class SyncCommand extends BaseCommand {
             Arrays.asList(
                     " ",
                     "<blend:&6;&e>&lHow to Sync Account</>",
-                    "&eStep #1 &fJoin discord.gg/minechase",
-                    "&eStep #2 &fGo to #bot-commands",
+                    "&eStep #1 &fJoin minechase.net/discord",
+                    "&eStep #2 &fGo to #sync",
                     "&eStep #3 &fType /sync " + syncCode.getCode(),
                     " ",
                     "&fAfter doing this your discord account will be synced",

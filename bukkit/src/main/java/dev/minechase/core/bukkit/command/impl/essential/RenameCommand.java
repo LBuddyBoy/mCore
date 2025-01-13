@@ -33,7 +33,7 @@ public class RenameCommand extends BaseCommand {
         }
 
         sender.getInventory().setItemInMainHand(new ItemFactory(item).displayName(name).build());
-        sender.sendMessage(CC.translate("<blend:&2;&a>Renamed the item in your hand.</>"));
+        sender.sendMessage(CC.translate("&6You have renamed your item in your hand."));
     }
 
 }

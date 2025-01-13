@@ -40,10 +40,10 @@ public class FeedCommand extends BaseCommand {
         player.setFoodLevel(20);
 
         if (sender.equals(player)) {
-            player.sendMessage(CC.translate("<blend:&2;&a>You have fed yourself.</>"));
+            player.sendMessage(CC.translate("&6You have fed yourself.</>"));
         } else {
-            sender.sendMessage(CC.translate("<blend:&2;&a>You have fed " + player.getName() + ".</>"));
-            player.sendMessage(CC.translate("<blend:&2;&a>" + CommandUtil.getSenderName(sender) + " has fed you.</>"));
+            sender.sendMessage(CC.translate("&6You have fed " + player.getName() + "."));
+            player.sendMessage(CC.translate("&f" + CommandUtil.getSenderName(sender) + " &6has fed you."));
         }
     }
 
@@ -75,10 +75,10 @@ public class FeedCommand extends BaseCommand {
         player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
 
         if (sender.equals(player)) {
-            player.sendMessage(CC.translate("<blend:&2;&a>You have healed yourself.</>"));
+            player.sendMessage(CC.translate("&6You have healed yourself."));
         } else {
-            sender.sendMessage(CC.translate("<blend:&2;&a>You have healed " + player.getName() + ".</>"));
-            player.sendMessage(CC.translate("<blend:&2;&a>" + CommandUtil.getSenderName(sender) + " has healed you.</>"));
+            sender.sendMessage(CC.translate("&6You have healed &f" + player.getName() + "&6."));
+            player.sendMessage(CC.translate("&f" + CommandUtil.getSenderName(sender) + " &6has healed you."));
         }
     }
 

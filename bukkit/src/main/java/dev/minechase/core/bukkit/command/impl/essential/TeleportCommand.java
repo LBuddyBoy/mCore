@@ -25,7 +25,7 @@ public class TeleportCommand extends BaseCommand {
         }
 
         sender.teleport(player);
-        sender.sendMessage(CC.translate("<blend:&2;&a>Teleporting to " + player.getName() + "...</>"));
+        sender.sendMessage(CC.translate("&6Teleporting to &f" + player.getName() + "&6...</>"));
     }
 
     @CommandAlias("teleporthere|tph|s|tphere")
@@ -40,8 +40,7 @@ public class TeleportCommand extends BaseCommand {
         }
 
         player.teleport(sender);
-        sender.sendMessage(CC.translate("<blend:&2;&a>Teleporting " + player.getName() + " to yourself...</>"));
-        player.sendMessage(CC.translate("<blend:&2;&a>" + sender.getName() + " teleported you to them...</>"));
+        sender.sendMessage(CC.translate("&6Teleporting &f" + player.getName() + " to yourself"));
     }
 
     @CommandAlias("back")
@@ -60,7 +59,7 @@ public class TeleportCommand extends BaseCommand {
         }
 
         sender.teleport(location);
-        sender.sendMessage(CC.translate("<blend:&2;&a>Teleporting to your previous location...</>"));
+        sender.sendMessage(CC.translate("&6Teleporting to your previous location..."));
     }
 
 
