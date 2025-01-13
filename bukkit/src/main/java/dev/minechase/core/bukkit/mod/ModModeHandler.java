@@ -7,6 +7,7 @@ import dev.minechase.core.bukkit.CoreConstants;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.mod.model.ModItem;
 import dev.minechase.core.bukkit.mod.model.ModMode;
+import dev.minechase.core.bukkit.util.totp.TwoFactorUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -56,9 +57,7 @@ public class ModModeHandler implements IModule, Listener {
     }
 
     public boolean isVanished(Player player) {
-        User user = CorePlugin.getInstance().getUserHandler().getUser(player.getUniqueId());
-
-        return user.getLocalMetadata().getBooleanOrDefault(VANISHED_METADATA, false);
+        return player.hasMetadata(VANISHED_METADATA);
     }
 
     public boolean isFrozen(Player player) {
@@ -89,9 +88,7 @@ public class ModModeHandler implements IModule, Listener {
     }
 
     public void activateVanish(Player player) {
-        User user = CorePlugin.getInstance().getUserHandler().getUser(player.getUniqueId());
-
-        user.getLocalMetadata().setBoolean(VANISHED_METADATA, true);
+        player.setMetadata(VANISHED_METADATA, new FixedMetadataValue(CorePlugin.getInstance(), true));
 
         for (Player other : Bukkit.getOnlinePlayers()) {
             if (other.hasPermission(CoreConstants.STAFF_PERM)) continue;
@@ -101,9 +98,7 @@ public class ModModeHandler implements IModule, Listener {
     }
 
     public void deactivateVanish(Player player) {
-        User user = CorePlugin.getInstance().getUserHandler().getUser(player.getUniqueId());
-
-        user.getLocalMetadata().setBoolean(VANISHED_METADATA, false);
+        player.removeMetadata(VANISHED_METADATA, CorePlugin.getInstance());
 
         for (Player other : Bukkit.getOnlinePlayers()) {
             other.showPlayer(CorePlugin.getInstance(), player);
@@ -135,12 +130,13 @@ public class ModModeHandler implements IModule, Listener {
             player.hidePlayer(CorePlugin.getInstance(), other);
         }
 
+        if (TwoFactorUtil.isLocked(player)) return;
         if (!player.hasPermission(CoreConstants.STAFF_PERM)) return;
 
         this.activate(player);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.LOWEST)
     private void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 

@@ -26,7 +26,7 @@ public class AdminMessagePacket implements Packet {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (!player.hasPermission(CoreConstants.ADMIN_PERM)) continue;
 
-            this.messages.forEach(player::sendMessage);
+            this.messages.forEach(s -> player.sendMessage(CC.translate(s)));
         }
 
         this.messages.forEach(s -> Bukkit.getConsoleSender().sendMessage(CC.translate(s)));

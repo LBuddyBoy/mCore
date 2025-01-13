@@ -6,6 +6,7 @@ import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.command.context.*;
 import dev.minechase.core.bukkit.command.impl.*;
 import dev.minechase.core.bukkit.command.impl.admin.*;
+import dev.minechase.core.bukkit.command.impl.essential.*;
 import dev.minechase.core.bukkit.command.impl.punishment.PunishmentsCommand;
 import dev.minechase.core.bukkit.command.impl.punishment.impl.*;
 import dev.minechase.core.bukkit.command.impl.staff.*;
@@ -24,6 +25,8 @@ public class CommandHandler implements IModule {
 
         Arrays.asList(
                 new RankContext(),
+                new EnchantmentContext(),
+                new GameModeContext(),
                 new PrefixContext(),
                 new TagContext(),
                 new MultiScopeContext(),
@@ -34,6 +37,19 @@ public class CommandHandler implements IModule {
         ).forEach(context -> context.register(this.commandManager));
 
         this.commandManager.getCommandCompletions().registerCompletion("rankPermissions", new RankContext.RankPermissionCompletion());
+        this.commandManager.getCommandCompletions().registerCompletion("disguiseRanks", new RankContext.DisguiseRanksCompletion());
+
+        this.commandManager.registerCommand(new ClearCommand());
+        this.commandManager.registerCommand(new CraftCommand());
+        this.commandManager.registerCommand(new EnchantCommand());
+        this.commandManager.registerCommand(new FeedCommand());
+        this.commandManager.registerCommand(new FixCommand());
+        this.commandManager.registerCommand(new GameModeCommand());
+        this.commandManager.registerCommand(new ListCommand());
+        this.commandManager.registerCommand(new RenameCommand());
+        this.commandManager.registerCommand(new SpawnCommand());
+        this.commandManager.registerCommand(new TeleportCommand());
+        this.commandManager.registerCommand(new InvseeCommand());
 
         this.commandManager.registerCommand(new ReportCommand());
         this.commandManager.registerCommand(new CoreCommand());
@@ -53,10 +69,12 @@ public class CommandHandler implements IModule {
         this.commandManager.registerCommand(new IPHistoryCommand());
         this.commandManager.registerCommand(new AdminCommand());
         this.commandManager.registerCommand(new StaffCommand());
-        this.commandManager.registerCommand(new DisguiseCommand());
         this.commandManager.registerCommand(new TwoFactorCommand());
         this.commandManager.registerCommand(new NoteCommand());
         this.commandManager.registerCommand(new SyncCommand());
+
+        this.commandManager.registerCommand(new DisguiseCommand());
+        this.commandManager.registerCommand(new UnDisguiseCommand());
 
         /*
         Punishments

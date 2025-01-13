@@ -3,25 +3,43 @@ package dev.minechase.core.bukkit.api;
 import dev.lbuddyboy.commons.api.util.StringUtils;
 import dev.lbuddyboy.commons.api.util.TimeUtils;
 import dev.lbuddyboy.commons.util.CC;
+import dev.lbuddyboy.commons.util.Tasks;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.api.MultiScope;
 import dev.minechase.core.api.api.ScopedPermission;
 import dev.minechase.core.api.grant.GrantHandler;
 import dev.minechase.core.api.grant.model.Grant;
+import dev.minechase.core.api.grant.packet.GrantRemovePacket;
 import dev.minechase.core.api.grant.packet.GrantUpdatePacket;
 import dev.minechase.core.api.log.model.impl.grant.GrantCreationLog;
 import dev.minechase.core.api.log.model.impl.permission.PermissionCreationLog;
 import dev.minechase.core.api.permission.packet.PermissionUpdatePacket;
 import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.api.user.model.User;
+import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.packet.PlayerMessagePacket;
 import dev.minechase.core.bukkit.util.CommandUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
 
 public class BukkitGrantHandler extends GrantHandler {
+
+    @Override
+    public void load() {
+        super.load();
+
+        Tasks.runAsyncTimer(() -> {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                User user = CorePlugin.getInstance().getUserHandler().getUser(player.getUniqueId());
+
+                user.updateActiveGrant();
+            }
+        }, 20 * 60, 20 * 60);
+    }
 
     public void grant(CommandSender sender, UUID targetUUID, Rank rank, List<String> scopes, long duration, String reason) {
         String scopesString = StringUtils.join(scopes, ",");

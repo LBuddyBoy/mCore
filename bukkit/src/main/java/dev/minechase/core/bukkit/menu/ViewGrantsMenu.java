@@ -8,6 +8,7 @@ import dev.lbuddyboy.commons.util.ConversationBuilder;
 import dev.lbuddyboy.commons.util.ItemFactory;
 import dev.lbuddyboy.commons.util.Tasks;
 import dev.minechase.core.api.grant.model.Grant;
+import dev.minechase.core.api.grant.packet.GrantRemovePacket;
 import dev.minechase.core.api.grant.packet.GrantUpdatePacket;
 import dev.minechase.core.api.log.model.impl.grant.GrantRemoveLog;
 import dev.minechase.core.api.report.packet.ReportUpdatePacket;
@@ -104,6 +105,7 @@ public class ViewGrantsMenu extends IPagedMenu {
                     this.grant.setRemovedOn(CorePlugin.getInstance().getServerName());
 
                     new GrantUpdatePacket(this.grant).send();
+                    new GrantRemovePacket(this.grant).send();
                     new GrantRemoveLog(this.grant).createLog();
                 } else {
                     ctx.getForWhom().sendRawMessage(CC.translate("&cProcess cancelled."));

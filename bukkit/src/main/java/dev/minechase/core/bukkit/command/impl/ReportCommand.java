@@ -28,7 +28,7 @@ public class ReportCommand extends BaseCommand {
     }
 
     @CommandAlias("report")
-    @CommandCompletion("@players")
+    @CommandCompletion("@players <reason>")
     public void report(Player sender, @Name("target") AsyncCorePlayer player, @Name("reason") String reason) {
         User user = CorePlugin.getInstance().getUserHandler().getUser(sender.getUniqueId());
         long cooldown = user.getPersistentMetadata().getLong("report_cooldown");
@@ -50,6 +50,7 @@ public class ReportCommand extends BaseCommand {
     }
 
     @CommandAlias("helpop|request")
+    @CommandCompletion("<reason>")
     public void helpop(Player sender, @Name("reason") String reason) {
         User user = CorePlugin.getInstance().getUserHandler().getUser(sender.getUniqueId());
         long cooldown = user.getPersistentMetadata().getLong("request_cooldown");

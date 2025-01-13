@@ -24,7 +24,7 @@ public class Rank extends Documented implements IScoped {
     private final UUID id;
     private String name, prefix, suffix, displayName, primaryColor, secondaryColor;
     private int weight;
-    private boolean staffRank, defaultRank;
+    private boolean staffRank, defaultRank, disguiseRank;
     private String materialString, discordRoleId;
     private final List<UUID> inheritedRanks = new ArrayList<>();
     private final List<ScopedPermission> permissions = new ArrayList<>();
@@ -59,6 +59,7 @@ public class Rank extends Documented implements IScoped {
         this.suffix = document.get("suffix", "");
         this.discordRoleId = document.get("discordRoleId", "");
         this.materialString = document.getString("materialString");
+        this.disguiseRank = document.getBoolean("disguiseRank", false);
         this.staffRank = document.getBoolean("staffRank", false);
         this.defaultRank = document.getBoolean("defaultRank", false);
         this.permissions.addAll(APIConstants.GSON.fromJson(document.getString("permissions"), RankHandler.SCOPED_PERMISSIONS.getType()));
@@ -80,6 +81,7 @@ public class Rank extends Documented implements IScoped {
                 .append("discordRoleId", this.discordRoleId)
                 .append("staffRank", this.staffRank)
                 .append("defaultRank", this.defaultRank)
+                .append("disguiseRank", this.disguiseRank)
                 .append("weight", this.weight)
                 .append("permissions", APIConstants.GSON.toJson(this.permissions, RankHandler.SCOPED_PERMISSIONS.getType()))
                 .append("inheritedRanks", this.inheritedRanks.stream().map(UUID::toString).toList())

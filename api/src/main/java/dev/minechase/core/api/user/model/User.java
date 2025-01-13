@@ -4,6 +4,8 @@ import com.google.gson.reflect.TypeToken;
 import dev.lbuddyboy.commons.api.APIConstants;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.grant.model.Grant;
+import dev.minechase.core.api.log.model.impl.disguise.DisguiseAddLog;
+import dev.minechase.core.api.log.model.impl.disguise.DisguiseRemoveLog;
 import dev.minechase.core.api.prefix.model.Prefix;
 import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.api.tag.model.Tag;
@@ -26,7 +28,7 @@ public class User {
     private UserMetadata persistentMetadata = new UserMetadata();
     private List<String> pendingMessages = new ArrayList<>();
     private UUID disguiseRank;
-    private String disguiseName;
+    private String disguiseName, disguiseSkinTextures, disguiseSkinSignature;
 
     private transient boolean changedIps;
     private transient UserMetadata localMetadata = new UserMetadata();
@@ -74,7 +76,7 @@ public class User {
     }
 
     public boolean isDisguised() {
-        return this.disguiseName != null && this.disguiseRank != null;
+        return this.disguiseName != null && this.disguiseRank != null && this.disguiseSkinTextures != null && this.disguiseSkinSignature != null;
     }
 
     public String getDisplayName() {
@@ -83,9 +85,40 @@ public class User {
         return rank == null ? "&f" + this.name : rank.getPrefix() + this.name + rank.getSuffix();
     }
 
-    public void disguise(String name, Rank rank) {
+    public String getChatDisplay() {
+        Rank rank = this.getRank();
+
+        if (isDisguised() && CoreAPI.getInstance().getRankHandler().getRankById(this.disguiseRank) != null) {
+            rank = CoreAPI.getInstance().getRankHandler().getRankById(this.disguiseRank);
+        }
+
+        String displayName = rank.getPrefix() + this.getEditedName() + rank.getSuffix();
+        String tag = this.getActiveTag() == null ? "" : this.getActiveTag().getSuffix();
+        String prefix = this.getActivePrefix() == null ? "" : this.getActivePrefix().getPrefix();
+
+        return prefix + displayName + tag;
+    }
+
+    public void undisguise() {
+        Rank rank = CoreAPI.getInstance().getRankHandler().getRankById(this.disguiseRank);
+
+        if (rank != null) {
+            new DisguiseRemoveLog(this.uniqueId, this.disguiseName, rank).createLog();
+        }
+
+        this.disguiseName = null;
+        this.disguiseRank = null;
+        this.disguiseSkinSignature = null;
+        this.disguiseSkinTextures = null;
+    }
+
+    public void disguise(String name, String disguiseSkinTextures, String disguiseSkinSignature, Rank rank) {
         this.disguiseName = name;
         this.disguiseRank = rank.getId();
+        this.disguiseSkinTextures = disguiseSkinTextures;
+        this.disguiseSkinSignature = disguiseSkinSignature;
+
+        new DisguiseAddLog(this.uniqueId, name, rank).createLog();
     }
 
     public CompletableFuture<Grant> updateActiveGrant() {
@@ -131,6 +164,8 @@ public class User {
         this.persistentMetadata = APIConstants.GSON.fromJson(document.getString("persistentMetadata"), METADATA.getType());
         this.pendingMessages = document.getList("pendingMessages", String.class, new ArrayList<>());
         this.disguiseRank = (document.getString("disguiseRank") == null ? null : UUID.fromString(document.getString("disguiseRank")));
+        this.disguiseSkinTextures = document.getString("disguiseSkinTextures");
+        this.disguiseSkinSignature = document.getString("disguiseSkinSignature");
         this.disguiseName = document.getString("disguiseName");
 
         this.updateActiveGrant();
@@ -147,6 +182,8 @@ public class User {
         document.put("activeGrant", this.activeGrant.toDocument().toJson());
         document.put("persistentMetadata", APIConstants.GSON.toJson(this.persistentMetadata, METADATA.getType()));
         document.put("disguiseRank", (this.disguiseRank == null ? null : this.disguiseRank.toString()));
+        document.put("disguiseSkinTextures", this.disguiseSkinTextures);
+        document.put("disguiseSkinSignature", this.disguiseSkinSignature);
         document.put("disguiseName", this.disguiseName);
 
         return document;

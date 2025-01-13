@@ -48,4 +48,13 @@ public class RankContext extends CommonCommandContext<Rank> {
 
     }
 
+    public static class DisguiseRanksCompletion implements CommandCompletions.CommandCompletionHandler<BukkitCommandCompletionContext> {
+
+        @Override
+        public Collection<String> getCompletions(BukkitCommandCompletionContext context) throws InvalidCommandArgument {
+            return CoreAPI.getInstance().getRankHandler().getSortedRanks().stream().filter(Rank::isDisguiseRank).map(Rank::getName).toList();
+        }
+
+    }
+
 }

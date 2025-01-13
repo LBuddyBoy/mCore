@@ -10,6 +10,7 @@ import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.grant.cache.GrantCacheLoader;
 import dev.minechase.core.api.grant.comparator.GrantComparator;
 import dev.minechase.core.api.grant.model.Grant;
+import dev.minechase.core.api.grant.packet.GrantRemovePacket;
 import dev.minechase.core.api.grant.packet.GrantUpdatePacket;
 import dev.minechase.core.api.user.model.User;
 import lombok.Getter;
@@ -76,6 +77,7 @@ public class GrantHandler implements IModule {
 
             grant.remove(null, "Expired");
             new GrantUpdatePacket(grant).send();
+            new GrantRemovePacket(grant).send();
         }
 
         return grants;
@@ -110,6 +112,10 @@ public class GrantHandler implements IModule {
 
     public void onRankChange(User user, Grant previousGrant, Grant newGrant) {
         CoreAPI.getInstance().getLogger().warning("Tried called " + user.getUniqueId() + "'s rank change, but there's no API implementation.");
+    }
+
+    public void onGrantRemoved(Grant grant) {
+
     }
 
 }

@@ -66,8 +66,47 @@ public class RankCommand extends BaseCommand {
         )).send();
     }
 
-    @Subcommand("discordid")
-    @CommandCompletion("@ranks <discord id>")
+    @Subcommand("disguiseRank")
+    @CommandCompletion("@ranks")
+    public void disguiseRank(CommandSender sender, @Name("rank") Rank rank) {
+        String senderName = CommandUtil.getSenderName(sender);
+
+        rank.setDisguiseRank(!rank.isDisguiseRank());
+
+        new RankUpdatePacket(rank).send();
+        new StaffMessagePacket(CC.translate(
+                "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank disguise rank! &7(" + (rank.isDisguiseRank() ? "&a&lYES" : "&c&lNO") + "&7)"
+        )).send();
+    }
+
+    @Subcommand("staffRank")
+    @CommandCompletion("@ranks")
+    public void staffRank(CommandSender sender, @Name("rank") Rank rank) {
+        String senderName = CommandUtil.getSenderName(sender);
+
+        rank.setStaffRank(!rank.isStaffRank());
+
+        new RankUpdatePacket(rank).send();
+        new StaffMessagePacket(CC.translate(
+                "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank staff rank! &7(" + (rank.isStaffRank() ? "&a&lYES" : "&c&lNO") + "&7)"
+        )).send();
+    }
+
+    @Subcommand("defaultRank")
+    @CommandCompletion("@ranks")
+    public void defaultRank(CommandSender sender, @Name("rank") Rank rank) {
+        String senderName = CommandUtil.getSenderName(sender);
+
+        rank.setDefaultRank(!rank.isDefaultRank());
+
+        new RankUpdatePacket(rank).send();
+        new StaffMessagePacket(CC.translate(
+                "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank default rank! &7(" + (rank.isDefaultRank() ? "&a&lYES" : "&c&lNO") + "&7)"
+        )).send();
+    }
+
+    @Subcommand("discordrole")
+    @CommandCompletion("@ranks <role-id>")
     public void discordid(CommandSender sender, @Name("rank") Rank rank, @Name("discordId") String discordId) {
         String senderName = CommandUtil.getSenderName(sender);
 

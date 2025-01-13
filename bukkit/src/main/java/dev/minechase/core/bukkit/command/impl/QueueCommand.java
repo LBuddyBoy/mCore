@@ -8,11 +8,15 @@ import co.aikar.commands.annotation.Name;
 import dev.lbuddyboy.commons.util.CC;
 import dev.minechase.core.api.server.model.CoreServer;
 import dev.minechase.core.api.server.model.QueuePlayer;
+import dev.minechase.core.api.server.packet.ServerUpdatePacket;
 import dev.minechase.core.bukkit.CoreConstants;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.api.BukkitServerHandler;
 import dev.minechase.core.velocity.packet.PlayerSendToServerPacket;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 public class QueueCommand extends BaseCommand {
 
@@ -58,6 +62,26 @@ public class QueueCommand extends BaseCommand {
         sender.sendMessage(CC.translate("<blend:&2;&a>Successfully joined the " + server.getName() + "'s queue!</>"));
     }
 
+    @CommandAlias("pausequeue|pauseq")
+    @CommandCompletion("@servers")
+    @CommandPermission("core.command.pausequeue")
+    public void pausequeue(Player sender, @Name("server") CoreServer server) {
+        if (server.isHub()) {
+            sender.sendMessage(CC.translate("<blend:&4;&c>You cannot pause hub servers.</>"));
+            return;
+        }
+
+        server.setQueuePaused(!server.isQueuePaused());
+
+        new ServerUpdatePacket(server).send();
+
+        if (server.isQueuePaused()) {
+            sender.sendMessage(CC.translate("<blend:&3;&b>Successfully paused " + server.getName() + "'s queue!</>"));
+        } else {
+            sender.sendMessage(CC.translate("<blend:&2;&a>Successfully unpaused " + server.getName() + "'s queue!</>"));
+        }
+    }
+
     @CommandAlias("leavequeue|leaveq")
     @CommandCompletion("@servers")
     public void leaveq(Player sender) {
@@ -75,6 +99,13 @@ public class QueueCommand extends BaseCommand {
     @CommandCompletion("@servers")
     public void server(Player sender, @Name("server") CoreServer server) {
         new PlayerSendToServerPacket(sender.getUniqueId(), server.getName()).send();
+    }
+
+    @CommandAlias("send")
+    @CommandPermission("core.command.send")
+    @CommandCompletion("@players @servers")
+    public void send(CommandSender sender, @Name("player") UUID playerUUID, @Name("server") CoreServer server) {
+        new PlayerSendToServerPacket(playerUUID, server.getName()).send();
     }
 
 }

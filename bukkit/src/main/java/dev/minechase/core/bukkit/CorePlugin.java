@@ -48,7 +48,7 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
 
     private CommandHandler commandHandler;
     private MongoHandler mongoHandler;
-    private UserHandler userHandler;
+    private BukkitUserHandler userHandler;
     private BukkitPunishmentHandler punishmentHandler;
     private BukkitGrantHandler grantHandler;
     private RankHandler rankHandler;
@@ -141,7 +141,7 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
                         getConfig().getString("mongo.auth.database"),
                         getConfig().getString("mongo.database")
                 ),
-                this.userHandler = new UserHandler(),
+                this.userHandler = new BukkitUserHandler(),
                 this.rankHandler = new RankHandler(),
                 this.grantHandler = new BukkitGrantHandler(),
                 this.punishmentHandler = new BukkitPunishmentHandler(),

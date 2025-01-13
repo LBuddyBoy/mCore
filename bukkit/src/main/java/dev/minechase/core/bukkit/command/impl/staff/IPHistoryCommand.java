@@ -1,10 +1,7 @@
 package dev.minechase.core.bukkit.command.impl.staff;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Name;
+import co.aikar.commands.annotation.*;
 import dev.lbuddyboy.commons.util.CC;
 import dev.minechase.core.bukkit.CoreConstants;
 import dev.minechase.core.bukkit.CorePlugin;
@@ -18,6 +15,7 @@ import org.bukkit.entity.Player;
 public class IPHistoryCommand extends BaseCommand {
 
     @Default
+    @CommandCompletion("@players")
     public void def(Player sender, @Name("player") AsyncCorePlayer player) {
         player.getUUID().whenCompleteAsyncExcept(uuid -> {
             sender.sendMessage(CC.translate("&aLoading " + player.getName() + "'s ip history, this may take a few seconds..."));

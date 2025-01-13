@@ -22,7 +22,9 @@ import dev.minechase.core.api.server.packet.ServerUpdatePacket;
 import dev.minechase.core.api.sync.SyncHandler;
 import dev.minechase.core.api.tag.TagHandler;
 import dev.minechase.core.api.user.UserHandler;
+import dev.minechase.core.jda.api.JDAGrantHandler;
 import dev.minechase.core.jda.api.JDAServerHandler;
+import dev.minechase.core.jda.api.JDASyncHandler;
 import dev.minechase.core.jda.command.CommandEvent;
 import dev.minechase.core.jda.command.CommandHandler;
 import lombok.Getter;
@@ -120,7 +122,7 @@ public class CoreBot implements ICoreAPI {
                     ),
                     this.userHandler = new UserHandler(),
                     this.rankHandler = new RankHandler(),
-                    this.grantHandler = new GrantHandler(),
+                    this.grantHandler = new JDAGrantHandler(),
                     this.punishmentHandler = new PunishmentHandler(),
                     this.serverHandler = new JDAServerHandler(),
                     this.logHandler = new LogHandler(),
@@ -130,7 +132,7 @@ public class CoreBot implements ICoreAPI {
                     this.reportHandler = new ReportHandler(),
                     this.tagHandler = new TagHandler(),
                     this.noteHandler = new NoteHandler(),
-                    this.syncHandler = new SyncHandler()
+                    this.syncHandler = new JDASyncHandler()
             ));
             CommonsAPI.getInstance().getModules().forEach(IModule::load);
 

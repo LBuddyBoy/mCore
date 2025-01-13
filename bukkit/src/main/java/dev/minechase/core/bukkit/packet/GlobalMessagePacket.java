@@ -24,7 +24,7 @@ public class GlobalMessagePacket implements Packet {
     @Override
     public void receive() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            this.messages.forEach(player::sendMessage);
+            this.messages.forEach(s -> player.sendMessage(CC.translate(s)));
         }
 
         this.messages.forEach(s -> Bukkit.getConsoleSender().sendMessage(CC.translate(s)));

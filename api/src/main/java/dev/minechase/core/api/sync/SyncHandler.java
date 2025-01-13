@@ -7,6 +7,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.api.CoreAPI;
+import dev.minechase.core.api.grant.model.Grant;
 import dev.minechase.core.api.iphistory.cache.IPHistoryCacheLoader;
 import dev.minechase.core.api.iphistory.model.HistoricalIP;
 import dev.minechase.core.api.punishment.model.Punishment;
@@ -88,6 +89,10 @@ public class SyncHandler implements IModule {
         this.syncCodes.add(code);
     }
 
+    public void removeCode(SyncCode code) {
+        this.syncCodes.removeIf(other -> other.getCode() == code.getCode());
+    }
+
     public void updateInfo(SyncInformation syncInformation) {
         CompletableFuture<SyncInformation> infoIfPresent = this.playerSyncInformation.getIfPresent(syncInformation.getPlayerUUID());
 
@@ -122,6 +127,11 @@ public class SyncHandler implements IModule {
         this.codeCollection.replaceOne(Filters.eq("code", code.getCode()), code.toDocument(), new ReplaceOptions().upsert(true));
     }
 
+    public void removeInfo(SyncInformation info) {
+        this.discordSyncInformation.put(info.getDiscordMemberId(), CompletableFuture.completedFuture(null));
+        this.playerSyncInformation.put(info.getPlayerUUID(), CompletableFuture.completedFuture(null));
+    }
+
     public void deleteInfo(SyncInformation info, boolean async) {
         if (async) {
             CompletableFuture.runAsync(() -> deleteInfo(info, false), CoreAPI.POOL);
@@ -138,6 +148,10 @@ public class SyncHandler implements IModule {
         }
 
         this.informationCollection.replaceOne(Filters.eq("playerUUID", info.getPlayerUUID().toString()), info.toDocument(), new ReplaceOptions().upsert(true));
+    }
+
+    public void onUserSynced(SyncInformation information) {
+
     }
 
 }

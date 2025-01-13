@@ -48,7 +48,7 @@ public class CoreListener implements Listener {
         Player player = event.getPlayer();
         User user = CoreAPI.getInstance().getUserHandler().getUser(player.getUniqueId());
 
-        if (FilterUtil.isDisallowed(event.getMessage())) {
+        if (FilterUtil.isDisallowed(CC.stripColor(CC.translate(event.getMessage())))) {
             event.setCancelled(true);
             player.sendMessage(CC.translate("&c[Filter] A message you sent was filtered."));
             new StaffMessagePacket("&4[Filtered Message] &c(" + CoreAPI.getInstance().getServerName() + ") &b" + user.getName() + "&7: " + ChatColor.stripColor(event.getMessage())).send();
@@ -98,14 +98,10 @@ public class CoreListener implements Listener {
             if (asyncCoreChatEvent.isCancelled()) return;
 
             ChatColor chatColor = ChatColor.of(user.getPersistentMetadata().getOrDefault("chatcolor", "WHITE"));
-            Rank rank = user.getRank();
-            String displayName = rank.getPrefix() + user.getName() + rank.getSuffix();
             GlobalChatSetting setting = CorePlugin.getInstance().getSettingsHandler().getSetting(GlobalChatSetting.class);
-            String tag = user.getActiveTag() == null ? "" : user.getActiveTag().getSuffix();
-            String prefix = user.getActivePrefix() == null ? "" : user.getActivePrefix().getPrefix();
 
             if (asyncCoreChatEvent.isShadowMute()) {
-                player.sendMessage(CC.translate(displayName + "&7: " + chatColor) + event.getMessage());
+                player.sendMessage(CC.translate(user.getChatDisplay() + "&7: " + chatColor) + event.getMessage());
                 return;
             }
 
@@ -116,7 +112,7 @@ public class CoreListener implements Listener {
             for (Player online : Bukkit.getOnlinePlayers()) {
                 if (!setting.isEnabled(online.getUniqueId())) continue;
 
-                online.sendMessage(CC.translate(prefix + displayName + tag + "&7: " + chatColor) + event.getMessage());
+                online.sendMessage(CC.translate(user.getChatDisplay() + "&7: " + chatColor) + event.getMessage());
             }
         }));
     }

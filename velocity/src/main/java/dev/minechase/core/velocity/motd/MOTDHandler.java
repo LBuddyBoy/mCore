@@ -222,6 +222,7 @@ public class MOTDHandler implements IModule {
 
         for (CoreServer server : CoreVelocity.getInstance().getServerHandler().getServers().values()) {
             if (server.getName().contains("Proxy")) continue;
+            if (server.getName().equalsIgnoreCase("JDA")) continue;
 
             onlinePlayers += server.getPlayerCount();
         }

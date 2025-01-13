@@ -38,6 +38,9 @@ public class ProxyServerHandler extends ServerHandler {
     }
 
     public void registerServer(CoreServer server) {
+        if (server.getName().equalsIgnoreCase("JDA")) return;
+        if (server.getName().equalsIgnoreCase("Proxy")) return;
+
         CoreVelocity.getInstance().getProxy().getServer(server.getName()).ifPresentOrElse(registeredServer -> {
             ServerInfo info = registeredServer.getServerInfo();
 

@@ -26,7 +26,7 @@ public class StaffMessagePacket implements Packet {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (!player.hasPermission(CoreConstants.STAFF_PERM)) continue;
 
-            this.messages.forEach(player::sendMessage);
+            this.messages.forEach(s -> player.sendMessage(CC.translate(s)));
         }
 
         this.messages.forEach(s -> Bukkit.getConsoleSender().sendMessage(s));

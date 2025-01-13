@@ -21,7 +21,7 @@ public class PlayerSyncInformationCacheLoader implements AsyncCacheLoader<UUID, 
         return CompletableFuture.supplyAsync(() -> {
             try {
                 Bson bson = Filters.eq("playerUUID", owner.toString());
-                Document document = CoreAPI.getInstance().getSyncHandler().getCodeCollection().find(bson).first();
+                Document document = CoreAPI.getInstance().getSyncHandler().getInformationCollection().find(bson).first();
 
                 return document == null ? null : new SyncInformation(document);
             } catch (Exception e) {

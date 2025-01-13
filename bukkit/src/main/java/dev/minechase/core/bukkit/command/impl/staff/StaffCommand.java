@@ -1,10 +1,7 @@
 package dev.minechase.core.bukkit.command.impl.staff;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Name;
-import co.aikar.commands.annotation.Optional;
+import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import dev.lbuddyboy.commons.api.util.TimeDuration;
 import dev.lbuddyboy.commons.util.CC;
@@ -92,6 +89,7 @@ public class StaffCommand extends BaseCommand {
 
     @CommandAlias("staffmode|h|staff|modmode|mod")
     @CommandPermission(CoreConstants.STAFF_PERM)
+    @CommandCompletion("@players")
     public void staffMode(CommandSender sender, @Name("player") @Optional OnlinePlayer target) {
         if (sender instanceof Player senderPlayer && target == null) {
             target = new OnlinePlayer(senderPlayer);
@@ -114,6 +112,7 @@ public class StaffCommand extends BaseCommand {
 
     @CommandAlias("vanish|v")
     @CommandPermission(CoreConstants.STAFF_PERM)
+    @CommandCompletion("@players")
     public void vanish(CommandSender sender, @Name("player") @Optional OnlinePlayer target) {
         if (sender instanceof Player senderPlayer && target == null) {
             target = new OnlinePlayer(senderPlayer);

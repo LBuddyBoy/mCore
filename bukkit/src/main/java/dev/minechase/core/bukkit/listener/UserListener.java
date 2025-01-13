@@ -12,6 +12,7 @@ import dev.minechase.core.api.log.model.impl.NewUserLog;
 import dev.minechase.core.api.user.model.User;
 import dev.minechase.core.bukkit.CoreConstants;
 import dev.minechase.core.bukkit.CorePlugin;
+import dev.minechase.core.bukkit.command.impl.essential.TeleportCommand;
 import dev.minechase.core.bukkit.util.totp.TwoFactorUtil;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -21,6 +22,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +54,8 @@ public class UserListener implements Listener {
         if (property != null) {
             user.getPersistentMetadata().set(User.HEAD_TEXTURE_KEY, property.value());
         }
+
+        CorePlugin.getInstance().getUserHandler().updateDisguise(player);
 
         CorePlugin.getInstance().getPermissionHandler().updatePermissions(player.getUniqueId());
 
@@ -91,6 +96,13 @@ public class UserListener implements Listener {
 
         user.save(true);
         CorePlugin.getInstance().getUserHandler().getUsers().remove(player.getUniqueId());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onTeleport(PlayerTeleportEvent event) {
+        Player player = event.getPlayer();
+
+        player.setMetadata(TeleportCommand.BACK_METADATA, new FixedMetadataValue(CorePlugin.getInstance(), event.getTo()));
     }
 
 }

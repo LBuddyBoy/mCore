@@ -1,6 +1,8 @@
 package dev.minechase.core.api.log.model;
 
 import dev.minechase.core.api.log.model.impl.*;
+import dev.minechase.core.api.log.model.impl.disguise.DisguiseAddLog;
+import dev.minechase.core.api.log.model.impl.disguise.DisguiseRemoveLog;
 import dev.minechase.core.api.log.model.impl.grant.GrantCreationLog;
 import dev.minechase.core.api.log.model.impl.grant.GrantRemoveLog;
 import dev.minechase.core.api.log.model.impl.permission.PermissionCreationLog;
@@ -19,6 +21,8 @@ import java.util.function.Function;
 @AllArgsConstructor
 public enum CoreLogType {
 
+    DISGUISE_ADDED("&a&lUSER DISGUISED", DisguiseAddLog::new),
+    DISGUISE_REMOVED("&c&lUSER UNDISGUISED", DisguiseRemoveLog::new),
     IP_CHANGED("&d&lUSER IP CHANGED", IPChangedLog::new),
     RANK_CREATED("&a&lRANK CREATED", RankCreationLog::new),
     RANK_DELETED("&c&lRANK DELETED", RankDeletionLog::new),

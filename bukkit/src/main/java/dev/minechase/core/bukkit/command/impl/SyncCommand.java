@@ -19,35 +19,40 @@ public class SyncCommand extends BaseCommand {
 
     @Default
     public void def(Player sender) {
-        User user = CorePlugin.getInstance().getUserHandler().getUser(sender.getUniqueId());
+        CorePlugin.getInstance().getSyncHandler().getSyncInformation(sender.getUniqueId()).whenCompleteAsync(((information, throwable) -> {
+            if (throwable != null) {
+                throwable.printStackTrace();
+                return;
+            }
 
-        if (user.getPersistentMetadata().getBooleanOrDefault(User.SYNCED_KEY, false)) {
-            sender.sendMessage(CC.translate("<blend:&4;&c>Your account is already synced.</>"));
-            return;
-        }
+            if (information != null) {
+                sender.sendMessage(CC.translate("<blend:&4;&c>Your account is already synced to: '" + information.getDiscordMemberId() + "'</>"));
+                return;
+            }
 
-        SyncCode syncCode = CorePlugin.getInstance().getSyncHandler().getSyncCode(sender.getUniqueId());
+            SyncCode syncCode = CorePlugin.getInstance().getSyncHandler().getSyncCode(sender.getUniqueId());
 
-        if (syncCode != null) {
-            sender.sendMessage(CC.translate("<blend:&4;&c>You already have a sync code: " + syncCode.getCode() + "</>"));
-            return;
-        }
+            if (syncCode != null) {
+                sender.sendMessage(CC.translate("<blend:&4;&c>You already have a sync code: " + syncCode.getCode() + "</>"));
+                return;
+            }
 
-        syncCode = new SyncCode(sender.getUniqueId(), generateCode());
+            syncCode = new SyncCode(sender.getUniqueId(), generateCode());
 
-        Arrays.asList(
-                " ",
-                "<blend:&6;&e>&lHow to Sync Account</>",
-                "&eStep #1 &fJoin discord.gg/minechase",
-                "&eStep #2 &fGo to #bot-commands",
-                "&eStep #3 &fType /sync " + syncCode.getCode(),
-                " ",
-                "&fAfter doing this your discord account will be synced",
-                "&fto your Minecraft Account!",
-                " "
-        ).forEach(s -> sender.sendMessage(CC.translate(s)));
+            Arrays.asList(
+                    " ",
+                    "<blend:&6;&e>&lHow to Sync Account</>",
+                    "&eStep #1 &fJoin discord.gg/minechase",
+                    "&eStep #2 &fGo to #bot-commands",
+                    "&eStep #3 &fType /sync " + syncCode.getCode(),
+                    " ",
+                    "&fAfter doing this your discord account will be synced",
+                    "&fto your Minecraft Account!",
+                    " "
+            ).forEach(s -> sender.sendMessage(CC.translate(s)));
 
-        new SyncCodeUpdatePacket(syncCode).send();
+            new SyncCodeUpdatePacket(syncCode).send();
+        }));
     }
 
     public int generateCode() {

@@ -45,7 +45,7 @@ public class RankHandler implements IModule {
     }
 
     public Rank getDefaultRank() {
-        Rank defaultRank = this.ranks.values().stream().filter(Rank::isDefaultRank).findFirst().orElse(null);
+        Rank defaultRank = this.getSortedRanks().stream().filter(Rank::isDefaultRank).findFirst().orElse(null);
 
         if (defaultRank == null) {
             defaultRank = new Rank("Default");

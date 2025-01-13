@@ -4,6 +4,7 @@ import dev.minechase.core.api.user.model.User;
 import dev.minechase.core.api.util.ExceptedFuture;
 import dev.minechase.core.api.util.UUIDUtils;
 import dev.minechase.core.bukkit.CorePlugin;
+import dev.minechase.core.bukkit.mod.ModModeHandler;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,6 +22,10 @@ public class AsyncCorePlayer {
 
     public boolean isOnline() {
         return getPlayer() != null;
+    }
+
+    public boolean isVanished() {
+        return isOnline() && getPlayer().hasMetadata(ModModeHandler.VANISHED_METADATA);
     }
 
     public Player getPlayer() {

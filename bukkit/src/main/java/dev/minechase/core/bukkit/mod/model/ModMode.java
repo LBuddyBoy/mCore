@@ -14,7 +14,6 @@ public class ModMode {
     private final Player player;
     private final GameMode gameMode;
     private final ItemStack[] inventoryContents;
-    private boolean vanished;
 
     public ModMode(Player player) {
         this.player = player;
