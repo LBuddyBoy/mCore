@@ -1,13 +1,25 @@
-package dev.minechase.core.bukkit.command.impl;
+package dev.minechase.core.bukkit.command.impl.admin;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import dev.lbuddyboy.commons.api.util.HTTPUtils;
 import dev.lbuddyboy.commons.util.CC;
 import dev.lbuddyboy.commons.util.LocationUtils;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.npc.model.CustomNPC;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.mineskin.JsoupRequestHandler;
+import org.mineskin.MineSkinClient;
+import org.mineskin.data.Skin;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.concurrent.CompletableFuture;
 
 @CommandAlias("npc")
 @CommandPermission("commons.command.npc")
@@ -46,6 +58,37 @@ public class NPCCommand extends BaseCommand {
     public void delete(Player sender, @Name("npc") CustomNPC npc) {
         npc.delete();
         sender.sendMessage(CC.translate("<blend:&4;&c>Deleted the '" + npc.getName() + "' npc.</>"));
+    }
+
+    @Subcommand("skin")
+    @CommandCompletion("@npcs <mineskin.org url>")
+    public void skin(Player sender, @Name("name") CustomNPC npc, @Name("url") String url) {
+        String uuid = url.replaceAll("https://mineskin.org/skins/", "");
+
+        if (uuid.startsWith("https://")) uuid = url.replaceAll("https://minesk.in/", "");
+
+        sender.sendMessage(CC.translate("<blend:&6;&e>Updating '" + npc.getName() + "' skin, this may take a few seconds...</>"));
+
+        MineSkinClient client = MineSkinClient.builder()
+                .requestHandler(JsoupRequestHandler::new)
+                .userAgent("mCore/v1.0")
+                .apiKey("94791932570333c4675c3ffcff865de72cb41830b3090d15f96c608da8ce70ae")
+                .build();
+
+        client.skins().get(uuid).whenCompleteAsync((response, throwable) -> {
+            if (throwable != null) {
+                throwable.printStackTrace();
+                sender.sendMessage(CC.translate("<blend:&4;&c>Error processing '" + url + "' mine skin url.</>"));
+                sender.sendMessage(CC.translate("<blend:&4;&c>Valid Example #1: 'https://minesk.in/d66f1a35bc4b423eb9b4381f99dfad44'</>"));
+                sender.sendMessage(CC.translate("<blend:&4;&c>Valid Example #2: 'https://mineskin.org/skins/d66f1a35bc4b423eb9b4381f99dfad44'</>"));
+                return;
+            }
+            Skin skin = response.getSkin();
+
+            npc.setSkin(skin.texture().data().value(), skin.texture().data().signature());
+            sender.sendMessage(CC.translate("<blend:&2;&a>Successfully updated '" + npc.getName() + "' skin.</>"));
+        });
+
     }
 
     @Subcommand("tp|teleport")

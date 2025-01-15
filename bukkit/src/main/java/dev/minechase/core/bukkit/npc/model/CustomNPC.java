@@ -3,6 +3,7 @@ package dev.minechase.core.bukkit.npc.model;
 import com.google.common.base.Preconditions;
 import dev.lbuddyboy.commons.util.Config;
 import dev.lbuddyboy.commons.util.Coordinate;
+import dev.lbuddyboy.commons.util.Tasks;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.hologram.model.HologramLine;
 import dev.minechase.core.bukkit.npc.model.packet.NPCHologram;
@@ -102,6 +103,7 @@ public class CustomNPC {
         this.spawned = true;
         this.entity = new NPCEntity(this);
         this.hologram = new NPCHologram(this);
+
         this.showNPC();
 
         CorePlugin.getInstance().getNpcHandler().getNpcById().put(this.entity.getId(), this);
@@ -128,9 +130,10 @@ public class CustomNPC {
         this.skinTexture = skinTexture;
         this.skinSignature = skinSignature;
 
-        this.entity.updateGameProfile();
-        this.updateNPC();
+        this.hideNPC();
         this.save();
+
+        Tasks.runAsyncLater(this::showNPC, 60);
     }
 
     public void setRightClickCommand(String rightClickCommand) {
@@ -148,12 +151,17 @@ public class CustomNPC {
     }
 
     public void despawnNPC() {
-        this.entity.remove(Entity.RemovalReason.DISCARDED);
-        this.hologram.despawnHologram();
+        this.spawned = false;
 
         for (Player player : this.getSpawnLocation().getWorld().getPlayers()) {
             this.entity.getRemovePackets().forEach(packet -> ((CraftPlayer)player).getHandle().connection.sendPacket(packet));
         }
+
+        this.hologram.despawnHologram();
+        this.entity.remove(Entity.RemovalReason.DISCARDED);
+
+        this.entity = null;
+        this.hologram = null;
     }
 
     public void delete() {

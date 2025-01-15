@@ -4,14 +4,9 @@ import dev.lbuddyboy.commons.api.util.IModule;
 import dev.lbuddyboy.commons.util.Config;
 import dev.lbuddyboy.commons.util.Tasks;
 import dev.minechase.core.bukkit.CorePlugin;
-import dev.minechase.core.bukkit.command.context.HologramContext;
-import dev.minechase.core.bukkit.command.impl.HologramCommand;
-import dev.minechase.core.bukkit.hologram.model.HologramLine;
 import dev.minechase.core.bukkit.hologram.model.IHologram;
 import dev.minechase.core.bukkit.hologram.model.SerializableHologram;
 import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,13 +14,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.world.WorldLoadEvent;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
 public class HologramHandler implements IModule, Listener {
@@ -42,18 +34,7 @@ public class HologramHandler implements IModule, Listener {
 
     @Override
     public void load() {
-        if (!CorePlugin.getInstance().getConfig().getBoolean("holograms", false)) return;
-
         CorePlugin.getInstance().getServer().getPluginManager().registerEvents(this, CorePlugin.getInstance());
-
-        new HologramContext().register(CorePlugin.getInstance().getCommandHandler().getCommandManager());
-        CorePlugin.getInstance().getCommandHandler().getCommandManager().getCommandCompletions().registerCompletion("hologramLines", (ctx) -> {
-            IHologram hologram = ctx.getContextValue(IHologram.class);
-
-            return hologram.getLines().stream().map(HologramLine::getIndex).map(String::valueOf).toList();
-        });
-
-        CorePlugin.getInstance().getCommandHandler().getCommandManager().registerCommand(new HologramCommand());
 
         for (String fileName : this.directory.list()) {
             fileName = fileName.replaceAll(".yml", "");
@@ -65,7 +46,6 @@ public class HologramHandler implements IModule, Listener {
         Tasks.runAsyncTimer(() -> {
             this.holograms.values().stream().filter(IHologram::isAutoUpdating).forEach(IHologram::updateHologram);
         }, 20, 20);
-
     }
 
     @Override

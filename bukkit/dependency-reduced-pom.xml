@@ -37,6 +37,19 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>ca.bkaw</groupId>
+        <artifactId>paper-nms-maven-plugin</artifactId>
+        <version>1.4.4</version>
+        <executions>
+          <execution>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>remap</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <repositories>
@@ -55,6 +68,10 @@
     <repository>
       <id>papermc</id>
       <url>https://repo.papermc.io/repository/maven-public/</url>
+    </repository>
+    <repository>
+      <id>inventive-repo</id>
+      <url>https://repo.inventivetalent.org/repository/public/</url>
     </repository>
   </repositories>
   <pluginRepositories>

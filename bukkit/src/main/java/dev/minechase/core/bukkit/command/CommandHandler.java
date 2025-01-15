@@ -40,6 +40,11 @@ public class CommandHandler implements IModule {
 
         this.commandManager.getCommandCompletions().registerCompletion("rankPermissions", new RankContext.RankPermissionCompletion());
         this.commandManager.getCommandCompletions().registerCompletion("disguiseRanks", new RankContext.DisguiseRanksCompletion());
+        this.commandManager.getCommandCompletions().registerCompletion("hologramLines", new HologramContext.HologramLinesCompletion());
+        this.commandManager.getCommandCompletions().registerCompletion("npcLines", new NPCContext.NPCLinesCompletion());
+
+        this.commandManager.registerCommand(new NPCCommand());
+        this.commandManager.registerCommand(new HologramCommand());
 
         this.commandManager.registerCommand(new ClearCommand());
         this.commandManager.registerCommand(new CraftCommand());

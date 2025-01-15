@@ -26,7 +26,7 @@ public class NPCEntity extends ServerPlayer {
     private final CustomNPC npc;
 
     public NPCEntity(CustomNPC npc) {
-        super(((CraftWorld)npc.getSpawnLocation().getWorld()).getHandle().getServer(), ((CraftWorld)npc.getSpawnLocation().getWorld()).getHandle(), new GameProfile(npc.getUniqueId(), ""), ClientInformation.createDefault());
+        super(((CraftWorld) npc.getSpawnLocation().getWorld()).getHandle().getServer(), ((CraftWorld) npc.getSpawnLocation().getWorld()).getHandle(), new GameProfile(npc.getUniqueId(), ""), ClientInformation.createDefault());
         this.npc = npc;
 
         this.updateGameProfile();
@@ -48,6 +48,7 @@ public class NPCEntity extends ServerPlayer {
     public List<Packet<?>> getCreatePackets() {
         this.setCustomNameVisible(false);
         this.setCustomName(null);
+        this.updateGameProfile();
 
         return Arrays.asList(
                 new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, this),
@@ -82,8 +83,10 @@ public class NPCEntity extends ServerPlayer {
         this.setRot(npc.getSpawnLocation().getYaw(), npc.getSpawnLocation().getPitch());
         this.setYHeadRot(this.getYRot());
         this.setYBodyRot(this.getXRot());
+        this.updateGameProfile();
 
         return Arrays.asList(
+                new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, this),
                 new ClientboundTeleportEntityPacket(
                         this.getId(),
                         new PositionMoveRotation(this.position(), this.getDeltaMovement(), this.getYRot(), this.getXRot()),
@@ -101,7 +104,7 @@ public class NPCEntity extends ServerPlayer {
         );
     }
 
-    public void updateGameProfile() {
+    private void updateGameProfile() {
         gameProfile.getProperties().removeAll("textures");
 
         gameProfile.getProperties().put("textures", new Property(

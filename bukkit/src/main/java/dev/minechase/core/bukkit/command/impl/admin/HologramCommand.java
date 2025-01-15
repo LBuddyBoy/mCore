@@ -1,4 +1,4 @@
-package dev.minechase.core.bukkit.command.impl;
+package dev.minechase.core.bukkit.command.impl.admin;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
