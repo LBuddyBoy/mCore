@@ -19,10 +19,12 @@ import dev.minechase.core.api.server.packet.ServerUpdatePacket;
 import dev.minechase.core.api.sync.SyncHandler;
 import dev.minechase.core.api.tag.TagHandler;
 import dev.minechase.core.bukkit.api.*;
+import dev.minechase.core.bukkit.hologram.HologramHandler;
 import dev.minechase.core.bukkit.listener.CoreListener;
 import dev.minechase.core.bukkit.listener.PunishmentListener;
 import dev.minechase.core.bukkit.listener.TotpListener;
 import dev.minechase.core.bukkit.mod.ModModeHandler;
+import dev.minechase.core.bukkit.npc.NPCHandler;
 import dev.minechase.core.bukkit.settings.SettingsHandler;
 import dev.minechase.core.api.user.UserHandler;
 import dev.minechase.core.bukkit.command.CommandHandler;
@@ -67,6 +69,8 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
     private RebootHandler rebootHandler;
     private WhitelistHandler whitelistHandler;
     private TipHandler tipHandler;
+    private NPCHandler npcHandler;
+    private HologramHandler hologramHandler;
 
     @Override
     public void onEnable() {
@@ -159,7 +163,9 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
                 this.modModeHandler = new ModModeHandler(),
                 this.rebootHandler = new RebootHandler(),
                 this.whitelistHandler = new WhitelistHandler(),
-                this.tipHandler = new TipHandler()
+                this.tipHandler = new TipHandler(),
+                this.npcHandler = new NPCHandler(),
+                this.hologramHandler = new HologramHandler()
         ));
 
         this.modules.forEach(IModule::load);

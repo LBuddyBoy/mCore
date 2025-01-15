@@ -28,6 +28,8 @@ public class CommandHandler implements IModule {
                 new EnchantmentContext(),
                 new GameModeContext(),
                 new PrefixContext(),
+                new NPCContext(),
+                new HologramContext(),
                 new TagContext(),
                 new MultiScopeContext(),
                 new TimeDurationContext(),
