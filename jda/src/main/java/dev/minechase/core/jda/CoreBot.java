@@ -77,7 +77,7 @@ public class CoreBot implements ICoreAPI {
         this.dataDirectory = new File(System.getProperty("user.dir"));
 
         try {
-            this.jda = JDABuilder.createDefault("MTEwMTYwOTAxNjMzOTIxMDM3MA.GcczWB.5E-3Bo8olpqWJ5aqabyH2gZ6G5sQ3T85AtJWpg")
+            this.jda = JDABuilder.createDefault("token_here")
                     .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES)
                     .disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
                     .setBulkDeleteSplittingEnabled(false)
@@ -146,7 +146,7 @@ public class CoreBot implements ICoreAPI {
     }
 
     public Guild getGuild() {
-        return CoreBot.getInstance().getJda().getGuildById("1104585785581240411");
+        return CoreBot.getInstance().getJda().getGuildById("guild_id_here");
     }
 
     public InputStream getResourceAsStream(String name) {
