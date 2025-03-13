@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>${parent.artifactId}-api</artifactId>
+    <name>core-api</name>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

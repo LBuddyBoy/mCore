@@ -9,7 +9,8 @@
         <version>1.0</version>
     </parent>
 
-    <artifactId>mcore-jda</artifactId>
+    <artifactId>${parent.artifactId}-jda</artifactId>
+    <name>core-jda</name>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
