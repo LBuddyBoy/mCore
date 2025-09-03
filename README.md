@@ -15,6 +15,10 @@
 
 <em>Built with the tools and technologies:</em>
 
+<img src="https://img.shields.io/badge/Java-007396.svg?style=flat&logo=openjdk&logoColor=white" alt="Java">
+<img src="https://img.shields.io/badge/Spring-6DB33F.svg?style=flat&logo=spring&logoColor=white" alt="Spring">
+<img src="https://img.shields.io/badge/JavaScript-F7DF1E.svg?style=flat&logo=javascript&logoColor=black" alt="JavaScript">
+<img src="https://img.shields.io/badge/React-61DAFB.svg?style=flat&logo=react&logoColor=black" alt="React">
 <img src="https://img.shields.io/badge/Markdown-000000.svg?style=flat&logo=Markdown&logoColor=white" alt="Markdown">
 <img src="https://img.shields.io/badge/XML-005FAD.svg?style=flat&logo=XML&logoColor=white" alt="XML">
 
