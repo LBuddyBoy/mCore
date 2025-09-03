@@ -7,10 +7,6 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.api.CoreAPI;
-import dev.minechase.core.api.grant.model.Grant;
-import dev.minechase.core.api.iphistory.cache.IPHistoryCacheLoader;
-import dev.minechase.core.api.iphistory.model.HistoricalIP;
-import dev.minechase.core.api.punishment.model.Punishment;
 import dev.minechase.core.api.sync.cache.DiscordSyncInformationCacheLoader;
 import dev.minechase.core.api.sync.cache.PlayerSyncInformationCacheLoader;
 import dev.minechase.core.api.sync.model.SyncCode;
@@ -19,7 +15,6 @@ import lombok.Getter;
 import org.bson.Document;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -28,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 public class SyncHandler implements IModule {
 
-    private MongoCollection<Document> codeCollection, informationCollection;
+    private MongoCollection<Document> discordCodeCollection, informationCollection;
     private List<SyncCode> syncCodes;
     private AsyncLoadingCache<UUID, SyncInformation> playerSyncInformation;
     private AsyncLoadingCache<String, SyncInformation> discordSyncInformation;
@@ -43,10 +38,10 @@ public class SyncHandler implements IModule {
                 .expireAfterAccess(10, TimeUnit.MINUTES)
                 .buildAsync(new DiscordSyncInformationCacheLoader());
 
-        this.codeCollection = CoreAPI.getInstance().getMongoHandler().getDatabase().getCollection("SyncCodes");
+        this.discordCodeCollection = CoreAPI.getInstance().getMongoHandler().getDatabase().getCollection("DiscordSyncCodes");
         this.informationCollection = CoreAPI.getInstance().getMongoHandler().getDatabase().getCollection("SyncInformation");
 
-        for (Document document : this.codeCollection.find()) {
+        for (Document document : this.discordCodeCollection.find()) {
             this.syncCodes.add(new SyncCode(document));
         }
     }
@@ -115,7 +110,7 @@ public class SyncHandler implements IModule {
             return;
         }
 
-        this.codeCollection.deleteOne(Filters.eq("code", code.getCode()));
+        this.discordCodeCollection.deleteOne(Filters.eq("code", code.getCode()));
     }
 
     public void saveCode(SyncCode code, boolean async) {
@@ -124,7 +119,7 @@ public class SyncHandler implements IModule {
             return;
         }
 
-        this.codeCollection.replaceOne(Filters.eq("code", code.getCode()), code.toDocument(), new ReplaceOptions().upsert(true));
+        this.discordCodeCollection.replaceOne(Filters.eq("code", code.getCode()), code.toDocument(), new ReplaceOptions().upsert(true));
     }
 
     public void removeInfo(SyncInformation info) {
