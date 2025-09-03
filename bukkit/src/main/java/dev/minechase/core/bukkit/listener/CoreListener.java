@@ -2,7 +2,6 @@ package dev.minechase.core.bukkit.listener;
 
 import dev.lbuddyboy.commons.util.CC;
 import dev.minechase.core.api.CoreAPI;
-import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.api.user.model.User;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.api.event.AsyncCoreChatEvent;
@@ -11,7 +10,7 @@ import dev.minechase.core.bukkit.packet.StaffMessagePacket;
 import dev.minechase.core.bukkit.settings.model.impl.AdminChatSetting;
 import dev.minechase.core.bukkit.settings.model.impl.GlobalChatSetting;
 import dev.minechase.core.bukkit.settings.model.impl.StaffChatSetting;
-import dev.minechase.core.bukkit.util.FilterUtil;
+import dev.minechase.core.api.util.FilterUtil;
 import dev.minechase.core.velocity.packet.PlayerKickPacket;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -20,11 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerPreLoginEvent;
-
-import java.util.UUID;
 
 /**
  * Overrides Bukkit Events to ensure proper cache calls
@@ -70,12 +65,12 @@ public class CoreListener implements Listener {
             return;
         }
 
-        if (!player.hasPermission("core.chat.bypass") && CorePlugin.getInstance().getChatHandler().isMuted()) {
+        if (!player.hasPermission("core.chat.bypass") && CorePlugin.getInstance().getChatHandler().getLocalSettings().isMuted()) {
             player.sendMessage(CC.translate("<blend:&4;&c>Chat is muted.</>"));
             return;
         }
 
-        if (!player.hasPermission("core.chat.bypass") && CorePlugin.getInstance().getChatHandler().isSlowed()) {
+        if (!player.hasPermission("core.chat.bypass") && CorePlugin.getInstance().getChatHandler().getLocalSettings().isSlowed()) {
             long timeLeft = user.getLocalMetadata().getLong("slowChat") - System.currentTimeMillis();
 
             if (timeLeft >= 0) {
@@ -83,7 +78,7 @@ public class CoreListener implements Listener {
                 return;
             }
 
-            user.getLocalMetadata().setLong("slowChat", System.currentTimeMillis() + (CorePlugin.getInstance().getChatHandler().getSlowedDelay() * 1000L));
+            user.getLocalMetadata().setLong("slowChat", System.currentTimeMillis() + (CorePlugin.getInstance().getChatHandler().getLocalSettings().getSlowDelay() * 1000L));
         }
 
         CorePlugin.getInstance().getPunishmentHandler().fetchSnapshotsRelating(player.getUniqueId(), user.getCurrentIpAddress()).whenCompleteAsync(((punishments, throwable) -> {

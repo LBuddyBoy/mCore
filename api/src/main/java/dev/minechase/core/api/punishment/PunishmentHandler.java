@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.gson.reflect.TypeToken;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.ReplaceOptions;
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.api.CoreAPI;
@@ -39,6 +40,8 @@ public class PunishmentHandler implements IModule {
                 .buildAsync(new PunishmentCacheLoader());
 
         this.collection = CoreAPI.getInstance().getMongoHandler().getDatabase().getCollection("Punishments");
+        this.collection.createIndex(new Document("targetUUID", 1));
+        this.collection.createIndex(new Document("targetIp", 1));
     }
 
     @Override

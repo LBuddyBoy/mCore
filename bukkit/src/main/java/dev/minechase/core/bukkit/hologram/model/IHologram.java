@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +43,7 @@ public interface IHologram {
 
         HologramLine toRemove = lines.get(index);
         for (Player viewer : getLocation().getWorld().getPlayers()) {
-            ((CraftPlayer)viewer).getHandle().connection.sendPacket(toRemove.getDespawnPacket(viewer));
+            toRemove.getDespawnPackets().forEach(packet -> ((CraftPlayer)viewer).getHandle().connection.send(packet));
         }
 
         lines.remove(toRemove);
@@ -81,7 +82,7 @@ public interface IHologram {
         this.updateHologram();
 
         for (Player player : getLocation().getWorld().getPlayers()) {
-            line.getCreatePackets(player).forEach(packet -> ((CraftPlayer)player).getHandle().connection.sendPacket(packet));
+            line.getCreatePackets(player).forEach(packet -> ((CraftPlayer)player).getHandle().connection.send(packet));
         }
 
         this.save();
@@ -94,14 +95,14 @@ public interface IHologram {
     default void updateHologram() {
         for (Player viewer : getLocation().getWorld().getPlayers()) {
             for (HologramLine line : this.getLines()) {
-                line.getUpdatePackets(viewer).forEach(packet -> ((CraftPlayer)viewer).getHandle().connection.sendPacket(packet));
+                line.getUpdatePackets(viewer).forEach(packet -> ((CraftPlayer)viewer).getHandle().connection.send(packet));
             }
         }
     }
 
     default void spawnHologram(Player viewer) {
         for (HologramLine line : this.getLines()) {
-            line.getCreatePackets(viewer).forEach(packet -> ((CraftPlayer)viewer).getHandle().connection.sendPacket(packet));
+            line.getCreatePackets(viewer).forEach(packet -> ((CraftPlayer)viewer).getHandle().connection.send(packet));
         }
     }
 
@@ -111,7 +112,7 @@ public interface IHologram {
 
     default void despawnHologram(Player viewer) {
         for (HologramLine line : this.getLines()) {
-            ((CraftPlayer)viewer).getHandle().connection.sendPacket(line.getDespawnPacket(viewer));
+            line.getDespawnPackets().forEach(packet -> ((CraftPlayer)viewer).getHandle().connection.send(packet));
         }
     }
 

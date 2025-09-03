@@ -1,4 +1,7 @@
-serverName: "Hub-01"
+serverFlags:
+  instance: false
+  template: false
+
 serverGroups:
   - 'GLOBAL'
   - 'HUBS'

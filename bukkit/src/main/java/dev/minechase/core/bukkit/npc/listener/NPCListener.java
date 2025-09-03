@@ -4,6 +4,7 @@ import dev.lbuddyboy.commons.packet.event.PacketReceiveEvent;
 import dev.lbuddyboy.commons.util.Tasks;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.npc.model.CustomNPC;
+import dev.minechase.core.bukkit.npc.model.INPC;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import net.minecraft.world.entity.Entity;
@@ -27,7 +28,7 @@ public class NPCListener implements Listener {
 
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {
-        for (CustomNPC npc : CorePlugin.getInstance().getNpcHandler().getNpcs().values()) {
+        for (INPC npc : CorePlugin.getInstance().getNpcHandler().getNpcs().values()) {
             if (!npc.getWorld().equalsIgnoreCase(event.getWorld().getName())) continue;
 
             npc.spawnNPC();
@@ -39,7 +40,7 @@ public class NPCListener implements Listener {
         Player player = event.getPlayer();
 
         Tasks.runAsync(() -> {
-            for (CustomNPC npc : CorePlugin.getInstance().getNpcHandler().getNpcs().values()) {
+            for (INPC npc : CorePlugin.getInstance().getNpcHandler().getNpcs().values()) {
                 if (!npc.getWorld().equalsIgnoreCase(player.getWorld().getName())) continue;
 
                 npc.showNPC(player);
@@ -52,7 +53,7 @@ public class NPCListener implements Listener {
         Player player = event.getPlayer();
 
         Tasks.runAsync(() -> {
-            for (CustomNPC npc : CorePlugin.getInstance().getNpcHandler().getNpcs().values()) {
+            for (INPC npc : CorePlugin.getInstance().getNpcHandler().getNpcs().values()) {
                 if (!npc.getWorld().equalsIgnoreCase(player.getWorld().getName())) continue;
 
                 npc.hideNPC(player);
@@ -68,7 +69,7 @@ public class NPCListener implements Listener {
         World toWorld = event.getPlayer().getWorld();
 
         Tasks.runAsync(() -> {
-            for (CustomNPC npc : CorePlugin.getInstance().getNpcHandler().getNpcs().values()) {
+            for (INPC npc : CorePlugin.getInstance().getNpcHandler().getNpcs().values()) {
                 if (!npc.getWorld().equals(fromWorld.getName())) {
                     if (!npc.getWorld().equals(toWorld.getName())) continue;
 
@@ -88,7 +89,7 @@ public class NPCListener implements Listener {
         if (packet.isUsingSecondaryAction()) return;
 
         Player player = event.getPlayer();
-        CustomNPC npc = CorePlugin.getInstance().getNpcHandler().getNpcById().getOrDefault(packet.getEntityId(), null);
+        INPC npc = CorePlugin.getInstance().getNpcHandler().getNpcById().getOrDefault(packet.getEntityId(), null);
 
         if (npc == null) return;
         if (npc.getRightClickCommand() == null || npc.getRightClickCommand().isEmpty()) return;

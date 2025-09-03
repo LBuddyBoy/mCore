@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="240" height="72" viewBox="0 0 240 72" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Default badge - outline">
+  <style>
+    .pill {
+      fill: none;
+      stroke: var(--primary, #2C4A99);
+      stroke-width: 3;
+      shape-rendering: geometricPrecision;
+    }
+    .label {
+      fill: var(--primary, #2C4A99);
+      font: 700 28px/1 "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      letter-spacing: .2px;
+    }
+  </style>
+  <!-- Transparent background; outline-only badge -->
+  <rect x="3.5" y="3.5" width="233" height="65" rx="32.5" class="pill"/>
+  <text x="50%" y="50%" class="label" text-anchor="middle" dominant-baseline="middle">Default</text>
+</svg>

@@ -5,6 +5,7 @@ import dev.lbuddyboy.commons.util.Config;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.npc.listener.NPCListener;
 import dev.minechase.core.bukkit.npc.model.CustomNPC;
+import dev.minechase.core.bukkit.npc.model.INPC;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -16,8 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Getter
 public class NPCHandler implements IModule {
 
-    private final Map<String, CustomNPC> npcs;
-    private final Map<Integer, CustomNPC> npcById;
+    private final Map<String, INPC> npcs;
+    private final Map<Integer, INPC> npcById;
     private final File directory;
 
     public NPCHandler() {
@@ -46,7 +47,7 @@ public class NPCHandler implements IModule {
 
     @Override
     public void unload() {
-        this.npcs.values().forEach(CustomNPC::despawnNPC);
+        this.npcs.values().forEach(INPC::despawnNPC);
     }
 
 }

@@ -6,12 +6,12 @@ import dev.lbuddyboy.commons.api.util.IModule;
 import dev.lbuddyboy.commons.api.util.TimeDuration;
 import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.velocity.CoreVelocity;
-import dev.minechase.core.velocity.command.context.MOTDTimerParam;
-import dev.minechase.core.velocity.command.context.RankParam;
-import dev.minechase.core.velocity.command.context.TimeParam;
-import dev.minechase.core.velocity.command.context.UUIDParam;
+import dev.minechase.core.velocity.command.context.*;
+import dev.minechase.core.velocity.command.impl.CoreServerCommand;
+import dev.minechase.core.velocity.command.impl.InstanceCommand;
 import dev.minechase.core.velocity.command.impl.LockdownCommand;
 import dev.minechase.core.velocity.command.impl.MOTDTimerCommand;
+import dev.minechase.core.velocity.instance.model.InstanceType;
 import dev.minechase.core.velocity.motd.model.MOTDTimer;
 import lombok.AllArgsConstructor;
 
@@ -48,9 +48,12 @@ public class CommandHandler implements IModule {
         this.commandManager.getCommandContexts().registerContext(TimeDuration.class, new TimeParam());
         this.commandManager.getCommandContexts().registerContext(UUID.class, new UUIDParam());
         this.commandManager.getCommandContexts().registerContext(Rank.class, new RankParam());
+        this.commandManager.getCommandContexts().registerContext(InstanceType.class, new InstanceTypeParam());
 
         this.commandManager.registerCommand(new LockdownCommand());
         this.commandManager.registerCommand(new MOTDTimerCommand());
+        this.commandManager.registerCommand(new InstanceCommand());
+        this.commandManager.registerCommand(new CoreServerCommand());
     }
 
     @Override

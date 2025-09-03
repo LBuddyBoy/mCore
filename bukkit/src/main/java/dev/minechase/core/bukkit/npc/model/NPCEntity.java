@@ -2,6 +2,7 @@ package dev.minechase.core.bukkit.npc.model;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import dev.lbuddyboy.commons.CommonsPlugin;
 import dev.minechase.core.bukkit.npc.model.packet.NPCChannel;
 import dev.minechase.core.bukkit.npc.model.packet.NPCConnection;
 import dev.minechase.core.bukkit.npc.model.packet.NPCPacketGameListener;
@@ -16,6 +17,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,20 +25,21 @@ import java.util.List;
 
 public class NPCEntity extends ServerPlayer {
 
-    private final CustomNPC npc;
+    private final INPC npc;
 
-    public NPCEntity(CustomNPC npc) {
+    public NPCEntity(INPC npc) {
         super(((CraftWorld) npc.getSpawnLocation().getWorld()).getHandle().getServer(), ((CraftWorld) npc.getSpawnLocation().getWorld()).getHandle(), new GameProfile(npc.getUniqueId(), ""), ClientInformation.createDefault());
         this.npc = npc;
 
-        this.updateGameProfile();
+        this.npc.onEntityCreate(this);
+
         this.setUUID(npc.getUniqueId());
         this.setRot(npc.getSpawnLocation().getYaw(), npc.getSpawnLocation().getPitch());
         this.setPos(npc.getSpawnLocation().getX(), npc.getSpawnLocation().getY(), npc.getSpawnLocation().getZ());
         this.setCustomNameVisible(false);
         this.setCustomName(null);
         this.connection = new NPCPacketGameListener(
-                server,
+                this.getServer(),
                 new NPCConnection(PacketFlow.CLIENTBOUND),
                 this,
                 CommonListenerCookie.createInitial(this.getGameProfile(), false)
@@ -45,10 +48,10 @@ public class NPCEntity extends ServerPlayer {
         this.connection.connection.channel = new NPCChannel();
     }
 
-    public List<Packet<?>> getCreatePackets() {
+    public List<Packet<?>> getCreatePackets(Player viewer) {
         this.setCustomNameVisible(false);
         this.setCustomName(null);
-        this.updateGameProfile();
+        this.updateGameProfile(viewer);
 
         return Arrays.asList(
                 new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, this),
@@ -76,14 +79,14 @@ public class NPCEntity extends ServerPlayer {
         );
     }
 
-    public List<Packet<?>> getUpdatePackets() {
+    public List<Packet<?>> getUpdatePackets(Player viewer) {
         this.setCustomNameVisible(false);
         this.setCustomName(null);
         this.setPos(npc.getSpawnLocation().getX(), npc.getSpawnLocation().getY(), npc.getSpawnLocation().getZ());
         this.setRot(npc.getSpawnLocation().getYaw(), npc.getSpawnLocation().getPitch());
         this.setYHeadRot(this.getYRot());
         this.setYBodyRot(this.getXRot());
-        this.updateGameProfile();
+        this.updateGameProfile(viewer);
 
         return Arrays.asList(
                 new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, this),
@@ -100,17 +103,18 @@ public class NPCEntity extends ServerPlayer {
 
     public List<Packet<?>> getRemovePackets() {
         return Arrays.asList(
+                new ClientboundPlayerInfoRemovePacket(Arrays.asList(this.getUUID())),
                 new ClientboundRemoveEntitiesPacket(this.getId())
         );
     }
 
-    private void updateGameProfile() {
+    public void updateGameProfile(Player viewer) {
         gameProfile.getProperties().removeAll("textures");
 
         gameProfile.getProperties().put("textures", new Property(
                 "textures",
-                npc.getSkinTexture(),
-                npc.getSkinSignature()
+                CommonsPlugin.getInstance().getPlaceholderHandler().applyPlaceholders(viewer, npc.getSkinTexture()),
+                CommonsPlugin.getInstance().getPlaceholderHandler().applyPlaceholders(viewer, npc.getSkinSignature())
         ));
     }
 

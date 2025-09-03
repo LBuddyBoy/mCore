@@ -60,7 +60,7 @@ public class NPCCommand extends BaseCommand {
         sender.sendMessage(CC.translate("<blend:&4;&c>Deleted the '" + npc.getName() + "' npc.</>"));
     }
 
-    @Subcommand("skin")
+    @Subcommand("skin url")
     @CommandCompletion("@npcs <mineskin.org url>")
     public void skin(Player sender, @Name("name") CustomNPC npc, @Name("url") String url) {
         String uuid = url.replaceAll("https://mineskin.org/skins/", "");
@@ -89,6 +89,15 @@ public class NPCCommand extends BaseCommand {
             sender.sendMessage(CC.translate("<blend:&2;&a>Successfully updated '" + npc.getName() + "' skin.</>"));
         });
 
+    }
+
+    @Subcommand("skin set")
+    @CommandCompletion("@npcs <mineskin.org url>")
+    public void skinValue(Player sender, @Name("name") CustomNPC npc, @Name("value") String value, @Name("signature") String signature) {
+        sender.sendMessage(CC.translate("<blend:&6;&e>Updating '" + npc.getName() + "' skin, this may take a few seconds...</>"));
+
+        npc.setSkin(value, signature);
+        sender.sendMessage(CC.translate("<blend:&2;&a>Successfully updated '" + npc.getName() + "' skin.</>"));
     }
 
     @Subcommand("tp|teleport")

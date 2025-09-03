@@ -6,6 +6,7 @@ import dev.lbuddyboy.commons.util.command.CommonCommandContext;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.hologram.model.HologramLine;
 import dev.minechase.core.bukkit.npc.model.CustomNPC;
+import dev.minechase.core.bukkit.npc.model.INPC;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,16 +20,18 @@ public class NPCContext extends CommonCommandContext<CustomNPC> {
     @Override
     public CustomNPC getContext(BukkitCommandExecutionContext context) throws InvalidCommandArgument {
         String source = context.popFirstArg();
-        CustomNPC npc = CorePlugin.getInstance().getNpcHandler().getNpcs().get(source.toLowerCase());
+        INPC npc = CorePlugin.getInstance().getNpcHandler().getNpcs().get(source.toLowerCase());
 
-        if (npc != null) return npc;
+        if (npc instanceof CustomNPC) {
+            return (CustomNPC) npc;
+        }
 
         throw new InvalidCommandArgument(CC.translate("<blend:&4;&c>A npc with the name '" + source + "' doesn't exists.</>"));
     }
 
     @Override
     public Collection<String> getCompletions(BukkitCommandCompletionContext context) throws InvalidCommandArgument {
-        return CorePlugin.getInstance().getNpcHandler().getNpcs().keySet();
+        return CorePlugin.getInstance().getNpcHandler().getNpcs().values().stream().filter(npc -> npc instanceof CustomNPC).map(INPC::getName).toList();
     }
 
     public static class NPCLinesCompletion implements CommandCompletions.CommandCompletionHandler<BukkitCommandCompletionContext> {

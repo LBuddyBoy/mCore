@@ -23,7 +23,7 @@ public class ScopedPermission extends Documented implements IScoped, ISendable, 
     private UUID removedBy = null;
     private String removedReason = null;
     private String removedOn = null;
-    private long removedAt = 0L;
+    private long removedAt = Long.MAX_VALUE;
 
     public ScopedPermission(UUID senderUUID, UUID targetUUID, String permissionNode, long duration, String server, String reason) {
         this.id = UUID.randomUUID();

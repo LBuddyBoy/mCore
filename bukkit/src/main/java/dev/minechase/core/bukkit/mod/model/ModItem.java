@@ -40,14 +40,7 @@ public enum ModItem {
     })),
 
     RANDOM_TP(new ItemFactory(Material.CLOCK).displayName("<blend:&6;&e>Random Teleport</>").build(), 8, ((player, target) -> {
-        List<Player> players = Bukkit.getOnlinePlayers().stream().filter(p -> !CorePlugin.getInstance().getModModeHandler().isActive(p)).map(p -> ((Player)p)).toList();
-
-        if (players.isEmpty()) {
-            player.sendMessage(CC.translate("<blend:&4;&c>Couldn't find a player to teleport to.</>"));
-            return;
-        }
-
-        player.teleport(players.get(ThreadLocalRandom.current().nextInt(players.size())));
+        player.chat("/rtp");
     })),
 
     SPECTATOR(new ItemFactory(Material.SPYGLASS).displayName("<blend:&6;&e>Spectator Mode</>").build(), 9, ((player, target) -> {

@@ -17,7 +17,7 @@ public interface IRemovable {
     }
 
     default boolean isRemoved() {
-        return getRemovedReason() != null || getRemovedAt() > 0;
+        return getRemovedReason() != null || getRemovedAt() != Long.MAX_VALUE;
     }
 
     default String getRemovedAtDate() {

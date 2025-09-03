@@ -17,20 +17,7 @@ public class PlayerSendToServerPacket implements Packet {
 
     @Override
     public void receive() {
-        CoreVelocity.getInstance().getProxy().getPlayer(this.playerUUID).ifPresentOrElse(player -> {
-            CoreVelocity.getInstance().getProxy().getServer(this.serverName).ifPresentOrElse(server -> {
-                player.createConnectionRequest(server).connect().whenCompleteAsync(((result, throwable) -> {
-                    if (result.isSuccessful()) return;
-
-                    if (throwable != null) {
-                        throwable.printStackTrace();
-                    }
-
-                    player.sendMessage(CC.translate("&cYou were kicked from " + this.serverName + ": " + CC.translate(result.getReasonComponent().orElse(Component.text("None")))));
-
-                }));
-            }, () -> CoreVelocity.getInstance().getLogger().warning("Tried sending " + UUIDUtils.getName(this.playerUUID) + ", but the server is not registered."));
-        }, () -> CoreVelocity.getInstance().getLogger().warning("Tried sending " + UUIDUtils.getName(this.playerUUID) + ", but they were not connected to the proxy."));
+        CoreVelocity.getInstance().getServerHandler().sendPlayerToServer(this.playerUUID, this.serverName);
     }
 
 }

@@ -1,12 +1,13 @@
-package dev.minechase.core.api.filter;
+package dev.minechase.core.api.chat;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.api.CoreAPI;
+import dev.minechase.core.api.chat.model.ChatSettings;
+import dev.minechase.core.api.user.model.User;
 import lombok.Getter;
-import lombok.Setter;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -19,8 +20,7 @@ public class ChatHandler implements IModule {
 
     private MongoCollection<Document> filterCollection, chatCollection;
     private List<String> filterList = new ArrayList<>();
-    @Setter private long slowDelay, slowDuration, slowedAt;
-    @Setter private long muteDuration, mutedAt;
+    private ChatSettings localSettings;
 
     @Override
     public void load() {
@@ -28,7 +28,7 @@ public class ChatHandler implements IModule {
         this.chatCollection = CoreAPI.getInstance().getMongoHandler().getDatabase().getCollection("Chat");
 
         this.loadFilter();
-        this.loadChat();
+        this.loadSettings();
     }
 
     @Override
@@ -36,48 +36,53 @@ public class ChatHandler implements IModule {
 
     }
 
-    private void loadChat() {
-        Document document = this.chatCollection.find(Filters.eq("server", CoreAPI.getInstance().getServerName())).first();
-
-        if (document == null) {
-            document = new Document()
-                    .append("server", CoreAPI.getInstance().getServerName())
-                    .append("slowDelay", 0L)
-                    .append("slowDuration", 0L)
-                    .append("slowedAt", 0L)
-                    .append("muteDuration", 0L)
-                    .append("mutedAt", 0L);
-
-            this.chatCollection.insertOne(document);
-        }
-
-        this.slowDelay = document.getLong("slowDelay");
-        this.slowDuration = document.getLong("slowDuration");
-        this.slowedAt = document.getLong("slowedAt");
-        this.muteDuration = document.getLong("muteDuration");
-        this.mutedAt = document.getLong("mutedAt");
+    private void loadSettings() {
+        this.localSettings = this.getSettings(CoreAPI.getInstance().getServerName());
     }
 
-    public void saveChat() {
-        Bson filter = Filters.eq("server", CoreAPI.getInstance().getServerName());
-        Document document = this.chatCollection.find(filter).first();
+    public void saveSettings(ChatSettings settings) {
+        Bson filter = Filters.eq("server", settings.getServerName());
+
+        this.chatCollection.replaceOne(filter, settings.toDocument(), new ReplaceOptions().upsert(true));
+    }
+    
+    public ChatSettings getSettings(String serverName) {
+        ChatSettings settings = null;
+        Document document = this.chatCollection.find(Filters.eq("server", serverName)).first();
 
         if (document == null) {
-            document = new Document();
+            settings = new ChatSettings(serverName);
+        } else {
+            settings = new ChatSettings(document);
         }
 
-        document.put("server", CoreAPI.getInstance().getServerName());
-        document.put("slowDelay", this.slowDelay);
-        document.put("slowDuration", this.slowDuration);
-        document.put("slowedAt", this.slowedAt);
-        document.put("muteDuration", this.muteDuration);
-        document.put("mutedAt", this.mutedAt);
-
-        this.chatCollection.replaceOne(filter, document, new ReplaceOptions().upsert(true));
+        return settings;
     }
 
-    public boolean isSlowed() {
-        return this.slowDelay > 0 && 
+    protected void slowChat(int secondsDelay, long duration) {
+        this.localSettings.setSlowDelay(secondsDelay);
+        this.localSettings.setSlowDuration(duration);
+        this.localSettings.setSlowedAt(System.currentTimeMillis());
+        this.saveSettings(this.localSettings);
+    }
+
+    protected void unslowChat() {
+        this.localSettings.setSlowDelay(0L);
+        this.localSettings.setSlowDuration(0L);
+        this.localSettings.setSlowedAt(0L);
+        this.saveSettings(this.localSettings);
+    }
+
+    protected void mute(long duration) {
+        this.localSettings.setMuteDuration(duration);
+        this.localSettings.setMutedAt(System.currentTimeMillis());
+        this.saveSettings(this.localSettings);
+    }
+
+    protected void unmute() {
+        this.localSettings.setMuteDuration(0L);
+        this.localSettings.setMutedAt(0L);
+        this.saveSettings(this.localSettings);
     }
 
     private void loadFilter() {
@@ -106,11 +111,13 @@ public class ChatHandler implements IModule {
     }
 
     public void saveFilter(List<String> newFilter) {
-        Document document = this.filterCollection.find(Filters.eq("settings", true)).first();
+        Document document = new Document();
 
+        document.put("settings", true);
         document.put("filter", newFilter);
 
         this.filterCollection.replaceOne(Filters.eq("settings", true), document, new ReplaceOptions().upsert(true));
     }
+    
 
 }

@@ -162,6 +162,7 @@ public class MOTDHandler implements IModule {
     private void loadDefaultMOTDs() {
         Configuration configuration = CoreVelocity.getInstance().getConfig();
 
+        configuration.set("motds.example.favicon", "server-icon.png");
         configuration.set("motds.example.normal.line-one", "<blend:#327637;#c9ff99e;false>→ Arrow MOTD Line One</>");
         configuration.set("motds.example.normal.line-two", "<blend:#327637;#c9ff99e;false>→ Arrow MOTD Line Two</>");
         configuration.set("motds.example.legacy.line-one", "&2→ &aArrow MOTD Line One");

@@ -2,15 +2,21 @@ package dev.minechase.core.api.sync;
 
 import com.github.benmanes.caffeine.cache.AsyncLoadingCache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.google.gson.JsonArray;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
+import dev.lbuddyboy.commons.api.APIConstants;
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.sync.cache.DiscordSyncInformationCacheLoader;
 import dev.minechase.core.api.sync.cache.PlayerSyncInformationCacheLoader;
+import dev.minechase.core.api.sync.cache.PlayerWebsiteSyncInformationCacheLoader;
+import dev.minechase.core.api.sync.cache.WebsiteSyncInformationCacheLoader;
+import dev.minechase.core.api.sync.model.GlobalChatMessage;
 import dev.minechase.core.api.sync.model.SyncCode;
 import dev.minechase.core.api.sync.model.SyncInformation;
+import dev.minechase.core.api.sync.model.WebsiteSyncInformation;
 import lombok.Getter;
 import org.bson.Document;
 
@@ -21,25 +27,25 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 @Getter
-public class SyncHandler implements IModule {
+public class WebsiteSyncHandler implements IModule {
 
     private MongoCollection<Document> discordCodeCollection, informationCollection;
     private List<SyncCode> syncCodes;
-    private AsyncLoadingCache<UUID, SyncInformation> playerSyncInformation;
-    private AsyncLoadingCache<String, SyncInformation> discordSyncInformation;
+    private AsyncLoadingCache<UUID, WebsiteSyncInformation> playerSyncInformation;
+    private AsyncLoadingCache<String, WebsiteSyncInformation> websiteSyncInformation;
 
     @Override
     public void load() {
         this.syncCodes = new CopyOnWriteArrayList<>();
         this.playerSyncInformation = Caffeine.newBuilder()
                 .expireAfterAccess(10, TimeUnit.MINUTES)
-                .buildAsync(new PlayerSyncInformationCacheLoader());
-        this.discordSyncInformation = Caffeine.newBuilder()
+                .buildAsync(new PlayerWebsiteSyncInformationCacheLoader());
+        this.websiteSyncInformation = Caffeine.newBuilder()
                 .expireAfterAccess(10, TimeUnit.MINUTES)
-                .buildAsync(new DiscordSyncInformationCacheLoader());
+                .buildAsync(new WebsiteSyncInformationCacheLoader());
 
-        this.discordCodeCollection = CoreAPI.getInstance().getMongoHandler().getDatabase().getCollection("DiscordSyncCodes");
-        this.informationCollection = CoreAPI.getInstance().getMongoHandler().getDatabase().getCollection("SyncInformation");
+        this.discordCodeCollection = CoreAPI.getInstance().getMongoHandler().getDatabase().getCollection("WebsiteSyncCodes");
+        this.informationCollection = CoreAPI.getInstance().getMongoHandler().getDatabase().getCollection("WebsiteSyncInformation");
 
         for (Document document : this.discordCodeCollection.find()) {
             this.syncCodes.add(new SyncCode(document));
@@ -51,8 +57,8 @@ public class SyncHandler implements IModule {
 
     }
 
-    public CompletableFuture<SyncInformation> getSyncInformation(UUID playerUUID) {
-        CompletableFuture<SyncInformation> presentInformation = this.playerSyncInformation.getIfPresent(playerUUID);
+    public CompletableFuture<WebsiteSyncInformation> getSyncInformation(UUID playerUUID) {
+        CompletableFuture<WebsiteSyncInformation> presentInformation = this.playerSyncInformation.getIfPresent(playerUUID);
 
         if (presentInformation != null) {
             return presentInformation;
@@ -61,14 +67,14 @@ public class SyncHandler implements IModule {
         return this.playerSyncInformation.get(playerUUID);
     }
 
-    public CompletableFuture<SyncInformation> getSyncInformation(String discordMemberId) {
-        CompletableFuture<SyncInformation> presentInformation = this.discordSyncInformation.getIfPresent(discordMemberId);
+    public CompletableFuture<WebsiteSyncInformation> getSyncInformation(String discordMemberId) {
+        CompletableFuture<WebsiteSyncInformation> presentInformation = this.websiteSyncInformation.getIfPresent(discordMemberId);
 
         if (presentInformation != null) {
             return presentInformation;
         }
 
-        return this.discordSyncInformation.get(discordMemberId);
+        return this.websiteSyncInformation.get(discordMemberId);
     }
 
     public SyncCode getSyncCode(int code) {
@@ -88,8 +94,8 @@ public class SyncHandler implements IModule {
         this.syncCodes.removeIf(other -> other.getCode() == code.getCode());
     }
 
-    public void updateInfo(SyncInformation syncInformation) {
-        CompletableFuture<SyncInformation> infoIfPresent = this.playerSyncInformation.getIfPresent(syncInformation.getPlayerUUID());
+    public void updateInfo(WebsiteSyncInformation syncInformation) {
+        CompletableFuture<WebsiteSyncInformation> infoIfPresent = this.playerSyncInformation.getIfPresent(syncInformation.getPlayerUUID());
 
         if (infoIfPresent != null) {
             infoIfPresent.whenCompleteAsync((info, throwable) -> {
@@ -99,7 +105,7 @@ public class SyncHandler implements IModule {
                 }
 
                 this.playerSyncInformation.put(syncInformation.getPlayerUUID(), CompletableFuture.completedFuture(syncInformation));
-                this.discordSyncInformation.put(syncInformation.getDiscordMemberId(), CompletableFuture.completedFuture(syncInformation));
+                this.websiteSyncInformation.put(syncInformation.getWebsiteUserId(), CompletableFuture.completedFuture(syncInformation));
             });
         }
     }
@@ -122,12 +128,12 @@ public class SyncHandler implements IModule {
         this.discordCodeCollection.replaceOne(Filters.eq("code", code.getCode()), code.toDocument(), new ReplaceOptions().upsert(true));
     }
 
-    public void removeInfo(SyncInformation info) {
-        this.discordSyncInformation.put(info.getDiscordMemberId(), CompletableFuture.completedFuture(null));
+    public void removeInfo(WebsiteSyncInformation info) {
+        this.websiteSyncInformation.put(info.getWebsiteUserId(), CompletableFuture.completedFuture(null));
         this.playerSyncInformation.put(info.getPlayerUUID(), CompletableFuture.completedFuture(null));
     }
 
-    public void deleteInfo(SyncInformation info, boolean async) {
+    public void deleteInfo(WebsiteSyncInformation info, boolean async) {
         if (async) {
             CompletableFuture.runAsync(() -> deleteInfo(info, false), CoreAPI.POOL);
             return;
@@ -136,7 +142,7 @@ public class SyncHandler implements IModule {
         this.informationCollection.deleteOne(Filters.eq("playerUUID", info.getPlayerUUID().toString()));
     }
 
-    public void saveInfo(SyncInformation info, boolean async) {
+    public void saveInfo(WebsiteSyncInformation info, boolean async) {
         if (async) {
             CompletableFuture.runAsync(() -> saveInfo(info, false), CoreAPI.POOL);
             return;
@@ -145,7 +151,35 @@ public class SyncHandler implements IModule {
         this.informationCollection.replaceOne(Filters.eq("playerUUID", info.getPlayerUUID().toString()), info.toDocument(), new ReplaceOptions().upsert(true));
     }
 
-    public void onUserSynced(SyncInformation information) {
+    public void postChatMessage(UUID playerUUID, String playerName, String serverName, String chatMessage) {
+        CoreAPI.getInstance().getRedisHandler().executeCommand(redis -> {
+            GlobalChatMessage message = new GlobalChatMessage(
+                    playerUUID,
+                    playerName,
+                    serverName,
+                    chatMessage,
+                    System.currentTimeMillis()
+            );
+            JsonArray messages = new JsonArray();
+
+            if (redis.hexists("mCoreMessages", serverName)) {
+                String messagesString = redis.hget("mCoreMessages", serverName);
+                messages = APIConstants.PARSER.parse(messagesString).getAsJsonArray();
+            }
+
+            messages.add(message.toJSON());
+            redis.hset("mCoreMessages", serverName, messages.toString());
+
+            CoreAPI.getInstance().getRedisHandler().publish(
+                    "mCoreMessages",
+                    message.toJSON()
+            );
+
+            return null;
+        });
+    }
+
+    public void onUserSynced(WebsiteSyncInformation information) {
 
     }
 

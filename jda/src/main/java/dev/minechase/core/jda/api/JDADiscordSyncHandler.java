@@ -2,14 +2,13 @@ package dev.minechase.core.jda.api;
 
 import dev.minechase.core.api.grant.model.Grant;
 import dev.minechase.core.api.rank.model.Rank;
-import dev.minechase.core.api.sync.SyncHandler;
+import dev.minechase.core.api.sync.DiscordSyncHandler;
 import dev.minechase.core.api.sync.model.SyncInformation;
 import dev.minechase.core.jda.CoreBot;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 
-public class JDASyncHandler extends SyncHandler {
+public class JDADiscordSyncHandler extends DiscordSyncHandler {
 
     @Override
     public void onUserSynced(SyncInformation information) {

@@ -5,13 +5,11 @@ import dev.lbuddyboy.commons.menu.IButton;
 import dev.lbuddyboy.commons.menu.paged.IPagedMenu;
 import dev.lbuddyboy.commons.util.CC;
 import dev.lbuddyboy.commons.util.ItemFactory;
-import dev.lbuddyboy.commons.util.Tasks;
 import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.api.util.Pair;
 import dev.minechase.core.bukkit.CorePlugin;
-import dev.minechase.core.bukkit.util.WordUtil;
 import lombok.AllArgsConstructor;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -19,8 +17,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @AllArgsConstructor
 public class DisguiseRankMenu extends IPagedMenu {

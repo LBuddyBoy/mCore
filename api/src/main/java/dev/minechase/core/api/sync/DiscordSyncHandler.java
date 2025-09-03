@@ -21,7 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 @Getter
-public class SyncHandler implements IModule {
+public class DiscordSyncHandler implements IModule {
 
     private MongoCollection<Document> discordCodeCollection, informationCollection;
     private List<SyncCode> syncCodes;

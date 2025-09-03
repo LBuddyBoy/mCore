@@ -1,8 +1,10 @@
 package dev.minechase.core.api.server.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
+@Getter
 public enum ServerStatus {
 
     OFFLINE("&c&lOFFLINE"),

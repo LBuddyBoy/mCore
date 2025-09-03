@@ -1,0 +1,45 @@
+.navbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    height: 100px;
+    width: 100%;
+    background-color: var(--surface);
+    border: 1.5px solid var(--border);
+}
+
+.navbar header a {
+    display: flex;
+    align-items: center;
+    color: var(--text-dark);
+    text-decoration: none;
+    font-size: 25px;
+}
+
+.navbar header a img {
+    width: 80px;
+}
+
+.navbarLinks {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 5ch;
+    font-size: 20px;
+}
+
+.navbarLinks a {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2ch;
+    text-decoration: none;
+    color: var(--text-dark);
+}
+
+.navbarLinks a img {
+    width: 40px;
+    border-radius: 50%;
+}

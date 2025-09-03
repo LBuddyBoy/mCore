@@ -7,7 +7,6 @@ import dev.minechase.core.api.sync.model.SyncInformation;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -18,7 +17,7 @@ public class DiscordSyncInformationCacheLoader implements AsyncCacheLoader<Strin
         return CompletableFuture.supplyAsync(() -> {
             try {
                 Bson bson = Filters.eq("discordMemberId", owner);
-                Document document = CoreAPI.getInstance().getSyncHandler().getInformationCollection().find(bson).first();
+                Document document = CoreAPI.getInstance().getDiscordSyncHandler().getInformationCollection().find(bson).first();
 
                 return document == null ? null : new SyncInformation(document);
             } catch (Exception e) {

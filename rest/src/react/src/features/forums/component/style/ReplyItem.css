@@ -1,0 +1,75 @@
+.replyItem {
+  display: flex;
+  gap: 2ch;
+  align-items: center;
+  padding: 15px;
+  border-radius: 15px;
+  background-color: var(--surface);
+  margin-bottom: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06), 0 2px 10px rgba(0, 0, 0, 0.04);
+
+}
+
+.replyImage {
+  display: flex;
+  flex-direction: column;
+  gap: 1ch;
+}
+
+.editButtons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.editButtons button {
+  padding: 3px;
+  padding-right: 5px;
+  padding-left: 5px;
+  border-radius: 5px;
+  border: none;
+  background-color: transparent;
+  transition: ease-in-out opacity 0.2s;
+  font-size: 10px;
+}
+
+.editButtons button:hover {
+  cursor: pointer;
+  opacity: 50%;
+}
+
+.replyImage img {
+  border-radius: 50%;
+  width: 50px;
+}
+
+.replyAuthor {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.replyAuthor #customButton {
+  height: 35px;
+}
+
+.replyDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 1ch;
+  width: 100%;
+}
+
+.replyMessage {
+  display: flex;
+  justify-content: space-between;
+}
+
+.replyMessage p {
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+.replyMessage time {
+  color: var(--text-light);
+  font-weight: 400;
+}

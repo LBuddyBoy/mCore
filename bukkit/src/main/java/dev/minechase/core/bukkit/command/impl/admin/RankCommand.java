@@ -4,6 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import dev.lbuddyboy.commons.api.util.StringUtils;
 import dev.lbuddyboy.commons.api.util.TimeDuration;
+import dev.lbuddyboy.commons.component.FancyBuilder;
 import dev.lbuddyboy.commons.util.CC;
 import dev.minechase.core.api.api.MultiScope;
 import dev.minechase.core.api.api.ScopedPermission;
@@ -19,11 +20,38 @@ import dev.minechase.core.bukkit.packet.StaffMessagePacket;
 import dev.minechase.core.bukkit.util.CommandUtil;
 import org.bukkit.command.CommandSender;
 
+import java.util.Arrays;
+
 @CommandAlias("rank")
 @CommandPermission("core.command.rank")
 public class RankCommand extends BaseCommand {
 
     private final RankHandler rankHandler = CorePlugin.getInstance().getRankHandler();
+
+    @Subcommand("list")
+    public void list(CommandSender sender) {
+        sender.sendMessage(CC.translate("<blend:&6;&e>&lServer Ranks</>"));
+        for (Rank rank : this.rankHandler.getSortedRanks()) {
+            new FancyBuilder(rank.getName())
+                    .hoverNormal(
+                            CC.translate("&fExample: " + rank.getPrefix() + sender.getName() + rank.getSuffix()),
+                            CC.translate("&fName: " + rank.getSecondaryColor() + rank.getName()),
+                            CC.translate("&fWeight: " + rank.getSecondaryColor() + rank.getWeight()),
+                            CC.translate("&fDisplay Name: " + rank.getSecondaryColor() + rank.getDisplayName()),
+                            CC.translate("&fPrefix: " + rank.getPrefix()),
+                            CC.translate("&fSuffix: " + rank.getSuffix()),
+                            CC.translate("&fPrimary Color: " + rank.getPrimaryColor() + "Example &7(") + rank.getPrimaryColor() + ")",
+                            CC.translate("&fSecondary Color: " + rank.getSecondaryColor() + "Example &7(") + rank.getSecondaryColor() + ")",
+                            CC.translate("&fDiscord Role ID: " + rank.getSecondaryColor() + rank.getDiscordRoleId()),
+                            CC.translate("&fWebsite Image URL: " + rank.getSecondaryColor() + rank.getWebsiteBadge()),
+                            CC.translate("&fDisplay Material: " + rank.getSecondaryColor() + rank.getMaterialString()),
+                            CC.translate("&fInheritance: " + rank.getSecondaryColor() + (rank.getMappedValidInheritedRanks().isEmpty() ? "None" : StringUtils.join(rank.getMappedValidInheritedRanks().stream().map(Rank::getName).toList(), ", "))),
+                            CC.translate("&fStaff Rank: " + rank.getSecondaryColor() + (rank.isStaffRank() ? "&aYes" : "&cNo")),
+                            CC.translate("&fDisguise Rank: " + rank.getSecondaryColor() + (rank.isDisguiseRank() ? "&aYes" : "&cNo"))
+                    )
+                    .send(sender);
+        }
+    }
 
     @Subcommand("create")
     public void create(CommandSender sender, @Name("name") @Single String rankName) {
@@ -115,6 +143,19 @@ public class RankCommand extends BaseCommand {
         new RankUpdatePacket(rank).send();
         new StaffMessagePacket(CC.translate(
                 "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank discord id! &7(" + rank.getDiscordRoleId() + "&7)"
+        )).send();
+    }
+
+    @Subcommand("websitebadge")
+    @CommandCompletion("@ranks <image-url/directory>")
+    public void websitebadge(CommandSender sender, @Name("rank") Rank rank, @Name("website-badge") String websiteBadge) {
+        String senderName = CommandUtil.getSenderName(sender);
+
+        rank.setWebsiteBadge(websiteBadge);
+
+        new RankUpdatePacket(rank).send();
+        new StaffMessagePacket(CC.translate(
+                "<blend:&6;&e>[Rank Handler]</>&a " + senderName + " updated the '" + rank.getName() + "' rank website badge! &7(" + rank.getWebsiteBadge() + "&7)"
         )).send();
     }
 

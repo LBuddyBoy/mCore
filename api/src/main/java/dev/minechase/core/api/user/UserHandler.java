@@ -2,10 +2,14 @@ package dev.minechase.core.api.user;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.IndexOptionDefaults;
+import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.ReplaceOptions;
 import dev.lbuddyboy.commons.api.cache.UUIDCache;
+import dev.lbuddyboy.commons.api.data.impl.RedisDataStorage;
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.api.CoreAPI;
+import dev.minechase.core.api.user.cache.RedisUserCache;
 import dev.minechase.core.api.user.model.User;
 import dev.minechase.core.api.util.UUIDUtils;
 import lombok.Getter;
@@ -22,11 +26,17 @@ public class UserHandler implements IModule {
 
     private Map<UUID, User> users;
     private MongoCollection<Document> collection;
+    private RedisUserCache cache;
 
     @Override
     public void load() {
         this.users = new HashMap<>();
         this.collection = CoreAPI.getInstance().getMongoHandler().getDatabase().getCollection("Users");
+        this.collection.createIndex(new Document("uniqueId", -1), new IndexOptions()
+                .unique(true));
+        this.collection.createIndex(new Document("name", -1));
+        this.collection.createIndex(new Document("currentIpAddress", 1));
+        this.cache = new RedisUserCache();
     }
 
     @Override
@@ -35,7 +45,7 @@ public class UserHandler implements IModule {
     }
 
     /**
-     * Fetches a user based on the cache (This will not query any database)
+     * Fetches a user based on the cache (This will not query a database)
      *
      * @param playerUUID players uuid to fetch
      * @return a user based on the cache
@@ -55,6 +65,7 @@ public class UserHandler implements IModule {
 
     public CompletableFuture<User> getOrCreateAsync(UUID uuid) {
         if (this.users.containsKey(uuid)) return CompletableFuture.completedFuture(this.users.get(uuid));
+        if (this.cache.exists(uuid)) return CompletableFuture.completedFuture(this.cache.loadUser(uuid));
 
         return UUIDUtils.fetchName(uuid).thenApplyAsync(name -> loadUser(uuid, name));
     }

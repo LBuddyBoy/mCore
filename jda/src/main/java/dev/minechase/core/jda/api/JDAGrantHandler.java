@@ -12,7 +12,7 @@ public class JDAGrantHandler extends GrantHandler {
 
     @Override
     public void onRankChange(User user, Grant previousGrant, Grant newGrant) {
-        CoreBot.getInstance().getSyncHandler().getSyncInformation(user.getUniqueId()).whenCompleteAsync(((information, throwable1) -> {
+        CoreBot.getInstance().getDiscordSyncHandler().getSyncInformation(user.getUniqueId()).whenCompleteAsync(((information, throwable1) -> {
             if (throwable1 != null) {
                 throwable1.printStackTrace();
                 return;
@@ -58,7 +58,7 @@ public class JDAGrantHandler extends GrantHandler {
                 return;
             }
 
-            CoreBot.getInstance().getSyncHandler().getSyncInformation(grant.getTargetUUID()).whenCompleteAsync(((information, throwable1) -> {
+            CoreBot.getInstance().getDiscordSyncHandler().getSyncInformation(grant.getTargetUUID()).whenCompleteAsync(((information, throwable1) -> {
                 if (throwable1 != null) {
                     throwable1.printStackTrace();
                     return;

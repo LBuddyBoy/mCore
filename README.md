@@ -16,11 +16,13 @@ This core for the most part will be ran on a seperate thread with some exception
 - Prefixes
 - Advanced Logging System
 - Custom NPCs
+- Custom Holograms
+- Disguises
 - Queue
+- Velocity Support (MOTD, MOTD Countdown, Lockdown)
 - Intuitive API
 
 # Requirements
-
 - Mongo Database
 - Java 17+
 - Minecraft 1.20+

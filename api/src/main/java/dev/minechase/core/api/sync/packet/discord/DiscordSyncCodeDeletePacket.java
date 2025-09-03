@@ -1,4 +1,4 @@
-package dev.minechase.core.api.sync.packet;
+package dev.minechase.core.api.sync.packet.discord;
 
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.packet.ServerResponsePacket;

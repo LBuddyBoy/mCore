@@ -1,0 +1,13 @@
+.postReplyForm {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.postReplyForm input {
+    padding: 10px;
+    border-radius: 15px;
+    height: 35px;
+    border: 1px solid gray;
+}

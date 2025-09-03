@@ -6,9 +6,10 @@ import dev.lbuddyboy.commons.util.Coordinate;
 import dev.lbuddyboy.commons.util.Tasks;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.hologram.model.HologramLine;
-import dev.minechase.core.bukkit.npc.model.packet.NPCHologram;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,10 +20,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static dev.minechase.core.bukkit.npc.model.packet.NPCHologram.HOLOGRAM_OFFSET;
+import static dev.minechase.core.bukkit.npc.model.NPCHologram.HOLOGRAM_OFFSET;
 
 @Getter
-public class CustomNPC {
+public class CustomNPC implements INPC {
 
     private final Config config;
     private final UUID uniqueId;
@@ -75,6 +76,11 @@ public class CustomNPC {
         this.config.save();
     }
 
+    public Entity getNMSEntity() {
+        return this.entity;
+    }
+
+    @Override
     public List<String> getHologramLines() {
         return this.config.getStringList("hologramLines");
     }
@@ -94,7 +100,13 @@ public class CustomNPC {
         this.save();
     }
 
+    @Override
+    public int getId() {
+        return this.entity.getId();
+    }
+
     @SneakyThrows
+    @Override
     public void spawnNPC() {
         if (spawned) return;
 
@@ -109,21 +121,25 @@ public class CustomNPC {
         CorePlugin.getInstance().getNpcHandler().getNpcById().put(this.entity.getId(), this);
     }
 
-    public void showNPC() {
-        this.getSpawnLocation().getWorld().getPlayers().forEach(this::showNPC);
-    }
-
+    @Override
     public void showNPC(Player viewer) {
-        this.entity.getCreatePackets().forEach(packet -> ((CraftPlayer)viewer).getHandle().connection.sendPacket(packet));
-        this.entity.getUpdatePackets().forEach(packet -> ((CraftPlayer)viewer).getHandle().connection.sendPacket(packet));
+        this.entity.getCreatePackets(viewer).forEach(packet -> ((CraftPlayer) viewer).getHandle().connection.send(packet));
+        this.entity.getUpdatePackets(viewer).forEach(packet -> ((CraftPlayer) viewer).getHandle().connection.send(packet));
     }
 
-    public void hideNPC() {
-        this.getSpawnLocation().getWorld().getPlayers().forEach(this::hideNPC);
-    }
-
+    @Override
     public void hideNPC(Player viewer) {
-        this.entity.getRemovePackets().forEach(packet -> ((CraftPlayer)viewer).getHandle().connection.sendPacket(packet));
+        this.entity.getRemovePackets().forEach(packet -> ((CraftPlayer) viewer).getHandle().connection.send(packet));
+    }
+
+    @Override
+    public NPCHologram getHologram() {
+        return this.hologram;
+    }
+
+    @Override
+    public List<Player> getViewers() {
+        return this.getSpawnLocation().getWorld().getPlayers();
     }
 
     public void setSkin(String skinTexture, String skinSignature) {
@@ -133,7 +149,7 @@ public class CustomNPC {
         this.hideNPC();
         this.save();
 
-        Tasks.runAsyncLater(this::showNPC, 60);
+        Tasks.runAsyncLater(this::showNPC, 15);
     }
 
     public void setRightClickCommand(String rightClickCommand) {
@@ -142,19 +158,17 @@ public class CustomNPC {
         this.save();
     }
 
-    public void updateNPC() {
-        this.getSpawnLocation().getWorld().getPlayers().forEach(this::updateNPC);
-    }
-
+    @Override
     public void updateNPC(Player viewer) {
-        this.entity.getUpdatePackets().forEach(packet -> ((CraftPlayer)viewer).getHandle().connection.sendPacket(packet));
+        this.entity.getUpdatePackets(viewer).forEach(packet -> ((CraftPlayer) viewer).getHandle().connection.send(packet));
     }
 
+    @Override
     public void despawnNPC() {
         this.spawned = false;
 
         for (Player player : this.getSpawnLocation().getWorld().getPlayers()) {
-            this.entity.getRemovePackets().forEach(packet -> ((CraftPlayer)player).getHandle().connection.sendPacket(packet));
+            this.entity.getRemovePackets().forEach(packet -> ((CraftPlayer) player).getHandle().connection.send(packet));
         }
 
         this.hologram.despawnHologram();
@@ -164,16 +178,14 @@ public class CustomNPC {
         this.hologram = null;
     }
 
+    @Override
     public void delete() {
-        CorePlugin.getInstance().getNpcHandler().getNpcs().remove(name);
-        CorePlugin.getInstance().getNpcHandler().getNpcById().remove(this.entity.getId());
-
-        this.despawnNPC();
-        this.hologram.delete();
+        INPC.super.delete();
 
         if (this.config.getFile().exists()) this.config.getFile().delete();
     }
 
+    @Override
     public Location getSpawnLocation() {
         if (spawnLocation == null) spawnLocation = this.coordinate.toLocation(Bukkit.getWorld(this.world));
 

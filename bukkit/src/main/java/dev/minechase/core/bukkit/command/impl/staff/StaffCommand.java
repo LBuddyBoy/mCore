@@ -19,6 +19,9 @@ import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
 public class StaffCommand extends BaseCommand {
 
     @CommandAlias("staffchat|sc")
@@ -39,7 +42,7 @@ public class StaffCommand extends BaseCommand {
     public void muteChat(CommandSender sender, @Name("duration") @Optional TimeDuration duration) {
         if (duration == null) duration = new TimeDuration("perm");
 
-        if (CorePlugin.getInstance().getChatHandler().isMuted()) {
+        if (CorePlugin.getInstance().getChatHandler().getLocalSettings().isMuted()) {
             CorePlugin.getInstance().getChatHandler().unmute(sender);
             return;
         }
@@ -53,7 +56,7 @@ public class StaffCommand extends BaseCommand {
         if (duration == null) duration = new TimeDuration("perm");
         if (secondsDelay == null) secondsDelay = 3;
 
-        if (CorePlugin.getInstance().getChatHandler().isSlowed()) {
+        if (CorePlugin.getInstance().getChatHandler().getLocalSettings().isSlowed()) {
             CorePlugin.getInstance().getChatHandler().unslowChat(sender);
             return;
         }
@@ -152,6 +155,19 @@ public class StaffCommand extends BaseCommand {
     @CommandPermission(CoreConstants.STAFF_PERM)
     public void onlinestaff(Player sender) {
         new ViewOnlineStaffMenu().openMenu(sender);
+    }
+
+    @CommandAlias("rtp")
+    @CommandPermission(CoreConstants.STAFF_PERM)
+    public void rtp(Player sender) {
+        List<Player> players = Bukkit.getOnlinePlayers().stream().filter(p -> !CorePlugin.getInstance().getModModeHandler().isActive(p)).map(p -> ((Player)p)).toList();
+
+        if (players.isEmpty()) {
+            sender.sendMessage(CC.translate("<blend:&4;&c>Couldn't find a player to teleport to.</>"));
+            return;
+        }
+
+        sender.teleport(players.get(ThreadLocalRandom.current().nextInt(players.size())));
     }
 
 }

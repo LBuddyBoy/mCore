@@ -10,21 +10,19 @@ import org.bukkit.event.HandlerList;
 
 @Getter
 @Setter
-public class PlayerInteractHologramLineEvent extends Event {
+public class PlayerInteractHologramEvent extends Event {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
 
     private boolean cancelled;
     private final Player player;
     private final IHologram hologram;
-    private final HologramLine line;
     private final boolean leftClick;
 
-    public PlayerInteractHologramLineEvent(Player player, IHologram hologram, HologramLine line, boolean leftClick) {
+    public PlayerInteractHologramEvent(Player player, IHologram hologram, boolean leftClick) {
         super(true);
         this.player = player;
         this.hologram = hologram;
-        this.line = line;
         this.leftClick = leftClick;
     }
 

@@ -25,7 +25,7 @@ public class Rank extends Documented implements IScoped {
     private String name, prefix, suffix, displayName, primaryColor, secondaryColor;
     private int weight;
     private boolean staffRank, defaultRank, disguiseRank;
-    private String materialString, discordRoleId;
+    private String materialString, discordRoleId, websiteBadge;
     private final List<UUID> inheritedRanks = new ArrayList<>();
     private final List<ScopedPermission> permissions = new ArrayList<>();
     private final List<String> scopes = new ArrayList<>();;
@@ -43,6 +43,7 @@ public class Rank extends Documented implements IScoped {
         this.defaultRank = false;
         this.materialString = "WHITE_WOOL";
         this.discordRoleId = "";
+        this.websiteBadge = "";
         this.scopes.add("GLOBAL");
     }
 
@@ -57,6 +58,7 @@ public class Rank extends Documented implements IScoped {
         this.weight = document.getInteger("weight");
         this.prefix = document.get("prefix", "");
         this.suffix = document.get("suffix", "");
+        this.websiteBadge = document.get("websiteBadge", "");
         this.discordRoleId = document.get("discordRoleId", "");
         this.materialString = document.getString("materialString");
         this.disguiseRank = document.getBoolean("disguiseRank", false);
@@ -78,6 +80,7 @@ public class Rank extends Documented implements IScoped {
                 .append("primaryColor", this.primaryColor)
                 .append("secondaryColor", this.secondaryColor)
                 .append("materialString", this.materialString)
+                .append("websiteBadge", this.websiteBadge)
                 .append("discordRoleId", this.discordRoleId)
                 .append("staffRank", this.staffRank)
                 .append("defaultRank", this.defaultRank)
@@ -107,6 +110,13 @@ public class Rank extends Documented implements IScoped {
 
     public List<UUID> getValidInheritedRanks() {
         return this.inheritedRanks.stream().filter(rankId -> CoreAPI.getInstance().getRankHandler().getRanks().containsKey(rankId)).toList();
+    }
+
+    public List<Rank> getMappedValidInheritedRanks() {
+        return this.inheritedRanks.stream()
+                .filter(rankId -> CoreAPI.getInstance().getRankHandler().getRanks().containsKey(rankId))
+                .map(rankId -> CoreAPI.getInstance().getRankHandler().getRankById(rankId))
+                .toList();
     }
 
     public List<ScopedPermission> getCombinedLocalPermissions() {

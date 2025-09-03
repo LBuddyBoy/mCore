@@ -1,13 +1,12 @@
 package dev.minechase.core.api.server;
 
-import com.google.common.collect.ImmutableList;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
+import dev.lbuddyboy.commons.api.data.impl.RedisDataStorage;
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.packet.GlobalLogPacket;
-import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.api.server.model.CoreServer;
 import dev.minechase.core.api.server.model.QueuePlayer;
 import dev.minechase.core.api.server.packet.QueuePlayerRemovePacket;
@@ -21,7 +20,6 @@ import org.bson.Document;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Getter
 public class ServerHandler implements IModule {
@@ -29,6 +27,7 @@ public class ServerHandler implements IModule {
     private final Map<String, CoreServer> servers;
     private final Map<UUID, QueuePlayer> queuePlayers;
     private MongoCollection<Document> serversCollection, queuePlayersCollection;
+    private RedisDataStorage<UUID, String> playerLocationStorage;
 
     public ServerHandler() {
         this.servers = new HashMap<>();
@@ -39,6 +38,7 @@ public class ServerHandler implements IModule {
     public void load() {
         this.serversCollection = CoreAPI.getInstance().getMongoHandler().getDatabase().getCollection("Servers");
         this.queuePlayersCollection = CoreAPI.getInstance().getMongoHandler().getDatabase().getCollection("QueuePlayers");
+        this.playerLocationStorage = new RedisDataStorage<>("playerLocations", UUID.class, String.class, true);
 
         for (Document document : this.serversCollection.find()) {
             CoreServer server = new CoreServer(document);
@@ -99,6 +99,10 @@ public class ServerHandler implements IModule {
     public void updateServer(CoreServer server) {
         server.updatePositions();
         this.servers.put(server.getName(), server);
+    }
+
+    public void unregisterServer(CoreServer server) {
+        this.servers.remove(server.getName());
     }
 
     public void deleteServer(CoreServer server) {
@@ -190,6 +194,10 @@ public class ServerHandler implements IModule {
         }
 
         this.queuePlayersCollection.replaceOne(Filters.eq("playerUUID", player.getPlayerUUID().toString()), player.toDocument(), new ReplaceOptions().upsert(true));
+    }
+
+    public void reboot() {
+
     }
 
 }

@@ -1,12 +1,12 @@
 package dev.minechase.core.jda;
 
-import com.mongodb.MongoClient;
 import dev.lbuddyboy.commons.api.CommonsAPI;
 import dev.lbuddyboy.commons.api.cache.UUIDCache;
 import dev.lbuddyboy.commons.api.mongo.MongoHandler;
 import dev.lbuddyboy.commons.api.redis.RedisHandler;
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.api.ICoreAPI;
+import dev.minechase.core.api.chat.ChatHandler;
 import dev.minechase.core.api.grant.GrantHandler;
 import dev.minechase.core.api.iphistory.IPHistoryHandler;
 import dev.minechase.core.api.log.LogHandler;
@@ -19,12 +19,13 @@ import dev.minechase.core.api.report.ReportHandler;
 import dev.minechase.core.api.server.ServerHandler;
 import dev.minechase.core.api.server.model.CoreServer;
 import dev.minechase.core.api.server.packet.ServerUpdatePacket;
-import dev.minechase.core.api.sync.SyncHandler;
+import dev.minechase.core.api.sync.DiscordSyncHandler;
+import dev.minechase.core.api.sync.WebsiteSyncHandler;
 import dev.minechase.core.api.tag.TagHandler;
 import dev.minechase.core.api.user.UserHandler;
 import dev.minechase.core.jda.api.JDAGrantHandler;
 import dev.minechase.core.jda.api.JDAServerHandler;
-import dev.minechase.core.jda.api.JDASyncHandler;
+import dev.minechase.core.jda.api.JDADiscordSyncHandler;
 import dev.minechase.core.jda.command.CommandEvent;
 import dev.minechase.core.jda.command.CommandHandler;
 import lombok.Getter;
@@ -69,7 +70,9 @@ public class CoreBot implements ICoreAPI {
     private final PrefixHandler prefixHandler;
     private final TagHandler tagHandler;
     private final NoteHandler noteHandler;
-    private final SyncHandler syncHandler;
+    private final DiscordSyncHandler discordSyncHandler;
+    private final WebsiteSyncHandler websiteSyncHandler;
+    private final ChatHandler chatHandler;
 
     public CoreBot() {
         instance = this;
@@ -102,10 +105,6 @@ public class CoreBot implements ICoreAPI {
                             ""
                     )) {
 
-                @Override
-                public MongoClient getMongoClient() {
-                    return mongoHandler.getClient();
-                }
 
             });
 
@@ -132,7 +131,9 @@ public class CoreBot implements ICoreAPI {
                     this.reportHandler = new ReportHandler(),
                     this.tagHandler = new TagHandler(),
                     this.noteHandler = new NoteHandler(),
-                    this.syncHandler = new JDASyncHandler()
+                    this.discordSyncHandler = new JDADiscordSyncHandler(),
+                    this.websiteSyncHandler = new WebsiteSyncHandler(),
+                    this.chatHandler = new ChatHandler()
             ));
             CommonsAPI.getInstance().getModules().forEach(IModule::load);
 
@@ -186,5 +187,10 @@ public class CoreBot implements ICoreAPI {
     @Override
     public Logger getLogger() {
         return Logger.getAnonymousLogger();
+    }
+
+    @Override
+    public boolean isProxy() {
+        return false;
     }
 }

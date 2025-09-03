@@ -5,17 +5,16 @@ import co.aikar.commands.annotation.*;
 import dev.lbuddyboy.commons.util.CC;
 import dev.minechase.core.bukkit.model.AsyncCorePlayer;
 import dev.minechase.core.bukkit.util.CommandUtil;
-import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class FeedCommand extends BaseCommand {
+public class SpeedCommand extends BaseCommand {
 
-    @CommandAlias("feed|eat")
-    @CommandPermission("core.command.feed")
+    @CommandAlias("speed|walkspeed|ws")
+    @CommandPermission("core.command.speed")
     @CommandCompletion("@players")
-    public void feed(CommandSender sender, @Name("player") @Optional AsyncCorePlayer corePlayer) {
+    public void feed(CommandSender sender, @Name("speed") float speed, @Name("player") @Optional AsyncCorePlayer corePlayer) {
         if (!(sender instanceof Player senderPlayer)) {
             if (corePlayer == null) {
                 sender.sendMessage(CC.translate("<blend:&4;&c>Please provide a player name.</>"));
@@ -32,53 +31,18 @@ public class FeedCommand extends BaseCommand {
             return;
         }
 
-        if (!sender.hasPermission("core.command.feed.other") && !sender.equals(player)) {
-            sender.sendMessage(CC.translate("<blend:&4;&c>You lack permission to feed others.</>"));
+        if (!sender.hasPermission("core.command.speed.other") && !sender.equals(player)) {
+            sender.sendMessage(CC.translate("<blend:&4;&c>You lack permission to speed others.</>"));
             return;
         }
 
-        player.setFoodLevel(20);
+        player.setWalkSpeed(speed);
 
         if (sender.equals(player)) {
-            player.sendMessage(CC.translate("&6You have fed yourself.</>"));
+            player.sendMessage(CC.translate("&6You have set your walk speed to: " + speed + ".</>"));
         } else {
-            sender.sendMessage(CC.translate("&6You have fed " + player.getName() + "."));
-            player.sendMessage(CC.translate("&f" + CommandUtil.getSenderName(sender) + " &6has fed you."));
-        }
-    }
-
-    @CommandAlias("heal")
-    @CommandPermission("core.command.heal")
-    @CommandCompletion("@players")
-    public void heal(CommandSender sender, @Name("player") @Optional AsyncCorePlayer corePlayer) {
-        if (!(sender instanceof Player senderPlayer)) {
-            if (corePlayer == null) {
-                sender.sendMessage(CC.translate("<blend:&4;&c>Please provide a player name.</>"));
-                return;
-            }
-        } else {
-            if (corePlayer == null) corePlayer = new AsyncCorePlayer(senderPlayer.getName());
-        }
-
-        Player player = corePlayer.getPlayer();
-
-        if (player == null) {
-            sender.sendMessage(CC.translate("<blend:&4;&c>That player is not online.</>"));
-            return;
-        }
-
-        if (!sender.hasPermission("core.command.feed.other") && !sender.equals(player)) {
-            sender.sendMessage(CC.translate("<blend:&4;&c>You lack permission to feed others.</>"));
-            return;
-        }
-
-        player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
-
-        if (sender.equals(player)) {
-            player.sendMessage(CC.translate("&6You have healed yourself."));
-        } else {
-            sender.sendMessage(CC.translate("&6You have healed &f" + player.getName() + "&6."));
-            player.sendMessage(CC.translate("&f" + CommandUtil.getSenderName(sender) + " &6has healed you."));
+            sender.sendMessage(CC.translate("&6You have set " + player.getName() + "'s walk speed to " + speed + "."));
+            player.sendMessage(CC.translate("&f" + CommandUtil.getSenderName(sender) + " &6has set your speed to " + speed + "."));
         }
     }
 

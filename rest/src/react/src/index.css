@@ -1,0 +1,33 @@
+:root {
+  --primary: hsla(222, 47%, 35%, 1); /* Indigo Blue */
+  --primary-light: hsla(222, 47%, 55%, 1); /* Softer Indigo */
+  --secondary: hsla(14, 84%, 58%, 1); /* Vibrant Orange */
+  --secondary-light: hsla(14, 84%, 70%, 1); /* Light Orange */
+  --accent-1: hsla(160, 84%, 39%, 1); /* Emerald Green */
+  --accent-2: hsla(280, 64%, 59%, 1); /* Violet */
+  --bg: hsla(210, 36%, 96%, 1); /* Light Gray Background */
+  --surface: hsla(0, 0%, 100%, 1); /* White surface/cards */
+  --border: hsla(1, 1%, 87%, 1); /* White surface/cards */
+
+  --text-dark: hsla(210, 22%, 20%, 1); /* Dark Gray for text */
+  --text-light: hsla(210, 22%, 40%, 1); /* Medium Gray for secondary text */
+}
+
+[data-theme="dark"] {
+  --bg: rgb(37, 47, 58);
+  --surface: rgb(32, 41, 49);
+  --text-dark: hsla(0, 0%, 100%, 0.95);
+  --text-light: hsla(0, 0%, 100%, 0.7);
+}
+
+body {
+  font: 700 0.9rem/1 Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial,
+    sans-serif;
+  background-color: var(--bg);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

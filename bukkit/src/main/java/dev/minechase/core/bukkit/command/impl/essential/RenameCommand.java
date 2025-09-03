@@ -6,10 +6,9 @@ import dev.lbuddyboy.commons.util.CC;
 import dev.lbuddyboy.commons.util.ItemFactory;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.bukkit.packet.StaffMessagePacket;
-import dev.minechase.core.bukkit.util.FilterUtil;
+import dev.minechase.core.api.util.FilterUtil;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

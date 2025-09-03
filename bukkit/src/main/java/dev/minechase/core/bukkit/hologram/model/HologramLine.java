@@ -10,9 +10,9 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PositionMoveRotation;
-import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -21,26 +21,30 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.Array;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 public class HologramLine {
 
-    private final UUID id;
+    private final UUID[] ids = new UUID[2];
     private final IHologram parent;
     private int index;
     private String text;
-    protected Map<Player, Integer> armorStandIds = new ConcurrentHashMap<>();
+
+    protected int[] armorStandIds = new int[2];
 
     public HologramLine(IHologram parent, int index, String text) {
-        this.id = UUID.randomUUID();
+        this.ids[0] = UUID.randomUUID(); // display line uuid
+        this.ids[1] = UUID.randomUUID(); // clickable line uuid
         this.parent = parent;
         this.index = index;
         this.text = text;
+        this.armorStandIds[0] = Entity.nextEntityId(); // line id
+        this.armorStandIds[1] = Entity.nextEntityId(); // clickable line id
     }
 
     public List<Packet<?>> getCreatePackets(Player player) {
-        ArmorStand armorStand = this.createArmorStand(player);
+        LineEntity armorStand = this.createLineEntity(player);
+        LineClickEntity clickEntity = this.createClickEntity();
 
         return Arrays.asList(
                 new ClientboundAddEntityPacket(
@@ -56,12 +60,27 @@ public class HologramLine {
                         Vec3.ZERO,
                         0.0D
                 ),
-                new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData().getNonDefaultValues())
+                new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData().getNonDefaultValues()),
+                new ClientboundAddEntityPacket(
+                        clickEntity.getId(),
+                        clickEntity.getUUID(),
+                        clickEntity.getX(),
+                        clickEntity.getY(),
+                        clickEntity.getZ(),
+                        0.0f,
+                        0.0f,
+                        EntityType.TADPOLE,
+                        0,
+                        Vec3.ZERO,
+                        0.0D
+                ),
+                new ClientboundSetEntityDataPacket(clickEntity.getId(), clickEntity.getEntityData().getNonDefaultValues())
         );
     }
 
     public List<Packet<?>> getUpdatePackets(Player player) {
-        ArmorStand armorStand = this.createArmorStand(player);
+        LineEntity armorStand = this.createLineEntity(player);
+        LineClickEntity clickEntity = this.createClickEntity();
 
         return Arrays.asList(
                 new ClientboundTeleportEntityPacket(
@@ -70,34 +89,39 @@ public class HologramLine {
                         Collections.emptySet(),
                         armorStand.onGround
                 ),
-                new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData().getNonDefaultValues())
+                new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData().getNonDefaultValues()),
+
+                new ClientboundTeleportEntityPacket(
+                        clickEntity.getId(),
+                        new PositionMoveRotation(clickEntity.position(), clickEntity.getDeltaMovement(), clickEntity.getYRot(), clickEntity.getXRot()),
+                        Collections.emptySet(),
+                        clickEntity.onGround
+                ),
+                new ClientboundSetEntityDataPacket(clickEntity.getId(), clickEntity.getEntityData().getNonDefaultValues())
         );
     }
 
-    public ClientboundRemoveEntitiesPacket getDespawnPacket(Player player) {
-        ArmorStand armorStand = new ArmorStand(EntityType.ARMOR_STAND, ((CraftWorld)parent.getLocation().getWorld()).getHandle());
-        armorStand.setUUID(this.id);
+    public List<ClientboundRemoveEntitiesPacket> getDespawnPackets() {
+        LineEntity armorStand = new LineEntity(((CraftWorld) parent.getLocation().getWorld()).getHandle(), this);
+        LineClickEntity clickEntity = new LineClickEntity(((CraftWorld) parent.getLocation().getWorld()).getHandle(), this);
 
-        if (armorStandIds.containsKey(player)) {
-            armorStand.setId(armorStandIds.get(player));
-        }
+        armorStand.setUUID(this.ids[0]);
+        armorStand.setId(this.armorStandIds[0]);
+        clickEntity.setUUID(this.ids[1]);
+        clickEntity.setId(this.armorStandIds[1]);
 
-        armorStandIds.remove(player);
-
-        return new ClientboundRemoveEntitiesPacket(armorStand.getId());
+        return Arrays.asList(
+                new ClientboundRemoveEntitiesPacket(armorStand.getId()),
+                new ClientboundRemoveEntitiesPacket(clickEntity.getId())
+        );
     }
 
-    protected ArmorStand createArmorStand(Player player) {
-        ArmorStand armorStand = new ArmorStand(EntityType.ARMOR_STAND, ((CraftWorld)parent.getLocation().getWorld()).getHandle());
+    protected LineEntity createLineEntity(Player player) {
+        LineEntity armorStand = new LineEntity(((CraftWorld) parent.getLocation().getWorld()).getHandle(), this);
         Location location = this.parent.getLocation();
 
-        armorStand.setUUID(this.id);
-
-        if (armorStandIds.containsKey(player)) {
-            armorStand.setId(armorStandIds.get(player));
-        } else {
-            armorStandIds.put(player, armorStand.getId());
-        }
+        armorStand.setUUID(this.ids[0]);
+        armorStand.setId(this.armorStandIds[0]);
 
         String text = this.text;
 
@@ -107,6 +131,7 @@ public class HologramLine {
 
         armorStand.setInvisible(true);
         armorStand.setCustomName((Component) Array.get(CraftChatMessage.fromString(CC.translate(text)), 0));
+        armorStand.setSilent(true);
 
         String translatedText = CC.stripColor(CC.translate(text));
 
@@ -114,6 +139,10 @@ public class HologramLine {
         armorStand.setPos(location.getX(), location.getY() + (index * parent.getLineOffset()), location.getZ());
 
         return armorStand;
+    }
+
+    protected LineClickEntity createClickEntity() {
+        return new LineClickEntity(((CraftWorld) parent.getLocation().getWorld()).getHandle(), this);
     }
 
 }

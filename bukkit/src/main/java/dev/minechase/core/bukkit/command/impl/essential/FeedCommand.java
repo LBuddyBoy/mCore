@@ -40,7 +40,7 @@ public class FeedCommand extends BaseCommand {
         player.setFoodLevel(20);
 
         if (sender.equals(player)) {
-            player.sendMessage(CC.translate("&6You have fed yourself.</>"));
+            player.sendMessage(CC.translate("&6You have fed yourself."));
         } else {
             sender.sendMessage(CC.translate("&6You have fed " + player.getName() + "."));
             player.sendMessage(CC.translate("&f" + CommandUtil.getSenderName(sender) + " &6has fed you."));

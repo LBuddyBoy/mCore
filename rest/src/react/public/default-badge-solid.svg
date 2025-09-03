@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="240" height="72" viewBox="0 0 240 72" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Default badge - solid">
+  <style>
+    .pill { fill: var(--primary, #2C4A99); }
+    .label {
+      fill: #ffffff;
+      font: 700 28px/1 "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      letter-spacing: .2px;
+    }
+  </style>
+  <!-- Transparent background by default; only the pill and text render -->
+  <rect x="2" y="2" width="236" height="68" rx="34" class="pill"/>
+  <text x="50%" y="50%" class="label" text-anchor="middle" dominant-baseline="middle">Default</text>
+</svg>

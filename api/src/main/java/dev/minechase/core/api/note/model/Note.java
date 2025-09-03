@@ -28,7 +28,7 @@ public class Note extends Documented implements IScoped, IRemovable, ISendable, 
     private UUID removedBy = null;
     private String removedReason = null;
     private String removedOn = null;
-    private long removedAt = 0L;
+    private long removedAt = Long.MAX_VALUE;
 
     public Note(UUID senderUUID, UUID targetUUID, String reason) {
         this.id = UUID.randomUUID();

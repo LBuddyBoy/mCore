@@ -1,28 +1,27 @@
 package dev.minechase.core.api.sync.model;
 
 import dev.minechase.core.api.api.Documented;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bson.Document;
 
 import java.util.UUID;
 
 @Getter
-public class SyncInformation extends Documented {
+public class WebsiteSyncInformation extends Documented {
 
     private final UUID playerUUID;
-    private final String discordMemberId;
+    private final String websiteUserId;
     private final long syncedAt;
 
-    public SyncInformation(UUID playerUUID, String discordMemberId) {
+    public WebsiteSyncInformation(UUID playerUUID, String websiteUserId) {
         this.playerUUID = playerUUID;
-        this.discordMemberId = discordMemberId;
+        this.websiteUserId = websiteUserId;
         this.syncedAt = System.currentTimeMillis();
     }
 
-    public SyncInformation(Document document) {
+    public WebsiteSyncInformation(Document document) {
         this.playerUUID = this.deserializeUUID(document.getString("playerUUID"));
-        this.discordMemberId = document.getString("discordMemberId");
+        this.websiteUserId = document.getString("websiteUserId");
         this.syncedAt = document.getLong("syncedAt");
     }
 
@@ -30,7 +29,7 @@ public class SyncInformation extends Documented {
     public Document toDocument() {
         return new Document()
                 .append("playerUUID", this.playerUUID.toString())
-                .append("discordMemberId", this.discordMemberId)
+                .append("websiteUserId", this.websiteUserId)
                 .append("syncedAt", this.syncedAt)
                 ;
     }

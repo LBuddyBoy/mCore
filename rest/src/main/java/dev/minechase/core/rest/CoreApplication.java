@@ -1,6 +1,6 @@
 package dev.minechase.core.rest;
 
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
 import dev.lbuddyboy.commons.api.CommonsAPI;
 import dev.lbuddyboy.commons.api.cache.UUIDCache;
 import dev.lbuddyboy.commons.api.mongo.MongoHandler;
@@ -26,21 +26,34 @@ import dev.minechase.core.api.sync.model.SyncCode;
 import dev.minechase.core.api.sync.packet.website.WebsiteSyncCodeUpdatePacket;
 import dev.minechase.core.api.tag.TagHandler;
 import dev.minechase.core.api.user.UserHandler;
+import dev.minechase.core.rest.api.SpringServerHandler;
+import dev.minechase.core.rest.api.SpringSyncHandler;
+import dev.minechase.core.rest.service.AccountService;
 import lombok.Getter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Logger;
 
+import static org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO;
+
 @SpringBootApplication
 @Getter
+@EnableMethodSecurity
+@EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)
 public class CoreApplication implements ICoreAPI {
+
+	private final AccountService accountService;
+
+	public static void main(String[] args) {
+		SpringApplication.run(CoreApplication.class, args);
+	}
 
 	@Getter private static CoreApplication instance;
 
@@ -63,8 +76,10 @@ public class CoreApplication implements ICoreAPI {
 	private final WebsiteSyncHandler websiteSyncHandler;
 	private final ChatHandler chatHandler;
 
-	public CoreApplication() {
-		instance = this;
+	public CoreApplication(AccountService accountService) {
+        this.accountService = accountService;
+
+        instance = this;
 		this.modules = new ArrayList<>();
 
 		start();
@@ -101,7 +116,7 @@ public class CoreApplication implements ICoreAPI {
 				this.rankHandler = new RankHandler(),
 				this.grantHandler = new GrantHandler(),
 				this.punishmentHandler = new PunishmentHandler(),
-				this.serverHandler = new ServerHandler(),
+				this.serverHandler = new SpringServerHandler(),
 				this.logHandler = new LogHandler(),
 				this.ipHistoryHandler = new IPHistoryHandler(),
 				this.permissionHandler = new PermissionHandler(),
@@ -110,65 +125,14 @@ public class CoreApplication implements ICoreAPI {
 				this.tagHandler = new TagHandler(),
 				this.noteHandler = new NoteHandler(),
 				this.discordSyncHandler = new DiscordSyncHandler(),
-				this.websiteSyncHandler = new WebsiteSyncHandler(),
+				this.websiteSyncHandler = new SpringSyncHandler(this.accountService),
 				this.chatHandler = new ChatHandler()
 		));
+
 		CommonsAPI.getInstance().getModules().forEach(IModule::load);
 
 		this.modules.forEach(IModule::load);
-
-		this.userHandler.getOrCreateAsync("LBuddyBoy");
-
-		UUID playerUUID = UUID.fromString("2732a2e3-2641-4888-81e7-de4282debeea");
-		this.websiteSyncHandler.getSyncInformation(playerUUID).whenCompleteAsync(((information, throwable) -> {
-			if (throwable != null) {
-				throwable.printStackTrace();
-				return;
-			}
-
-			if (information != null) {
-				System.out.println("Your account is already synced to: " + information.getWebsiteUserId() + "'");
-				return;
-			}
-
-			SyncCode syncCode = this.websiteSyncHandler.getSyncCode(playerUUID);
-
-			if (syncCode != null) {
-				System.out.println("You already have a sync code: " + syncCode.getCode());
-				return;
-			}
-
-			syncCode = new SyncCode(playerUUID, this.generateWebsiteCode());
-
-			Arrays.asList(
-					" ",
-					"<blend:&6;&e>&lHow to Sync Account</>",
-					"&eStep #1 &fHead over to https://mcore.com/sync",
-					"&eStep #2 &fCreate an account if you haven't",
-					"&eStep #3 &fEnter this code: " + syncCode.getCode(),
-					" ",
-					"&fAfter doing this your website account will be synced",
-					"&fto your Minecraft Account!",
-					" "
-			).forEach(s -> System.out.println(s));
-
-			new WebsiteSyncCodeUpdatePacket(syncCode).send();
-		}));
 	}
-
-	public int generateWebsiteCode() {
-		int random = ThreadLocalRandom.current().nextInt(99999);
-
-		if (this.websiteSyncHandler.getSyncCode(random) != null) return generateWebsiteCode();
-
-		return random;
-	}
-
-	public static void main(String[] args) {
-		SpringApplication.run(CoreApplication.class, args);
-	}
-
-	// curl -H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0NjAzNDc2M30.QeC4A1ofq0Ri_eoBIN_IcAzFFnrW48wzf3lHHDcms9vu1wO5oQ28XgFn9-ONKvloiFTnYyXZcvhTJKv-jMoTFg" http://localhost:8080/api/secure
 
 	public InputStream getResourceAsStream(String name) {
 		return getClass().getClassLoader().getResourceAsStream(name);
@@ -176,7 +140,7 @@ public class CoreApplication implements ICoreAPI {
 
 	@Override
 	public String getServerName() {
-		return "API";
+		return "Website";
 	}
 
 	@Override
@@ -207,6 +171,11 @@ public class CoreApplication implements ICoreAPI {
 	@Override
 	public Logger getLogger() {
 		return Logger.getAnonymousLogger();
+	}
+
+	@Override
+	public boolean isProxy() {
+		return false;
 	}
 
 }

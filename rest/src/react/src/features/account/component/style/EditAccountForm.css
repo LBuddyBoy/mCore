@@ -1,0 +1,91 @@
+/* EditAccountForm.css */
+
+.editAccountForm {
+  display: grid;
+  gap: 14px;
+}
+
+.editAccountField {
+  display: grid;
+  gap: 6px;
+}
+
+.editFieldLabel {
+  color: var(--text-dark);
+}
+
+.editInputContainer {
+  position: relative;
+}
+
+.editInputIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: var(--primary);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.inputField,
+.editAccountForm input[type="email"],
+.editAccountForm input[type="text"] {
+  width: 100%;
+  height: 42px;
+  padding: 10px 12px 10px 36px; /* room for icon */
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-dark);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.inputField::placeholder {
+  color: var(--text-light);
+}
+
+.inputField:focus,
+.editAccountForm input[type="email"]:focus,
+.editAccountForm input[type="text"]:focus {
+  border-color: color-mix(in srgb, var(--primary) 40%, var(--border) 60%);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
+/* File input — simple, clean */
+.editAccountForm input[type="file"] {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-dark);
+}
+
+/* Submit */
+.editAccountForm button[type="submit"],
+.editSubmitBtn {
+  margin-top: 4px;
+  width: fit-content;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+  transition: filter 0.12s ease, transform 0.08s ease;
+}
+
+.editAccountForm button[type="submit"]:hover,
+.editSubmitBtn:hover {
+  filter: brightness(1.05);
+}
+.editAccountForm button[type="submit"]:active,
+.editSubmitBtn:active {
+  transform: translateY(1px);
+}

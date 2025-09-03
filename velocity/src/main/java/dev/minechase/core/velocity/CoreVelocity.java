@@ -13,8 +13,8 @@ import dev.lbuddyboy.commons.api.CommonsAPI;
 import dev.lbuddyboy.commons.api.mongo.MongoHandler;
 import dev.lbuddyboy.commons.api.redis.RedisHandler;
 import dev.lbuddyboy.commons.api.util.IModule;
-import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.ICoreAPI;
+import dev.minechase.core.api.chat.ChatHandler;
 import dev.minechase.core.api.grant.GrantHandler;
 import dev.minechase.core.api.iphistory.IPHistoryHandler;
 import dev.minechase.core.api.log.LogHandler;
@@ -24,11 +24,13 @@ import dev.minechase.core.api.prefix.PrefixHandler;
 import dev.minechase.core.api.punishment.PunishmentHandler;
 import dev.minechase.core.api.rank.RankHandler;
 import dev.minechase.core.api.report.ReportHandler;
-import dev.minechase.core.api.sync.SyncHandler;
+import dev.minechase.core.api.sync.DiscordSyncHandler;
+import dev.minechase.core.api.sync.WebsiteSyncHandler;
 import dev.minechase.core.api.tag.TagHandler;
 import dev.minechase.core.api.user.UserHandler;
 import dev.minechase.core.velocity.api.ProxyServerHandler;
 import dev.minechase.core.velocity.command.CommandHandler;
+import dev.minechase.core.velocity.instance.InstanceHandler;
 import dev.minechase.core.velocity.listener.HubListener;
 import dev.minechase.core.velocity.listener.PermissionListener;
 import dev.minechase.core.velocity.listener.UserListener;
@@ -81,9 +83,12 @@ public class CoreVelocity implements ICoreAPI {
     private PrefixHandler prefixHandler;
     private TagHandler tagHandler;
     private NoteHandler noteHandler;
-    private SyncHandler syncHandler;
+    private DiscordSyncHandler discordSyncHandler;
+    private WebsiteSyncHandler websiteSyncHandler;
     private LockdownHandler lockdownHandler;
     private MOTDHandler motdHandler;
+    private ChatHandler chatHandler;
+    private InstanceHandler instanceHandler;
 
     @Inject
     public CoreVelocity(ProxyServer proxy, Logger logger, @DataDirectory Path dataDirectory) {
@@ -95,6 +100,7 @@ public class CoreVelocity implements ICoreAPI {
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         instance = this;
+
         this.configFile = new Config("config");
 
         this.start();
@@ -129,6 +135,11 @@ public class CoreVelocity implements ICoreAPI {
 
     }
 
+    @Override
+    public boolean isProxy() {
+        return true;
+    }
+
     private void loadModules() {
         this.modules.addAll(Arrays.asList(
                 this.commandHandler = new CommandHandler(new VelocityCommandManager(proxy, instance)),
@@ -153,9 +164,12 @@ public class CoreVelocity implements ICoreAPI {
                 this.reportHandler = new ReportHandler(),
                 this.tagHandler = new TagHandler(),
                 this.noteHandler = new NoteHandler(),
-                this.syncHandler = new SyncHandler(),
+                this.discordSyncHandler = new DiscordSyncHandler(),
+                this.websiteSyncHandler = new WebsiteSyncHandler(),
                 this.lockdownHandler = new LockdownHandler(),
-                this.motdHandler = new MOTDHandler()
+                this.motdHandler = new MOTDHandler(),
+                this.chatHandler = new ChatHandler(),
+                this.instanceHandler = new InstanceHandler()
         ));
 
         this.modules.forEach(IModule::load);

@@ -1,4 +1,4 @@
-package dev.minechase.core.bukkit.model;
+package dev.minechase.core.api.sync.model;
 
 import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;

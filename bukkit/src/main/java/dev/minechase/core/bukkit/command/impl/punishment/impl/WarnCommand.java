@@ -37,7 +37,7 @@ public class WarnCommand extends BaseCommand implements IPunishmentCommand {
         player.getUUID().whenCompleteAsyncExcept(uuid -> {
             String actualReason = reason == null ? "None specified" : reason;
 
-            punish(sender, uuid, actualReason, -1L, false, actualReason.contains("-s"));
+            punish(sender, uuid, actualReason, Long.MAX_VALUE, false, actualReason.contains("-s"));
         }, (throwable -> sender.sendMessage(CoreConstants.INVALID_NAME(player))));
     }
 

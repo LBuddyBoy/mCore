@@ -1,4 +1,4 @@
-package dev.minechase.core.api.filter.packet;
+package dev.minechase.core.api.chat.packet;
 
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.packet.ServerResponsePacket;

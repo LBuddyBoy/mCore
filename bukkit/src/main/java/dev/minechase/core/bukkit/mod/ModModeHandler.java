@@ -106,6 +106,11 @@ public class ModModeHandler implements IModule, Listener {
     }
 
     public void activate(Player player) {
+        if (CorePlugin.getInstance().getServerHandler().getLocalServer().isHub()) {
+            player.sendMessage(CC.blend("You cannot use mod mode in the lobby.", "&4", "&c"));
+            return;
+        }
+
         if (this.modModes.containsKey(player.getUniqueId())) return;
 
         this.modModes.put(player.getUniqueId(), new ModMode(player));

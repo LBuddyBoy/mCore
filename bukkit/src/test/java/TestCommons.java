@@ -26,6 +26,8 @@ public class TestCommons extends CommonsAPI {
                 getRedisHandler(),
                 getUUIDCache()
         )));
+
+        CommonsAPI.init(this);
     }
 
     @Override

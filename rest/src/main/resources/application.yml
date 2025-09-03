@@ -1,0 +1,19 @@
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
+
+security:
+  jwt:
+    secret: "7C0z8x7+bGlMJ+HnTCx4HiJx+rPi/aoPFOtkdYdVu2U="
+    issuer: "example-app"
+    expires-in: 3600
+
+spring:
+  application:
+    name: "mcore-rest"
+  data:
+    mongodb:
+      database: "mCore"
+      uri: mongodb://localhost:27017

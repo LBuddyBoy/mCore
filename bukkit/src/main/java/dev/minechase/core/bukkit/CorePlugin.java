@@ -1,13 +1,12 @@
 package dev.minechase.core.bukkit;
 
 import dev.iiahmed.disguise.DisguiseManager;
-import dev.iiahmed.disguise.DisguiseProvider;
+import dev.lbuddyboy.commons.CommonsPlugin;
 import dev.lbuddyboy.commons.api.CommonsAPI;
 import dev.lbuddyboy.commons.api.mongo.MongoHandler;
 import dev.lbuddyboy.commons.api.redis.RedisHandler;
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.lbuddyboy.commons.util.CC;
-import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.ICoreAPI;
 import dev.minechase.core.api.iphistory.IPHistoryHandler;
 import dev.minechase.core.api.log.LogHandler;
@@ -16,19 +15,17 @@ import dev.minechase.core.api.prefix.PrefixHandler;
 import dev.minechase.core.api.rank.RankHandler;
 import dev.minechase.core.api.server.model.CoreServer;
 import dev.minechase.core.api.server.packet.ServerUpdatePacket;
-import dev.minechase.core.api.sync.SyncHandler;
+import dev.minechase.core.api.sync.DiscordSyncHandler;
+import dev.minechase.core.api.sync.WebsiteSyncHandler;
 import dev.minechase.core.api.tag.TagHandler;
 import dev.minechase.core.bukkit.api.*;
+import dev.minechase.core.bukkit.api.hook.CorePlaceholderHook;
 import dev.minechase.core.bukkit.hologram.HologramHandler;
-import dev.minechase.core.bukkit.listener.CoreListener;
-import dev.minechase.core.bukkit.listener.PunishmentListener;
-import dev.minechase.core.bukkit.listener.TotpListener;
+import dev.minechase.core.bukkit.listener.*;
 import dev.minechase.core.bukkit.mod.ModModeHandler;
 import dev.minechase.core.bukkit.npc.NPCHandler;
 import dev.minechase.core.bukkit.settings.SettingsHandler;
-import dev.minechase.core.api.user.UserHandler;
 import dev.minechase.core.bukkit.command.CommandHandler;
-import dev.minechase.core.bukkit.listener.UserListener;
 import dev.minechase.core.bukkit.packet.StaffMessagePacket;
 import dev.minechase.core.bukkit.task.QueuePlayerTask;
 import lombok.Getter;
@@ -62,9 +59,10 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
     private PrefixHandler prefixHandler;
     private TagHandler tagHandler;
     private NoteHandler noteHandler;
-    private SyncHandler syncHandler;
+    private DiscordSyncHandler discordSyncHandler;
+    private WebsiteSyncHandler websiteSyncHandler;
     private BukkitReportHandler reportHandler;
-    private ChatHandler chatHandler;
+    private BukkitChatHandler chatHandler;
     private ModModeHandler modModeHandler;
     private RebootHandler rebootHandler;
     private WhitelistHandler whitelistHandler;
@@ -92,18 +90,26 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
 
     @Override
     public void onDisable() {
-        new StaffMessagePacket(CC.translate(Arrays.asList(
-                "&7&m------------------------",
-                "&6" + getServerName() + " &eis now &coffline&e!",
-                "&7&m------------------------"
-        ))).send();
+        if (this.serverHandler.isRebooted()) {
+            new StaffMessagePacket(CC.translate(Arrays.asList(
+                    "&7&m------------------------",
+                    "&6" + getServerName() + " &eis now &4rebooting&e!",
+                    "&7&m------------------------"
+            ))).send();
+        } else {
+            new StaffMessagePacket(CC.translate(Arrays.asList(
+                    "&7&m------------------------",
+                    "&6" + getServerName() + " &eis now &coffline&e!",
+                    "&7&m------------------------"
+            ))).send();
+        }
 
         this.modules.forEach(IModule::unload);
     }
 
     @Override
     public String getServerName() {
-        return this.getConfig().getString("serverName");
+        return Bukkit.getServer().getMotd();
     }
 
     @Override
@@ -130,9 +136,16 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
         new ServerUpdatePacket(localServer).send();
     }
 
+    @Override
+    public boolean isProxy() {
+        return false;
+    }
+
     private void loadModules() {
         DisguiseManager.initialize(this, true);
         DisguiseManager.getProvider().allowOverrideChat(false);
+
+        CommonsPlugin.getInstance().getPlaceholderHandler().registerProvider(new CorePlaceholderHook());
 
         this.modules.addAll(Arrays.asList(
                 this.commandHandler = new CommandHandler(),
@@ -158,8 +171,9 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
                 this.tagHandler = new TagHandler(),
                 this.reportHandler = new BukkitReportHandler(),
                 this.noteHandler = new NoteHandler(),
-                this.syncHandler = new SyncHandler(),
-                this.chatHandler = new ChatHandler(),
+                this.discordSyncHandler = new DiscordSyncHandler(),
+                this.websiteSyncHandler = new WebsiteSyncHandler(),
+                this.chatHandler = new BukkitChatHandler(),
                 this.modModeHandler = new ModModeHandler(),
                 this.rebootHandler = new RebootHandler(),
                 this.whitelistHandler = new WhitelistHandler(),
@@ -180,6 +194,7 @@ public class CorePlugin extends JavaPlugin implements ICoreAPI {
         this.getServer().getPluginManager().registerEvents(new PunishmentListener(), this);
         this.getServer().getPluginManager().registerEvents(new UserListener(), this);
         this.getServer().getPluginManager().registerEvents(new TotpListener(), this);
+        this.getServer().getPluginManager().registerEvents(new ChatListener(), this);
     }
 
 }

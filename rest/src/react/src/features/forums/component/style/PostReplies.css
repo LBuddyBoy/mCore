@@ -1,0 +1,17 @@
+.postReplies {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg);
+  padding: 15px;
+  border-radius: 15px;
+}
+
+.postRepliesHeader {
+  margin-bottom: 15px;
+}
+
+.postRepliesControls {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}

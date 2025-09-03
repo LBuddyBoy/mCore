@@ -2,6 +2,7 @@ package dev.minechase.core.api;
 
 import dev.lbuddyboy.commons.api.mongo.MongoHandler;
 import dev.lbuddyboy.commons.api.redis.RedisHandler;
+import dev.minechase.core.api.chat.ChatHandler;
 import dev.minechase.core.api.grant.GrantHandler;
 import dev.minechase.core.api.iphistory.IPHistoryHandler;
 import dev.minechase.core.api.log.LogHandler;
@@ -13,7 +14,8 @@ import dev.minechase.core.api.report.ReportHandler;
 import dev.minechase.core.api.server.ServerHandler;
 import dev.minechase.core.api.rank.RankHandler;
 import dev.minechase.core.api.server.model.CoreServer;
-import dev.minechase.core.api.sync.SyncHandler;
+import dev.minechase.core.api.sync.DiscordSyncHandler;
+import dev.minechase.core.api.sync.WebsiteSyncHandler;
 import dev.minechase.core.api.tag.TagHandler;
 import dev.minechase.core.api.user.UserHandler;
 
@@ -34,14 +36,17 @@ public interface ICoreAPI {
     PermissionHandler getPermissionHandler();
     IPHistoryHandler getIpHistoryHandler();
     ServerHandler getServerHandler();
-    SyncHandler getSyncHandler();
+    DiscordSyncHandler getDiscordSyncHandler();
+    WebsiteSyncHandler getWebsiteSyncHandler();
     PrefixHandler getPrefixHandler();
+    ChatHandler getChatHandler();
     ReportHandler getReportHandler();
     TagHandler getTagHandler();
     LogHandler getLogHandler();
     UserHandler getUserHandler();
     void updateLocalServer();
     Logger getLogger();
+    boolean isProxy();
 
     default List<CoreServer> getHubs() {
         return this.getServerHandler().getServers().values().stream().filter(CoreServer::isHub).sorted(Comparator.comparingInt(CoreServer::getPlayerCount)).toList();

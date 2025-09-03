@@ -1,11 +1,6 @@
 package dev.minechase.core.jda.command.impl;
 
-import dev.minechase.core.api.sync.model.SyncCode;
-import dev.minechase.core.api.sync.model.SyncInformation;
-import dev.minechase.core.api.sync.packet.SyncInformationRemovePacket;
-import dev.minechase.core.api.sync.packet.SyncInformationUpdatePacket;
-import dev.minechase.core.api.sync.packet.UserSyncPacket;
-import dev.minechase.core.api.util.UUIDUtils;
+import dev.minechase.core.api.sync.packet.discord.DiscordSyncInformationRemovePacket;
 import dev.minechase.core.bukkit.packet.PlayerMessagePacket;
 import dev.minechase.core.jda.CoreBot;
 import dev.minechase.core.jda.command.Command;
@@ -45,7 +40,7 @@ public class SyncResetCommand extends Command {
 
             User user = mentioned.getAsUser();
 
-            CoreBot.getInstance().getSyncHandler().getSyncInformation(user.getId()).whenCompleteAsync((information, throwable) -> {
+            CoreBot.getInstance().getDiscordSyncHandler().getSyncInformation(user.getId()).whenCompleteAsync((information, throwable) -> {
                 if (information == null) {
                     event.getHook().sendMessage("That user is not synced.").setEphemeral(true).queue();
                     return;
@@ -53,7 +48,7 @@ public class SyncResetCommand extends Command {
 
                 event.getHook().sendMessage("You reset " + user.getAsMention() + "'s sync information.").setEphemeral(true).queue();
 
-                new SyncInformationRemovePacket(information).send();
+                new DiscordSyncInformationRemovePacket(information).send();
 
                 CoreBot.getInstance().getUserHandler().getOrCreateAsync(information.getPlayerUUID()).whenCompleteAsync((coreUser, throwable1) -> {
                     if (throwable1 != null) {

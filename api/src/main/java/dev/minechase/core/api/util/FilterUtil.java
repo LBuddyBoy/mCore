@@ -1,6 +1,6 @@
-package dev.minechase.core.bukkit.util;
+package dev.minechase.core.api.util;
 
-import dev.minechase.core.bukkit.CorePlugin;
+import dev.minechase.core.api.CoreAPI;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -17,7 +17,7 @@ public class FilterUtil {
     );
 
     public static List<String> getDisallowedNames() {
-        return CorePlugin.getInstance().getConfig().getStringList("filter");
+        return CoreAPI.getInstance().getChatHandler().getFilterList();
     }
 
     public static boolean isDisallowed(String name) {

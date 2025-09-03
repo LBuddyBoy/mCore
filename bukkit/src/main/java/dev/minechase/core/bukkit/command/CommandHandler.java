@@ -1,5 +1,6 @@
 package dev.minechase.core.bukkit.command;
 
+import co.aikar.commands.BukkitCommandCompletionContext;
 import co.aikar.commands.PaperCommandManager;
 import dev.lbuddyboy.commons.api.util.IModule;
 import dev.minechase.core.bukkit.CorePlugin;
@@ -46,10 +47,12 @@ public class CommandHandler implements IModule {
         this.commandManager.registerCommand(new NPCCommand());
         this.commandManager.registerCommand(new HologramCommand());
 
+        this.commandManager.registerCommand(new WorldCommand());
         this.commandManager.registerCommand(new ClearCommand());
         this.commandManager.registerCommand(new CraftCommand());
         this.commandManager.registerCommand(new EnchantCommand());
         this.commandManager.registerCommand(new FeedCommand());
+        this.commandManager.registerCommand(new SpeedCommand());
         this.commandManager.registerCommand(new FixCommand());
         this.commandManager.registerCommand(new GameModeCommand());
         this.commandManager.registerCommand(new ListCommand());

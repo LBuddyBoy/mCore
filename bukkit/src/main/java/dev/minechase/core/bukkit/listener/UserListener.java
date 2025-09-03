@@ -3,13 +3,11 @@ package dev.minechase.core.bukkit.listener;
 import com.mojang.authlib.properties.Property;
 import dev.lbuddyboy.commons.api.CommonsAPI;
 import dev.lbuddyboy.commons.api.cache.UUIDCache;
-import dev.lbuddyboy.commons.api.util.StringUtils;
 import dev.lbuddyboy.commons.util.CC;
 import dev.minechase.core.api.CoreAPI;
-import dev.minechase.core.api.iphistory.model.HistoricalIP;
-import dev.minechase.core.api.iphistory.packet.HistoricalIPUpdatePacket;
 import dev.minechase.core.api.log.model.impl.NewUserLog;
 import dev.minechase.core.api.user.model.User;
+import dev.minechase.core.api.user.packet.UserUpdatePacket;
 import dev.minechase.core.bukkit.CoreConstants;
 import dev.minechase.core.bukkit.CorePlugin;
 import dev.minechase.core.bukkit.command.impl.essential.TeleportCommand;
@@ -25,8 +23,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class UserListener implements Listener {
@@ -35,10 +31,11 @@ public class UserListener implements Listener {
     public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
         UUID playerUUID = event.getUniqueId();
         String name = event.getName();
+        User user = CorePlugin.getInstance().getUserHandler().getCache().loadUser(playerUUID);
 
-        CommonsAPI.getInstance().getUUIDCache().cache(event.getUniqueId(), event.getName(), !UUIDCache.getNamesToUuids().containsKey(event.getName().toLowerCase()));
+        System.out.printf("User: %s", user);
 
-        User user = CorePlugin.getInstance().getUserHandler().loadUser(playerUUID, name);
+        user.setName(name);
 
         CorePlugin.getInstance().getUserHandler().getUsers().put(playerUUID, user);
     }
@@ -49,10 +46,13 @@ public class UserListener implements Listener {
         User user = CorePlugin.getInstance().getUserHandler().getUser(player.getUniqueId());
         String ipAddress = player.getAddress().getAddress().getHostAddress();
         boolean changedIps = user.getCurrentIpAddress() != null && !user.getCurrentIpAddress().equals(ipAddress);
-        Property property = ((CraftPlayer)player).getProfile().getProperties().get("textures").stream().findFirst().orElse(null);
+        Property property = ((CraftPlayer) player).getProfile().getProperties().get("textures").stream().findFirst().orElse(null);
+        boolean save = false;
 
         if (property != null) {
             user.getPersistentMetadata().set(User.HEAD_TEXTURE_KEY, property.value());
+            user.getPersistentMetadata().set(User.HEAD_SIGNATURE_KEY, property.signature());
+            save = true;
         }
 
         CorePlugin.getInstance().getUserHandler().updateDisguise(player);
@@ -77,14 +77,17 @@ public class UserListener implements Listener {
 
         if (changedIps) {
             CorePlugin.getInstance().getIpHistoryHandler().applyChange(player.getUniqueId(), ipAddress);
+            save = true;
         } else {
             CorePlugin.getInstance().getIpHistoryHandler().applyLogin(player.getUniqueId(), ipAddress);
         }
 
-        if (!user.hasPlayedBefore()) {
-            user.setFirstJoinAt(System.currentTimeMillis());
-            new NewUserLog(player.getUniqueId()).createLog();
-        }
+        if (save) user.save();
+
+        CorePlugin.getInstance().getServerHandler().getPlayerLocationStorage().saveAsync(
+                player.getUniqueId(),
+                CorePlugin.getInstance().getServerName()
+        );
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -94,8 +97,10 @@ public class UserListener implements Listener {
 
         user.getPendingMessages().clear();
 
-        user.save(true);
+        new UserUpdatePacket(user).send();
+
         CorePlugin.getInstance().getUserHandler().getUsers().remove(player.getUniqueId());
+        CorePlugin.getInstance().getServerHandler().getPlayerLocationStorage().deleteAsync(player.getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

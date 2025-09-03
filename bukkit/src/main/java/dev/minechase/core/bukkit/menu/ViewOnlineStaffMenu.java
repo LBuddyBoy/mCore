@@ -46,7 +46,7 @@ public class ViewOnlineStaffMenu extends IPagedMenu {
         public ItemStack getItem(Player player) {
             User user = CorePlugin.getInstance().getUserHandler().getUser(staff.getUniqueId());
 
-            return new ItemFactory(user.getPersistentMetadata().getOrDefault(User.HEAD_TEXTURE_KEY, HeadUtil.GRAY_BASE_64))
+            return new ItemFactory(user.getHeadTexture())
                     .displayName(CC.translate(user.getDisplayName()))
                     .lore(
                             "&fMod Mode&7: " + (CorePlugin.getInstance().getModModeHandler().isActive(player) ? "&aYes" : "&cNo"),

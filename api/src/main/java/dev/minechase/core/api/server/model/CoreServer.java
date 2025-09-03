@@ -3,6 +3,7 @@ package dev.minechase.core.api.server.model;
 import com.google.common.collect.ImmutableList;
 import dev.minechase.core.api.CoreAPI;
 import dev.minechase.core.api.api.Documented;
+import dev.minechase.core.api.server.packet.ServerRebootPacket;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +57,14 @@ public class CoreServer extends Documented {
                 .append("players", this.players.stream().map(UUID::toString).toList());
     }
 
+    public boolean isTemplate() {
+        return this.name.startsWith("template-");
+    }
+
+    public boolean isInstance() {
+        return this.name.startsWith("mini-");
+    }
+
     public void updatePositions() {
         int position = 1;
 
@@ -96,13 +105,19 @@ public class CoreServer extends Documented {
     public void markOnline() {
         this.startedAt = System.currentTimeMillis();
         this.stoppedAt = 0L;
+        this.playerCount = 0;
         this.players.clear();
     }
 
     public void markOffline() {
         this.stoppedAt = System.currentTimeMillis();
         this.startedAt = 0L;
+        this.playerCount = 0;
         this.players.clear();
+    }
+
+    public void reboot() {
+        new ServerRebootPacket(this.name).send();
     }
 
 }

@@ -9,6 +9,7 @@ import dev.minechase.core.api.log.model.impl.disguise.DisguiseRemoveLog;
 import dev.minechase.core.api.prefix.model.Prefix;
 import dev.minechase.core.api.rank.model.Rank;
 import dev.minechase.core.api.tag.model.Tag;
+import dev.minechase.core.api.user.packet.UserUpdatePacket;
 import lombok.Data;
 import org.bson.Document;
 
@@ -22,8 +23,8 @@ import java.util.concurrent.CompletableFuture;
 public class User {
 
     private final UUID uniqueId;
-    private String name, currentIpAddress;
-    private long firstJoinAt;
+    private String name, currentIpAddress, currentServer;
+    private long firstJoinAt = Long.MAX_VALUE;
     private Grant activeGrant;
     private UserMetadata persistentMetadata = new UserMetadata();
     private List<String> pendingMessages = new ArrayList<>();
@@ -33,8 +34,11 @@ public class User {
     private transient boolean changedIps;
     private transient UserMetadata localMetadata = new UserMetadata();
 
-    public User(UUID uniqueId) {
-        this.uniqueId = uniqueId;
+    public User(Document document) {
+        this.uniqueId = UUID.fromString(document.getString("uniqueId"));
+        this.name = document.getString("name");
+
+        load(document);
     }
 
     public User(UUID uniqueId, String name) {
@@ -128,6 +132,10 @@ public class User {
             ).sorted(Comparator.comparingInt(Grant::getWeight)).toList();
 
             if (sortedGrants.isEmpty()) {
+                if (this.activeGrant != null && !this.activeGrant.isRemoved()) {
+                    return this.getActiveGrant();
+                }
+
                 Grant grant = Grant.DEFAULT_GRANT(this.uniqueId);
                 setActiveGrant(grant);
                 save(true);
@@ -137,7 +145,7 @@ public class User {
 
             Grant selected = sortedGrants.getFirst();
 
-            if (this.getActiveGrant().equals(selected)) return this.getActiveGrant();
+            if (this.getActiveGrant().getRankId().equals(selected.getRankId())) return this.getActiveGrant();
 
             CoreAPI.getInstance().getGrantHandler().onRankChange(this, this.activeGrant, selected);
             setActiveGrant(selected);
@@ -148,13 +156,26 @@ public class User {
         });
     }
 
+    public void update() {
+        CoreAPI.getInstance().getUserHandler().getCache().save(this.uniqueId, toDocument().toJson());
+    }
+
     public void save(boolean async) {
-        if (async) {
-            CompletableFuture.runAsync(() -> save(false), CoreAPI.POOL);
+        if (CoreAPI.getInstance().isProxy()) {
+            if (async) {
+                CompletableFuture.runAsync(() -> save(false), CoreAPI.POOL);
+                return;
+            }
+
+            CoreAPI.getInstance().getUserHandler().saveUser(this);
             return;
         }
 
-        CoreAPI.getInstance().getUserHandler().saveUser(this);
+        new UserUpdatePacket(this).send();
+    }
+
+    public void save() {
+        this.save(false);
     }
 
     public void load(Document document) {
@@ -167,6 +188,7 @@ public class User {
         this.disguiseSkinTextures = document.getString("disguiseSkinTextures");
         this.disguiseSkinSignature = document.getString("disguiseSkinSignature");
         this.disguiseName = document.getString("disguiseName");
+        this.currentServer = document.getString("currentServer");
 
         this.updateActiveGrant();
     }
@@ -176,6 +198,7 @@ public class User {
 
         document.put("uniqueId", this.uniqueId.toString());
         document.put("name", this.name);
+        document.put("currentServer", this.currentServer);
         document.put("currentIpAddress", this.currentIpAddress);
         document.put("firstJoinedAt", this.firstJoinAt);
         document.put("pendingMessages", this.pendingMessages);
@@ -189,10 +212,26 @@ public class User {
         return document;
     }
 
+    public String getHeadTexture() {
+        return this.persistentMetadata.getOrDefault(
+                HEAD_TEXTURE_KEY,
+                "eyJ0aW1lc3RhbXAiOjE1ODc4MjU0NzgwNDcsInByb2ZpbGVJZCI6ImUzYjQ0NWM4NDdmNTQ4ZmI4YzhmYTNmMWY3ZWZiYThlIiwicHJvZmlsZU5hbWUiOiJNaW5pRGlnZ2VyVGVzdCIsInNpZ25hdHVyZVJlcXVpcmVkIjp0cnVlLCJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2E1ODg4YWEyZDdlMTk5MTczYmEzN2NhNzVjNjhkZTdkN2Y4NjJiMzRhMTNiZTMyNDViZTQ0N2UyZjIyYjI3ZSJ9fX0="
+        );
+    }
+
+    public String getHeadSignature() {
+        return this.persistentMetadata.getOrDefault(
+                HEAD_SIGNATURE_KEY,
+                "Yt6VmTAUTbpfGQoFneECtoYcbu7jcARAwZu2LYWv3Yf1MJGXv6Bi3i7Pl9P8y1ShB7V1Q2HyA1bce502x1naOKJPzzMJ0jKZfEAKXnzaFop9t9hXzgOq7PaIAM6fsapymYhkkulRIxnJdMrMb2PLRYfo9qiBJG+IEbdj8MTSvWJO10xm7GtpSMmA2Xd0vg5205hsj0OxSdgxf1uuWPyRaXpPZYDUU05/faRixDKti86hlkBs/v0rttU65r1UghkftfjK0sJoPpk9hABvkw4OjXVFb63wcb27KPhIiSHZzTooSxjGNDniauCsF8Je+fhhMebpXeba1R2lZPLhkHwazNgZmTCKbV1M/a8BDHN24HH9okJpQOR9SPCPOJrNbK+LTPsrR06agj+H/yvYq0ZMJTF6IE6C3KJqntPJF1NQvJM0/YegPPtzpbT/7O1cd4JBCVmguhadOFYvrxqCKHcmaYdkyMJtnGub/5sCjJAG7fZadACftwLnmdBZoQRcNKQMubpdUjuzF8g6C03MiZkeNBUgqkfVjXi7DqpmB0ZvTttp34vy7EIBCo3Hfj15779nGs8SoTw9V2zZc+LgiVPjWF6tffjWkgzLq8K2Cndu6RDlWGJWmrztN/X9lIiLdn8GEfSSGY983n0C91x8mkpOKSfAWPnSZd7NuHU5GaoMvyE="
+        );
+    }
+
     public static final String SYNCED_KEY = "discord_synced";
     public static final String ACTIVE_TAG_KEY = "active_tag";
     public static final String ACTIVE_PREFIX_KEY = "active_prefix";
     public static final String HEAD_TEXTURE_KEY = "head_texture";
-    public static final TypeToken<UserMetadata> METADATA = new TypeToken<>() {};
+    public static final String HEAD_SIGNATURE_KEY = "head_signature";
+    public static final TypeToken<UserMetadata> METADATA = new TypeToken<>() {
+    };
 
 }

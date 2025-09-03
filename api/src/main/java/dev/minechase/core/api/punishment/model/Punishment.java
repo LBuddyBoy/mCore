@@ -32,7 +32,7 @@ public class Punishment extends Documented implements IRemovable, ISendable, IEx
     private UUID removedBy = null;
     private String removedReason = null;
     private String removedOn = null;
-    private long removedAt = 0L;
+    private long removedAt = Long.MAX_VALUE;
     private boolean removedSilent = false;
 
     public Punishment(UUID senderUUID, UUID targetUUID, PunishmentType type, long duration, String reason, String server, String senderIp, String targetIp, boolean ipRelated, boolean shadow, boolean sentSilent) {

@@ -1,0 +1,102 @@
+.userPageContainer {
+  background-color: var(--surface);
+  width: 650px;
+  align-self: center;
+  border-radius: 20px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  margin: 28px auto 40px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Banner */
+.userPageBanner {
+  width: 100%;
+  height: 180px;
+  position: relative;
+}
+
+.bannerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Header with avatar + basic info */
+.userPageHeader {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 0 20px;
+  margin-top: -75px; /* pull avatar into banner */
+  z-index: 1000;
+}
+
+.userPageAvatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 5px solid var(--surface); /* clean outline */
+  background-color: var(--surface);
+  flex-shrink: 0;
+}
+
+/* User details */
+.userPageContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding-bottom: 10px;
+  padding: 15px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.userPageContent .usernameContainer {
+  background-color: rgba(15, 11, 11, 0.767);
+  
+}
+
+.userPageStatus {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  align-items: center;
+}
+
+.userStatus.online {
+  color: green;
+  font-weight: 500;
+}
+
+.userStatus.offline {
+  color: red;
+  font-weight: 500;
+}
+
+/* Stats at the bottom */
+.userPageStats {
+  display: flex;
+  justify-content: space-around;
+  padding: 15px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: var(--surface);
+}
+
+.userPageStat {
+  text-align: center;
+}
+
+.userPageStat p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.userPageStat a {
+  color: var(--text-light);
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-decoration: none;
+}

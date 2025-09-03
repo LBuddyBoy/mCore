@@ -6,8 +6,6 @@ import dev.minechase.core.api.sync.model.GlobalChatMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.List;
-
 @AllArgsConstructor
 @Getter
 public class GlobalChatMessagePacket extends ServerResponsePacket {
@@ -23,12 +21,6 @@ public class GlobalChatMessagePacket extends ServerResponsePacket {
     @Override
     public void onReceiveExecuteServer() {
 
-        CoreAPI.getInstance().getWebsiteSyncHandler().postChatMessage(
-                chatMessage.getPlayerUUID(),
-                chatMessage.getPlayerName(),
-                chatMessage.getServerName(),
-                chatMessage.getMessage()
-        );
     }
 
     @Override

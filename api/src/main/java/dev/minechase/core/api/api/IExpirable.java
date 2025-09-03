@@ -18,7 +18,7 @@ public interface IExpirable {
     }
 
     default boolean isPermanent() {
-        return getDuration() == -1L;
+        return getDuration() == Long.MAX_VALUE;
     }
 
     default boolean isActive() {

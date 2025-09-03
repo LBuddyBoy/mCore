@@ -1,22 +1,28 @@
 package dev.minechase.core.bukkit.hologram.model;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.frog.Tadpole;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.level.Level;
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.util.CraftChatMessage;
 
-public class LineEntity extends ArmorStand {
+import java.lang.reflect.Array;
 
-    private final HologramLine line;
+public class LineClickEntity extends Tadpole {
 
-    public LineEntity(Level level, HologramLine line) {
-        super(EntityType.ARMOR_STAND, level);
+    public LineClickEntity(Level level, HologramLine line) {
+        super(EntityType.TADPOLE, level);
 
-        this.line = line;
-    }
+        Location location = line.getParent().getLocation();
 
-    public LineEntity(Level level, double x, double y, double z, HologramLine line) {
-        super(level, x, y, z);
-        this.line = line;
+        this.setUUID(line.getIds()[1]);
+        this.setId(line.getArmorStandIds()[1]);
+        this.setInvisible(true);
+        this.setCustomNameVisible(false);
+        this.setNoGravity(true);
+        this.setPos(location.getX(), location.getY() + (((line.getIndex() + 1) * line.getParent().getLineOffset())), location.getZ());
     }
 
 }

@@ -23,6 +23,9 @@ public class CorePermissionProvider implements com.velocitypowered.api.permissio
         return permission -> {
 
             User user = CoreVelocity.getInstance().getUserHandler().getUser(player.getUniqueId());
+
+            if (user == null) return Tristate.FALSE;
+
             Rank rank = user.getRank();
 
             for (ScopedPermission scopedPermission : rank.getCombinedLocalPermissions()) {

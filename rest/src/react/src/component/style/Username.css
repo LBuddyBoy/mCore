@@ -1,0 +1,20 @@
+.usernameContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.usernameContainer.fitContent {
+  width: fit-content;
+}
+
+.usernameContainer .usernameDisplay {
+  text-transform: uppercase;
+  font-weight: bold;
+  padding: 0.1em 0.5em;
+  font-size: 1.2em;
+  padding-bottom: 0.2em;
+  align-items: center;
+}

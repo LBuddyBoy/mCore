@@ -23,7 +23,7 @@ public class Grant extends Documented implements IScoped, IRemovable, ISendable,
                 null,
                 targetUUID,
                 CoreAPI.getInstance().getRankHandler().getDefaultRank(),
-                -1L,
+                Long.MAX_VALUE,
                 CoreAPI.getInstance().getServerName(),
                 "Default Grant",
                 new MultiScope("GLOBAL")
@@ -40,7 +40,7 @@ public class Grant extends Documented implements IScoped, IRemovable, ISendable,
     private UUID removedBy = null;
     private String removedReason = null;
     private String removedOn = null;
-    private long removedAt = 0L;
+    private long removedAt = Long.MAX_VALUE;
 
     public Grant(UUID senderUUID, UUID targetUUID, Rank rank, long duration, String sentOn, String reason, MultiScope scope) {
         this.id = UUID.randomUUID();
@@ -65,7 +65,7 @@ public class Grant extends Documented implements IScoped, IRemovable, ISendable,
         this.reason = document.getString("reason");
         this.initialRankName = document.getString("initialRankName");
         this.sentAt = document.getLong("sentAt");
-        this.duration = document.getLong("duration");
+        this.duration = document.get("duration", Long.MAX_VALUE);
         this.removable = document.getBoolean("removable");
         this.scopes.addAll(document.getList("scopes", String.class, new ArrayList<>()));
         this.removedBy = this.deserializeUUID(document.getString("removedBy"));

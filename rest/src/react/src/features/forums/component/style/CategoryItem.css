@@ -1,0 +1,42 @@
+.categoryItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  background-color: var(--bg);
+  padding: 15px;
+  border-radius: 15px;
+  transition: ease-in-out opacity 0.25s;
+  text-decoration: none;
+}
+
+.categoryItem:hover {
+    cursor: pointer;
+    opacity: 60%;
+}
+
+.categoryItem h3 {
+  font-size: 20px;
+  color: var(--primary);
+}
+
+.categoryStats {
+  display: flex;
+  justify-content: space-between;
+  gap: 10ch;
+  text-align: center;
+}
+
+.categoryStat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25ch;
+}
+
+.categoryStat p {
+  color: var(--text-dark);
+}
+
+.categoryStat span {
+  color: var(--text-light);
+}
